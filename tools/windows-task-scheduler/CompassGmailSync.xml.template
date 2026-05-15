@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<!--
+  Compass Gmail Background Sync — Windows Task Scheduler definition.
+  Installed by tools/windows-task-scheduler/install.bat.
+  Don't edit this template directly; the install script substitutes placeholders.
+-->
+<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Author>Jiawen</Author>
+    <Description>Compass — Gmail background sync (runs every 4 hours)</Description>
+    <URI>\CompassGmailSync</URI>
+  </RegistrationInfo>
+
+  <Triggers>
+    <!-- Fire 5 minutes after logon, then repeat every 4 hours for 24 hours,
+         then re-trigger on next logon. -->
+    <LogonTrigger>
+      <Enabled>true</Enabled>
+      <Delay>PT5M</Delay>
+      <Repetition>
+        <Interval>PT4H</Interval>
+        <Duration>P1D</Duration>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+    </LogonTrigger>
+  </Triggers>
+
+  <Principals>
+    <Principal id="Author">
+      <LogonType>InteractiveToken</LogonType>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+
+  <Settings>
+    <!-- Only run when network is available. -->
+    <RunOnlyIfNetworkAvailable>true</RunOnlyIfNetworkAvailable>
+    <!-- Don't run while on battery (so light laptop users save juice). -->
+    <DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
+    <!-- If a fire was missed (laptop closed), run on next wake. -->
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <ExecutionTimeLimit>PT5M</ExecutionTimeLimit>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <Priority>7</Priority>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartOnRemoteAppSession>false</DisallowStartOnRemoteAppSession>
+    <UseUnifiedSchedulingEngine>true</UseUnifiedSchedulingEngine>
+    <IdleSettings>
+      <StopOnIdleEnd>true</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+  </Settings>
+
+  <Actions Context="Author">
+    <Exec>
+      <Command>__PYTHON__</Command>
+      <Arguments>"__PROJECT_ROOT__\tools\gmail_sync_cli.py" --days 14 --verbose</Arguments>
+      <WorkingDirectory>__PROJECT_ROOT__</WorkingDirectory>
+    </Exec>
+  </Actions>
+</Task>

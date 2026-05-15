@@ -1,0 +1,22 @@
+# Compass Gmail Background Sync — systemd timer unit
+# Install via tools/systemd/install.sh
+
+[Unit]
+Description=Run Compass Gmail Sync every 4 hours
+Documentation=https://github.com/JW2000Cc/compass-intl
+
+[Timer]
+# Fire 5 min after boot (so user can validate startup) + every 4h after.
+OnBootSec=5min
+OnUnitActiveSec=4h
+
+# If the system was off when a scheduled fire was due, run on next boot.
+Persistent=true
+
+# Random jitter so multiple users on a server don't pile up.
+RandomizedDelaySec=5min
+
+Unit=compass-gmail-sync.service
+
+[Install]
+WantedBy=timers.target

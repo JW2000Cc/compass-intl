@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.compass.gmail-sync</string>
+
+  <!-- Replaced by install.sh: __PYTHON__ + __PROJECT_ROOT__ -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PYTHON__</string>
+    <string>__PROJECT_ROOT__/tools/gmail_sync_cli.py</string>
+    <string>--days</string>
+    <string>14</string>
+    <string>--verbose</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>__PROJECT_ROOT__</string>
+
+  <!-- Run every 4 hours (14400 seconds). Sundial-like users with heavy
+       inbox traffic can lower to 3600 (1h); light traffic can raise to 21600 (6h). -->
+  <key>StartInterval</key>
+  <integer>14400</integer>
+
+  <!-- DON'T run immediately at install — first run should be triggered manually
+       via the web UI's "Sync now" button after you've completed /gmail/setup. -->
+  <key>RunAtLoad</key>
+  <false/>
+
+  <!-- One-shot per scheduled fire; don't restart if process exits. -->
+  <key>KeepAlive</key>
+  <false/>
+
+  <!-- Capture stdout / stderr for debugging. -->
+  <key>StandardOutPath</key>
+  <string>__PROJECT_ROOT__/data/logs/gmail-sync.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>__PROJECT_ROOT__/data/logs/gmail-sync.err.log</string>
+
+  <!-- Inherit user PATH so .venv python (and its OpenSSL etc.) works. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+  </dict>
+
+  <!-- If Mac is asleep when the timer fires, run on wake (rather than skip). -->
+  <key>StartCalendarInterval</key>
+  <array/>
+</dict>
+</plist>

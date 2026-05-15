@@ -1,0 +1,29 @@
+# Compass Gmail Background Sync — systemd service unit
+# Install via tools/systemd/install.sh — don't edit this template directly,
+# the install script will substitute __PYTHON__ + __PROJECT_ROOT__.
+
+[Unit]
+Description=Compass Gmail Background Sync
+Documentation=https://github.com/JW2000Cc/compass-intl
+# Only run when network is up
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# One-shot: runs to completion, no respawn. The .timer triggers schedule.
+Type=oneshot
+ExecStart=__PYTHON__ __PROJECT_ROOT__/tools/gmail_sync_cli.py --days 14 --verbose
+WorkingDirectory=__PROJECT_ROOT__
+StandardOutput=append:__PROJECT_ROOT__/data/logs/gmail-sync.out.log
+StandardError=append:__PROJECT_ROOT__/data/logs/gmail-sync.err.log
+
+# Sandbox a bit — don't let a bug in our script touch unrelated dirs.
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=__PROJECT_ROOT__/data
+
+# A successful exit code 0 = healthy. Exit code 1 (precondition) or 2 (transient) → timer retries next cycle.
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target

@@ -167,12 +167,33 @@ If after a while you say "I don't need this anymore" — that is the success cas
 
 ---
 
+## Optional: Background Gmail Sync
+
+By default `/gmail/sync` only runs when you click it. To keep Compass's funnel
+current even when the app is closed, install OS-native background sync:
+
+| OS | One command |
+|---|---|
+| macOS | `bash tools/launchd/install.sh` |
+| Linux | `bash tools/systemd/install.sh` |
+| Windows | `tools\windows-task-scheduler\install.bat` |
+
+The background job calls Compass's classification engine directly — Flask does
+not need to be running. See [docs/background-sync.md](docs/background-sync.md)
+for prerequisites + tuning. Unlike CareerSync / similar projects that only
+sync on app-open, Compass ships templated installers for all three desktop
+OSes. This is intentional: the reflection-system philosophy is "tool runs
+quietly so you don't optimise for the tool."
+
+---
+
 ## Roadmap
 
 - [x] **v1–v4** — Single-user reflection system (current)
   - 4-layer architecture, 6-level claim grounding, 5-tier reachable circle
   - Multi-profile job intent, JD keyword coverage, JSON Resume export
   - 6-language i18n, Claude Code Skill (MCP) extension surface
+  - Background Gmail sync via launchd / systemd / Task Scheduler
 - [ ] **v5** — Cross-user anonymous benchmarks
   - Aggregate response rate / time-to-offer by background cluster
   - Peer-anchored tier_quota recommendations
