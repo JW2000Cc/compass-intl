@@ -1,8 +1,10 @@
 """Gmail integration routes.
 
-GET  /gmail              status + setup instructions
-POST /gmail/open-folder  open the credentials/ folder in OS file explorer
-POST /gmail/sync         run a sync now (requires LLM + Gmail OAuth)
+GET  /gmail                       status + setup instructions
+POST /gmail/open-folder           open the credentials/ folder in OS file explorer
+POST /gmail/sync                  run a sync now (requires LLM + Gmail OAuth)
+POST /gmail/background/enable     install OS-native background sync schedule
+POST /gmail/background/disable    remove the background sync schedule
 """
 from __future__ import annotations
 
@@ -14,6 +16,7 @@ from flask import Blueprint, current_app, flash, jsonify, redirect, render_templ
 from flask_babel import gettext as _
 
 from ..extensions import session_scope
+from ..services import background_sync
 from ..services.gmail_sync import (
     gmail_client_secret_path,
     gmail_credentials_path,
@@ -36,6 +39,7 @@ def overview():
         creds_dir.mkdir(parents=True, exist_ok=True)
     except OSError:
         pass
+    bg = background_sync.status()
     return render_template(
         "gmail/overview.html",
         token_exists=token.exists(),
@@ -45,6 +49,7 @@ def overview():
         creds_dir=str(creds_dir),
         secret_filename=secret.name,
         has_llm=settings.has_llm,
+        bg=bg,
     )
 
 
@@ -101,3 +106,29 @@ def sync():
         "ok",
     )
     return render_template("gmail/result.html", stats=stats)
+
+
+@bp.route("/background/enable", methods=["POST"])
+def background_enable():
+    """Install the OS-native background sync schedule for the current OS."""
+    s = background_sync.enable()
+    if s.error:
+        flash(_("后台同步启用失败：%(err)s", err=s.error), "error")
+    elif s.installed:
+        flash(_("✓ 后台同步已启用（每 4 小时自动跑一次）"), "ok")
+    else:
+        flash(_("后台同步未启用 — 请查看 docs/background-sync.md"), "error")
+    return redirect(url_for("gmail.overview"))
+
+
+@bp.route("/background/disable", methods=["POST"])
+def background_disable():
+    """Remove the OS-native background sync schedule."""
+    s = background_sync.disable()
+    if s.error:
+        flash(_("后台同步关闭失败：%(err)s", err=s.error), "error")
+    elif not s.installed:
+        flash(_("✓ 后台同步已关闭"), "ok")
+    else:
+        flash(_("后台同步仍在运行 — 请手动检查"), "error")
+    return redirect(url_for("gmail.overview"))

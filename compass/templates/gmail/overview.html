@@ -112,6 +112,54 @@
 </div>
 
 <div class="card">
+  <h3>{{ _('后台自动同步') }}
+    {% if bg.installed %}
+      <span style="color: var(--ok); font-size: 13px; margin-left: 8px">● {{ _('已启用') }}</span>
+    {% else %}
+      <span style="color: var(--muted); font-size: 13px; margin-left: 8px">○ {{ _('未启用 (默认)') }}</span>
+    {% endif %}
+  </h3>
+  <p>{{ _('每 4 小时自动同步一次 Gmail，**不需要 Compass 一直运行**。基于 OS 原生调度器（macOS launchd / Linux systemd / Windows Task Scheduler），关掉浏览器或登出账户都不影响。') }}</p>
+
+  {% if bg.supported %}
+    <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px">
+      {% if not bg.installed %}
+        <form method="post" action="{{ url_for('gmail.background_enable') }}">
+          <button type="submit"
+                  {% if not (secret_exists and token_exists and has_llm) %}disabled title="{{ _('请先完成上方的 OAuth + LLM 配置') }}"{% endif %}>
+            {{ _('启用后台同步') }} ({{ bg.platform }})
+          </button>
+        </form>
+        {% if not (secret_exists and token_exists and has_llm) %}
+          <span class="muted" style="font-size: 12px">{{ _('（需先完成上方的 OAuth + LLM 配置）') }}</span>
+        {% endif %}
+      {% else %}
+        <form method="post" action="{{ url_for('gmail.background_disable') }}">
+          <button type="submit" class="subtle">{{ _('关闭后台同步') }}</button>
+        </form>
+        <span class="muted" style="font-size: 12px">{{ _('每 4 小时自动跑') }}</span>
+      {% endif %}
+    </div>
+
+    {% if bg.last_log_line %}
+      <p class="muted" style="font-size: 11.5px; margin-top: 10px; font-family: monospace">
+        {{ _('上次日志：') }}{{ bg.last_log_line[:160] }}
+      </p>
+    {% endif %}
+
+    <details style="margin-top: 10px">
+      <summary class="muted" style="font-size: 12px; cursor: pointer">{{ _('手动安装 / 自定义间隔') }}</summary>
+      <div style="margin-top: 6px; padding: 8px 12px; background: var(--bg-soft); border-radius: 4px; font-size: 12.5px">
+        <p>{{ _('UI 用的安装命令：') }}<code>{{ bg.install_command }}</code></p>
+        <p>{{ _('要改间隔（默认 4 小时）或看故障排除，参考') }} <a href="https://github.com/JW2000Cc/compass-intl/blob/main/docs/background-sync.md" target="_blank">docs/background-sync.md</a>{{ _('。') }}</p>
+      </div>
+    </details>
+  {% else %}
+    <p class="muted" style="font-size: 12.5px">{{ _('当前 OS 不支持自动安装（仅支持 macOS / Linux / Windows）。') }}</p>
+  {% endif %}
+</div>
+
+<div class="card">
   <h3>{{ _('隐私说明') }}</h3>
   <ul style="margin: 6px 0; padding-left: 18px; font-size: 13.5px; color: var(--muted)">
     <li>{{ _('Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件') }}</li>

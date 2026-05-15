@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-15 11:17+0200\n"
+"POT-Creation-Date: 2026-05-15 18:46+0200\n"
 "PO-Revision-Date: 2026-05-14 16:07+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -141,19 +141,45 @@ msgstr "%(region)s için maaş tabanı kaldırıldı."
 msgid "已记录解决方式: %(resolution)s"
 msgstr "Çözüm kaydedildi: %(resolution)s"
 
-#: compass/routes/gmail.py:77
+#: compass/routes/gmail.py:82
 msgid "没有配置 LLM_API_KEY — 无法分类邮件。"
 msgstr "LLM_API_KEY yapılandırılmadı — e-postalar sınıflandırılamıyor."
 
-#: compass/routes/gmail.py:91
+#: compass/routes/gmail.py:96
 #, python-format
 msgid "Gmail sync 失败: %(exc)s"
 msgstr "Gmail eşitlemesi başarısız: %(exc)s"
 
-#: compass/routes/gmail.py:95
+#: compass/routes/gmail.py:100
 #, python-format
 msgid "Gmail sync 出错: %(exc)s"
 msgstr "Gmail eşitleme hatası: %(exc)s"
+
+#: compass/routes/gmail.py:116
+#, python-format
+msgid "后台同步启用失败：%(err)s"
+msgstr "Arka plan senkronu etkinleştirilemedi: %(err)s"
+
+#: compass/routes/gmail.py:118
+msgid "✓ 后台同步已启用（每 4 小时自动跑一次）"
+msgstr "✓ Arka plan senkronu etkin (her 4 saatte bir)"
+
+#: compass/routes/gmail.py:120
+msgid "后台同步未启用 — 请查看 docs/background-sync.md"
+msgstr "Arka plan senkronu etkinleşmedi — docs/background-sync.md'ye bakın"
+
+#: compass/routes/gmail.py:129
+#, python-format
+msgid "后台同步关闭失败：%(err)s"
+msgstr "Arka plan senkronu kapatılamadı: %(err)s"
+
+#: compass/routes/gmail.py:131
+msgid "✓ 后台同步已关闭"
+msgstr "✓ Arka plan senkronu kapatıldı"
+
+#: compass/routes/gmail.py:133
+msgid "后台同步仍在运行 — 请手动检查"
+msgstr "Arka plan senkronu hâlâ çalışıyor — manuel olarak kontrol et"
 
 #: compass/routes/identity.py:83
 msgid "请选择简历文件。"
@@ -1995,38 +2021,103 @@ msgstr ""
 "durumunu **otomatik günceller**."
 
 #: compass/templates/gmail/overview.html:115
+msgid "后台自动同步"
+msgstr "Arka plan otomatik senkron"
+
+#: compass/templates/gmail/overview.html:117
+msgid "已启用"
+msgstr "Etkin"
+
+#: compass/templates/gmail/overview.html:119
+msgid "未启用 (默认)"
+msgstr "Kapalı (varsayılan)"
+
+#: compass/templates/gmail/overview.html:122
+msgid ""
+"每 4 小时自动同步一次 Gmail，**不需要 Compass 一直运行**。基于 OS 原生调度器（macOS launchd / Linux "
+"systemd / Windows Task Scheduler），关掉浏览器或登出账户都不影响。"
+msgstr ""
+"**Compass çalışmasa bile** Gmail'i her 4 saatte bir otomatik senkronlar. OS "
+"yerel zamanlayıcıları kullanır (macOS launchd / Linux systemd / Windows Task "
+"Scheduler) — tarayıcıyı kapatmak veya çıkış yapmak etkilemez."
+
+#: compass/templates/gmail/overview.html:129
+msgid "请先完成上方的 OAuth + LLM 配置"
+msgstr "Önce yukarıdaki OAuth + LLM yapılandırmasını tamamla"
+
+#: compass/templates/gmail/overview.html:130
+msgid "启用后台同步"
+msgstr "Arka plan senkronunu etkinleştir"
+
+#: compass/templates/gmail/overview.html:134
+msgid "（需先完成上方的 OAuth + LLM 配置）"
+msgstr "(Önce yukarıdaki OAuth + LLM ayarını yap)"
+
+#: compass/templates/gmail/overview.html:138
+msgid "关闭后台同步"
+msgstr "Arka plan senkronunu kapat"
+
+#: compass/templates/gmail/overview.html:140
+msgid "每 4 小时自动跑"
+msgstr "Her 4 saatte bir"
+
+#: compass/templates/gmail/overview.html:146
+msgid "上次日志："
+msgstr "Son günlük: "
+
+#: compass/templates/gmail/overview.html:151
+msgid "手动安装 / 自定义间隔"
+msgstr "Manuel kurulum / özel aralık"
+
+#: compass/templates/gmail/overview.html:153
+msgid "UI 用的安装命令："
+msgstr "UI'nin kullandığı kurulum komutu: "
+
+#: compass/templates/gmail/overview.html:154
+msgid "要改间隔（默认 4 小时）或看故障排除，参考"
+msgstr "Aralığı değiştirmek (varsayılan 4 sa) veya sorun gidermek için bakınız"
+
+#: compass/templates/gmail/overview.html:154
+msgid "。"
+msgstr "."
+
+#: compass/templates/gmail/overview.html:158
+msgid "当前 OS 不支持自动安装（仅支持 macOS / Linux / Windows）。"
+msgstr "Bu OS'da otomatik kurulum desteklenmiyor (yalnızca macOS / Linux / Windows)."
+
+#: compass/templates/gmail/overview.html:163
 msgid "隐私说明"
 msgstr "Gizlilik notları"
 
-#: compass/templates/gmail/overview.html:117
+#: compass/templates/gmail/overview.html:165
 msgid "Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件"
 msgstr "Compass salt okunur scope kullanır — gönderemez/değiştiremez"
 
-#: compass/templates/gmail/overview.html:118
+#: compass/templates/gmail/overview.html:166
 msgid "邮件正文用完即弃——不持久化邮件内容到 Compass DB"
 msgstr "E-posta içerikleri atılır — DB'de saklanmaz"
 
-#: compass/templates/gmail/overview.html:119
+#: compass/templates/gmail/overview.html:167
 msgid "只存\"分类结果 + subject 摘要\"作为 ReflectionEvent"
 msgstr "Sadece 'sınıflandırma + konu özeti' ReflectionEvent olarak saklar"
 
-#: compass/templates/gmail/overview.html:120
+#: compass/templates/gmail/overview.html:168
 msgid "OAuth token 存在本机"
 msgstr "OAuth belirteci yerelde"
 
-#: compass/templates/gmail/overview.html:120
+#: compass/templates/gmail/overview.html:168
 msgid "——可随时删除撤销"
 msgstr "— iptal için sil"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "你也可以在"
 msgstr "Şuradan da iptal edebilirsin:"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "Google Account 权限页"
 msgstr "Google Hesabı izinler sayfası"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "撤销 Compass 访问"
 msgstr "Compass erişimini iptal et"
 

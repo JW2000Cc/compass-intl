@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-05-15 11:17+0200\n"
+"POT-Creation-Date: 2026-05-15 18:46+0200\n"
 "PO-Revision-Date: 2026-05-14 16:07+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -145,19 +145,45 @@ msgstr "Suelo salarial eliminado para %(region)s."
 msgid "已记录解决方式: %(resolution)s"
 msgstr "Resolución registrada: %(resolution)s"
 
-#: compass/routes/gmail.py:77
+#: compass/routes/gmail.py:82
 msgid "没有配置 LLM_API_KEY — 无法分类邮件。"
 msgstr "LLM_API_KEY no configurada — no se pueden clasificar correos."
 
-#: compass/routes/gmail.py:91
+#: compass/routes/gmail.py:96
 #, python-format
 msgid "Gmail sync 失败: %(exc)s"
 msgstr "Sync Gmail fallida: %(exc)s"
 
-#: compass/routes/gmail.py:95
+#: compass/routes/gmail.py:100
 #, python-format
 msgid "Gmail sync 出错: %(exc)s"
 msgstr "Error sync Gmail: %(exc)s"
+
+#: compass/routes/gmail.py:116
+#, python-format
+msgid "后台同步启用失败：%(err)s"
+msgstr "No se pudo activar la sincronización en segundo plano: %(err)s"
+
+#: compass/routes/gmail.py:118
+msgid "✓ 后台同步已启用（每 4 小时自动跑一次）"
+msgstr "✓ Sync en segundo plano activa (cada 4 horas)"
+
+#: compass/routes/gmail.py:120
+msgid "后台同步未启用 — 请查看 docs/background-sync.md"
+msgstr "La sincronización en segundo plano no se activó — ver docs/background-sync.md"
+
+#: compass/routes/gmail.py:129
+#, python-format
+msgid "后台同步关闭失败：%(err)s"
+msgstr "No se pudo desactivar la sincronización: %(err)s"
+
+#: compass/routes/gmail.py:131
+msgid "✓ 后台同步已关闭"
+msgstr "✓ Sincronización en segundo plano desactivada"
+
+#: compass/routes/gmail.py:133
+msgid "后台同步仍在运行 — 请手动检查"
+msgstr "La sincronización sigue activa — comprueba manualmente"
 
 #: compass/routes/identity.py:83
 msgid "请选择简历文件。"
@@ -1996,38 +2022,106 @@ msgid "扫描你 Gmail 里过去 14 天与求职相关的邮件，LLM 分类后*
 msgstr "Escanea 14 días de Gmail, clasifica con LLM y **actualiza auto.** el status."
 
 #: compass/templates/gmail/overview.html:115
+msgid "后台自动同步"
+msgstr "Sincronización automática en segundo plano"
+
+#: compass/templates/gmail/overview.html:117
+msgid "已启用"
+msgstr "Activada"
+
+#: compass/templates/gmail/overview.html:119
+msgid "未启用 (默认)"
+msgstr "Desactivada (predeterminado)"
+
+#: compass/templates/gmail/overview.html:122
+msgid ""
+"每 4 小时自动同步一次 Gmail，**不需要 Compass 一直运行**。基于 OS 原生调度器（macOS launchd / Linux "
+"systemd / Windows Task Scheduler），关掉浏览器或登出账户都不影响。"
+msgstr ""
+"Sincroniza Gmail automáticamente cada 4 horas **incluso cuando Compass no "
+"está en marcha**. Usa schedulers nativos (macOS launchd / Linux systemd / "
+"Windows Task Scheduler) — cerrar el navegador o salir de la sesión no le "
+"afecta."
+
+#: compass/templates/gmail/overview.html:129
+msgid "请先完成上方的 OAuth + LLM 配置"
+msgstr "Completa primero la configuración OAuth + LLM arriba"
+
+#: compass/templates/gmail/overview.html:130
+msgid "启用后台同步"
+msgstr "Activar sync en segundo plano"
+
+#: compass/templates/gmail/overview.html:134
+msgid "（需先完成上方的 OAuth + LLM 配置）"
+msgstr "(Completa antes OAuth + LLM arriba)"
+
+#: compass/templates/gmail/overview.html:138
+msgid "关闭后台同步"
+msgstr "Desactivar sync en segundo plano"
+
+#: compass/templates/gmail/overview.html:140
+msgid "每 4 小时自动跑"
+msgstr "Cada 4 horas"
+
+#: compass/templates/gmail/overview.html:146
+msgid "上次日志："
+msgstr "Último log: "
+
+#: compass/templates/gmail/overview.html:151
+msgid "手动安装 / 自定义间隔"
+msgstr "Instalación manual / intervalo personalizado"
+
+#: compass/templates/gmail/overview.html:153
+msgid "UI 用的安装命令："
+msgstr "Comando de instalación que usa la UI: "
+
+#: compass/templates/gmail/overview.html:154
+msgid "要改间隔（默认 4 小时）或看故障排除，参考"
+msgstr "Para cambiar el intervalo (4 h por defecto) o ver troubleshooting, consulta"
+
+#: compass/templates/gmail/overview.html:154
+msgid "。"
+msgstr "."
+
+#: compass/templates/gmail/overview.html:158
+msgid "当前 OS 不支持自动安装（仅支持 macOS / Linux / Windows）。"
+msgstr ""
+"Instalación automática no compatible con este sistema (solo macOS / Linux / "
+"Windows)."
+
+#: compass/templates/gmail/overview.html:163
 msgid "隐私说明"
 msgstr "Notas de privacidad"
 
-#: compass/templates/gmail/overview.html:117
+#: compass/templates/gmail/overview.html:165
 msgid "Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件"
 msgstr "Compass usa scope readonly — sin enviar/modificar"
 
-#: compass/templates/gmail/overview.html:118
+#: compass/templates/gmail/overview.html:166
 msgid "邮件正文用完即弃——不持久化邮件内容到 Compass DB"
 msgstr "Cuerpos de email descartados — nunca persistidos"
 
-#: compass/templates/gmail/overview.html:119
+#: compass/templates/gmail/overview.html:167
 msgid "只存\"分类结果 + subject 摘要\"作为 ReflectionEvent"
 msgstr "Solo guarda 'clasificación + subject' como ReflectionEvent"
 
-#: compass/templates/gmail/overview.html:120
+#: compass/templates/gmail/overview.html:168
 msgid "OAuth token 存在本机"
 msgstr "Token OAuth local"
 
-#: compass/templates/gmail/overview.html:120
+#: compass/templates/gmail/overview.html:168
 msgid "——可随时删除撤销"
 msgstr "— bórralo para revocar"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "你也可以在"
 msgstr "También puedes revocar en"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "Google Account 权限页"
 msgstr "Página de permisos de Google Account"
 
-#: compass/templates/gmail/overview.html:121
+#: compass/templates/gmail/overview.html:169
 msgid "撤销 Compass 访问"
 msgstr "revocar el acceso de Compass"
 
