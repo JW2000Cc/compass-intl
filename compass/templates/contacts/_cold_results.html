@@ -1,0 +1,50 @@
+{# Cold contact search results — swap target for the "🔍 开始搜索" button. #}
+<div class="card" style="border-left: 3px solid var(--muted)">
+  {% if error %}
+    <p class="muted" style="color: var(--danger); margin: 0">⚠ 搜索出错: {{ error }}</p>
+  {% elif not cold %}
+    <p class="muted" style="margin: 0; font-size: 13px">
+      没找到 <strong>{{ job.company or "公司" }}</strong> {{ _('的公开联系人。
+      可能是公司太小 / 太冷门 / 搜索引擎临时挂了。') }}
+    </p>
+    <button type="button" class="subtle" style="font-size: 12px; margin-top: 6px"
+            hx-get="{{ url_for('contacts.cold_search', job_id=job.id, refresh='1') }}"
+            hx-target="#cold-results-{{ job.id }}" hx-swap="innerHTML">
+      ↻ 清缓存重试
+    </button>
+  {% else %}
+    <p class="muted" style="font-size: 12px; margin: 0 0 10px">
+      共 {{ cold | length }} 个公开联系人。**优先选 HR / 招聘 / 部门同事**。
+      <button type="button" class="subtle" style="font-size: 11px; margin-left: 8px"
+              hx-get="{{ url_for('contacts.cold_search', job_id=job.id, refresh='1') }}"
+              hx-target="#cold-results-{{ job.id }}" hx-swap="innerHTML">
+        ↻ 清缓存重搜
+      </button>
+    </p>
+    {% for c in cold %}
+      <div style="display: flex; gap: 12px; align-items: start; padding: 8px 0; border-top: 1px solid var(--line)">
+        <div style="flex: 1">
+          <p style="margin: 0; font-weight: 500">
+            <a href="{{ c.linkedin_url }}" target="_blank" rel="noopener">{{ c.name }}</a>
+          </p>
+          {% if c.title %}
+            <p class="muted" style="font-size: 12.5px; margin: 2px 0">{{ c.title }}</p>
+          {% endif %}
+          {% if c.snippet %}
+            <p class="muted" style="font-size: 11.5px; margin: 4px 0 0; font-style: italic">
+              "{{ c.snippet[:200] }}{% if c.snippet | length > 200 %}…{% endif %}"
+            </p>
+          {% endif %}
+        </div>
+        <button type="button" class="subtle"
+                @click='draftFor = {{ {"path":"cold","id":"","name":c.name,"title":c.title,"url":c.linkedin_url,"snippet":c.snippet} | tojson }}'
+                style="font-size: 12px; flex-shrink: 0">
+          📝 起草信
+        </button>
+      </div>
+    {% endfor %}
+    <p class="muted" style="font-size: 11px; margin-top: 10px">
+      结果缓存 30 天。同公司其他 job 共享。
+    </p>
+  {% endif %}
+</div>

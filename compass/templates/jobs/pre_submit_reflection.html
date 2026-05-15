@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}投递前一秒 · {{ reflection.job_title }}{% endblock %}
+{% block content %}
+
+<p><a href="{{ url_for('jobs.detail', job_id=reflection.job_id) }}" class="muted">{{ _('← 返回职位详情') }}</a></p>
+
+<h1>{{ _('🪞 投递前一秒') }}</h1>
+<p class="lede">
+  你正要把 <strong>{{ reflection.job_title }} · {{ reflection.company }}</strong> {{ _('标记为') }} <code>applied</code>。
+  停一秒——看一眼以下信号，确认或后退都可以。
+</p>
+
+<details class="module-help">
+  <summary>{{ _('这是什么？为什么要打断我？') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是 Compass 的反向通道') }}</h4>
+    <p>
+      Adversarial Voice + 早期边界快照 + 漂移轨迹——三个**永不学习用户偏好**的信号，
+      在你做高承诺动作（应聘）前一次性呈现。
+    </p>
+    <p>
+      系统其他部分都在为你优化（calibration learner、tier classifier）。这个页面相反：
+      它把"你六个月前的自己"叫到面前，问"还是同一个标准吗？"
+    </p>
+    <p><strong>{{ _('它不阻止你') }}</strong>{{ _('。看完确认即可继续。但你看了，就被记录了——这就够了。') }}</p>
+  </div>
+</details>
+
+{% if reflection.objections.count > 0 %}
+  <div class="card" style="border-color: var(--warn)">
+    <h3 style="color: var(--warn)">{{ _('⚠ 最近 21 天 Adversarial Voice 提出的反对') }}</h3>
+    <p>
+      你最近接受了 <strong>{{ reflection.objections.count }}</strong> 个被反对的 variant
+      {% if reflection.objections.high_level_count > 0 %}
+        （其中 <strong>{{ reflection.objections.high_level_count }}</strong> 个是 L3+ 高层级改写）
+      {% endif %}
+      。再听一次它当时说的话：
+    </p>
+    <ul>
+      {% for ex in reflection.objections.examples %}
+        <li style="margin: 6px 0; font-style: italic">"{{ ex }}"</li>
+      {% endfor %}
+    </ul>
+    <p class="muted" style="font-size: 12px">
+      Adversarial Voice 是冻结的——它不学你的偏好。它只看原始事实和你想说的版本。
+    </p>
+  </div>
+{% endif %}
+
+{% if reflection.drift and reflection.drift.direction != "stable" %}
+  <div class="card" style="border-color: {% if reflection.drift.direction == 'loosening' %}var(--warn){% else %}var(--ok){% endif %}">
+    <h3>{{ _('边界漂移轨迹') }}</h3>
+    <p>
+      过去 {{ reflection.drift.days_span }} 天，max_amplification_level
+      {% if reflection.drift.direction == 'loosening' %}
+        <strong style="color: var(--warn)">放宽了 {{ reflection.drift.delta_level }} 级</strong> ——
+        你的简历改写允许度比当初更激进了。
+      {% else %}
+        <strong style="color: var(--ok)">收紧了 {{ reflection.drift.delta_level | abs }} 级</strong> ——
+        你的简历改写允许度比当初更保守了。
+      {% endif %}
+    </p>
+  </div>
+{% endif %}
+
+{% if reflection.tier.is_outlier_high %}
+  <div class="card" style="border-color: var(--accent)">
+    <h3>{{ _('🎯 这个岗位的 Tier 比你平均更高（更"够一够"）') }}</h3>
+    <p>
+      这个岗位 Tier <strong>{{ reflection.tier.this_tier }}</strong>，
+      你最近 90 天平均应聘 Tier <strong>{{ reflection.tier.typical_applied_tier }}</strong>。
+      ε-exploration 鼓励"够一够"——这是好事。但要确认你**愿意为这个岗位写一份针对性强的简历**，
+      而不是直接用通用版本。
+    </p>
+  </div>
+{% elif reflection.tier.is_outlier_low %}
+  <div class="card" style="border-color: var(--muted)">
+    <h3>{{ _('这个岗位的 Tier 比你平均更低') }}</h3>
+    <p>
+      这个岗位 Tier <strong>{{ reflection.tier.this_tier }}</strong>，
+      你最近 90 天平均应聘 Tier <strong>{{ reflection.tier.typical_applied_tier }}</strong>。
+      你正在投一个比平均更安全的岗位——是因为这个岗位特别契合，还是只是想要一个 offer 兜底？
+    </p>
+  </div>
+{% endif %}
+
+{% if reflection.days_since_value_review and reflection.days_since_value_review >= 14 %}
+  <div class="card">
+    <h3>{{ _('价值观回归到期') }}</h3>
+    <p>
+      上次回归审视已 <strong>{{ reflection.days_since_value_review }}</strong> {{ _('天。
+      建议') }}<a href="{{ url_for('reflection.assumptions') }}">{{ _('扫一眼系统假设') }}</a>{{ _('——但不强求。') }}
+    </p>
+  </div>
+{% endif %}
+
+<div class="card" style="background: #f4f4ee; border-color: var(--accent)">
+  <h3 style="color: var(--accent)">{{ _('💬 六个月前的你说') }}</h3>
+  <p style="font-size: 15px; line-height: 1.6">{{ reflection.six_months_voice }}</p>
+</div>
+
+<form method="post" action="{{ url_for('jobs.change_status', job_id=reflection.job_id) }}" style="margin-top: 24px">
+  <input type="hidden" name="status" value="applied">
+  <input type="hidden" name="confirmed" value="1">
+  <button type="submit" class="btn" style="background: var(--accent); color: white">
+    ✓ 我看过了，确认应聘
+  </button>
+  <a href="{{ url_for('jobs.detail', job_id=reflection.job_id) }}" class="btn subtle" style="margin-left: 8px; text-decoration: none; display: inline-block">
+    ← 暂不投递
+  </a>
+</form>
+
+<p class="muted" style="font-size: 12px; margin-top: 16px">
+  Compass 不阻止你——但你看到了反向声音。这就足够了。
+</p>
+
+{% endblock %}

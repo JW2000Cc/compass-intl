@@ -1,0 +1,175 @@
+{# Jobs list results — supports two layouts:
+   - sort=tier: grouped by Tier (default)
+   - sort=scraped_desc/asc: flat list with section header
+   Each card shows scraped time. Quick search filters via Alpine. #}
+<div id="jobs-list-results">
+
+  {# Card macro — DRY between tier-grouped and flat-list rendering #}
+  {% macro job_card(job, match) %}
+    {% set search_blob = ((job.title or '') ~ ' ' ~ (job.company or '') ~ ' ' ~ (job.location or '')) | lower %}
+    <a href="{{ url_for('jobs.detail', job_id=job.id) }}"
+       class="item-card jobs-search-target"
+       data-search="{{ search_blob }}"
+       style="text-decoration: none; color: inherit">
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+        {% if match and match.tier %}<span class="badge badge-tier{{ match.tier }}">T{{ match.tier }}</span>{% endif %}
+        {% if job.status %}<span class="badge badge-status-{{ job.status }}">{{ job.status }}</span>{% endif %}
+        {% if match and match.score %}
+          <span class="muted" style="font-size: 11.5px; margin-left: auto">{{ match.score }}/10</span>
+        {% endif %}
+      </div>
+      <h3 class="card-title">{{ job.title }}</h3>
+      <p class="card-sub">
+        {{ job.company or "—" }}
+        {% if job.location %} · {{ job.location }}{% endif %}
+        {% if job.is_remote %} · 远程{% endif %}
+      </p>
+      {% if match and match.reason %}
+        <p class="card-excerpt">{{ match.reason }}</p>
+      {% endif %}
+      {% if match and match.learning_gap %}
+        <p class="muted" style="font-size: 12px; margin: 0">
+          📚 <em>{{ match.learning_gap[:80] }}{% if match.learning_gap | length > 80 %}…{% endif %}</em>
+        </p>
+      {% endif %}
+      <div class="card-meta">
+        <span>{{ job.source or "—" }}</span>
+        <span class="muted" title="{{ _('抓取时间') }}">🕒 {{ job.created_at | local_dt('%m-%d %H:%M') }}</span>
+        {% if job.posted_at %}
+          <span class="muted" title="{{ _('发布时间') }}">📌 {{ job.posted_at | local_dt }}</span>
+        {% endif %}
+        <span style="margin-left: auto; color: var(--accent); font-weight: 500">{{ _('详情 →') }}</span>
+      </div>
+    </a>
+  {% endmacro %}
+
+  {% set is_flat = current_sort in ('scraped_desc', 'scraped_asc') %}
+  {% set is_date = current_sort == 'by_date' %}
+  {% set total = (flat_rows | length) if is_flat else
+                 ((date_groups | sum(attribute='count')) if is_date else
+                  ((groups[1] | length) + (groups[2] | length) + (groups[3] | length) + (groups[4] | length) + (groups[5] | length) + (groups[0] | length))) %}
+
+  {% if current_tier or current_status or current_q %}
+    <p class="muted" style="font-size: 12.5px; margin: 4px 0 14px">
+      过滤中:
+      {% if current_tier %}<strong>Tier {{ current_tier }}</strong>{% endif %}
+      {% if current_tier and current_status %} · {% endif %}
+      {% if current_status %}<strong>{{ current_status }}</strong>{% endif %}
+      {% if current_q %} · 搜 "<strong>{{ current_q }}</strong>"{% endif %}
+      · 共 {{ total }} 条
+      · <a href="{{ url_for('jobs.list_view') }}">{{ _('清除全部过滤') }}</a>
+    </p>
+  {% endif %}
+
+  {% if is_flat %}
+    {# Flat sorted list — single section header #}
+    <div style="display: flex; align-items: baseline; gap: 8px; margin: 16px 0 10px">
+      <h2 style="margin: 0; font-size: 15px">
+        {% if current_sort == 'scraped_desc' %}🕒 按抓取时间倒序{% else %}🕒 按抓取时间正序{% endif %}
+      </h2>
+      <span class="muted" style="font-size: 12.5px">{{ total }} 条</span>
+    </div>
+    <div class="card-grid">
+      {% for job, match in flat_rows %}{{ job_card(job, match) }}{% endfor %}
+    </div>
+  {% elif is_date %}
+    {# Date-grouped, collapsible (>3 days old auto-collapsed) #}
+    {% for dg in date_groups %}
+      <details class="date-group"
+               {% if loop.index <= 3 %}open{% endif %}
+               style="margin-bottom: 8px">
+        <summary class="date-group-summary">
+          📅 <strong>{{ dg.date_str }}</strong>
+          <span class="muted" style="font-size: 12.5px; margin-left: 6px">{{ dg.count }} 条</span>
+          <span class="muted date-group-toggle">▾</span>
+        </summary>
+        <div class="card-grid" style="margin-top: 10px">
+          {% for job, match in dg.rows %}{{ job_card(job, match) }}{% endfor %}
+        </div>
+      </details>
+    {% endfor %}
+    <style>
+      .date-group { background: white; border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; }
+      .date-group-summary {
+        cursor: pointer; list-style: none; user-select: none;
+        display: flex; align-items: center; gap: 6px;
+        padding: 4px 0;
+      }
+      .date-group-summary::-webkit-details-marker { display: none; }
+      .date-group-summary:hover { color: var(--accent); }
+      .date-group-toggle { margin-left: auto; transition: transform 150ms; }
+      .date-group[open] .date-group-toggle { transform: rotate(180deg); }
+    </style>
+  {% else %}
+    {# Tier-grouped (default) #}
+    {% for tier_num in [1, 2, 3, 4, 5, 0] %}
+      {% set group = groups[tier_num] %}
+      {% if group %}
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin: 22px 0 10px">
+          <h2 style="margin: 0; font-size: 15px; display: flex; align-items: center; gap: 8px">
+            {% if tier_num == 0 %}
+              <span class="badge" style="background: var(--line); color: var(--muted)">{{ _('未分类') }}</span>
+              <span class="muted" style="font-weight: 400; font-size: 13px">{{ group | length }} 条</span>
+            {% else %}
+              <span class="badge badge-tier{{ tier_num }}">Tier {{ tier_num }}</span>
+              <span style="color: var(--fg)">{{ tier_labels[tier_num] }}</span>
+              <span class="muted" style="font-weight: 400; font-size: 13px">{{ group | length }} 条</span>
+            {% endif %}
+          </h2>
+        </div>
+        <div class="card-grid">
+          {% for job, match in group %}{{ job_card(job, match) }}{% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if total == 0 %}
+    <div class="card" style="text-align: center; padding: 40px 24px">
+      {% if current_tier or current_status or current_q %}
+        <p class="muted">{{ _('没匹配的岗位。换个过滤 / 搜索词试试？') }}</p>
+        <a href="{{ url_for('jobs.list_view') }}" class="btn subtle" style="margin-top: 8px; display: inline-block">{{ _('清除全部') }}</a>
+      {% elif scrape_diag %}
+        {# C5: diagnostic-based empty state — read from last external_scrape event #}
+        <div style="text-align: left; max-width: 640px; margin: 0 auto">
+          <h3 style="margin: 0 0 8px; font-size: 15px">{{ scrape_diag.headline }}</h3>
+          {% if scrape_diag.when %}
+            <p class="muted" style="font-size: 12px; margin: 0 0 14px">
+              🕒 {{ scrape_diag.when | local_dt('%m-%d %H:%M') }}
+              · 抓回 {{ scrape_diag.raw }} · 黑名单滤 {{ scrape_diag.blocked }}
+              · dealbreaker 滤 {{ scrape_diag.gate_blocked }} · 入库 {{ scrape_diag.new }}
+            </p>
+          {% endif %}
+          {% if scrape_diag.errors %}
+            <details style="margin: 8px 0 14px; font-size: 12px">
+              <summary class="muted" style="cursor: pointer">
+                ⚠ jobspy 错误 {{ scrape_diag.errors | length }} 条 — 点开看
+              </summary>
+              <ul style="margin: 6px 0 0 16px; color: var(--muted); font-family: ui-monospace, monospace; font-size: 11px">
+                {% for err in scrape_diag.errors[:5] %}<li>{{ err }}</li>{% endfor %}
+              </ul>
+            </details>
+          {% endif %}
+          {% if scrape_diag.fix_hint %}
+            <p style="margin: 0 0 12px"><strong>{{ _('建议') }}</strong>：{{ scrape_diag.fix_hint }}</p>
+          {% endif %}
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <form method="post" action="{{ url_for('jobs.scrape_direct') }}" data-slow-action="true" data-progress-source="scrape" style="margin: 0">
+              <button type="submit" class="btn subtle"
+                      data-loading-text="⏳ 抓取中... (30-60 秒)">{{ _('📥 用现有意图重新抓取') }}</button>
+            </form>
+            <a href="{{ url_for('jobs.search_config_overview') }}" class="btn subtle">{{ _('🧭 调整求职意图') }}</a>
+          </div>
+        </div>
+      {% else %}
+        <p class="muted" style="margin-bottom: 12px">{{ _('还没跑过抓取 — 上方面板填一组关键词 + 地点，点📥 抓取。') }}</p>
+        <p class="muted" style="font-size: 12px; margin: 0">{{ _('或从 v1 数据迁移：') }}</p>
+        <pre style="background: #f4f4f0; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; text-align: left; max-width: 600px; margin: 8px auto 0"><code>python -m tools.migrate_from_v1 --v1-db "../Job Mate/data/jobmate.sqlite"</code></pre>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <p id="jobs-search-empty" class="muted" style="text-align: center; padding: 30px; display: none">
+    没有匹配的岗位（实时搜索）。
+  </p>
+</div>

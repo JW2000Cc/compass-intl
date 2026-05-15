@@ -1,0 +1,4614 @@
+# English translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-05-15 11:17+0200\n"
+"PO-Revision-Date: 2026-05-14 16:07+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: compass/routes/blacklist.py:40
+msgid "黑名单已保存。下次抓取时生效。"
+msgstr "Blacklist saved. Takes effect on next scrape."
+
+#: compass/routes/calibration.py:48
+msgid "已更新 calibration。"
+msgstr "Calibration updated."
+
+#: compass/routes/calibration.py:91
+msgid "已重置 calibration 到中性默认值。"
+msgstr "Calibration reset to neutral defaults."
+
+#: compass/routes/connections.py:52
+msgid "没选文件。"
+msgstr "No file selected."
+
+#: compass/routes/connections.py:58
+msgid "只接受 .csv 文件（LinkedIn 导出）。"
+msgstr "Only .csv files accepted (LinkedIn export)."
+
+#: compass/routes/connections.py:63
+msgid "文件过大（>10MB）— 这不像是 LinkedIn Connections 导出。"
+msgstr "File too large (>10MB) — doesn't look like a LinkedIn Connections export."
+
+#: compass/routes/connections.py:74
+msgid "无法识别 CSV 编码。"
+msgstr "Cannot detect CSV encoding."
+
+#: compass/routes/connections.py:80
+#, python-format
+msgid "导入失败: %(result_error)s"
+msgstr "Import failed: %(result_error)s"
+
+#: compass/routes/connections.py:107
+msgid "找不到该联系人。"
+msgstr "Contact not found."
+
+#: compass/routes/connections.py:110
+msgid "已停用。"
+msgstr "Disabled."
+
+#: compass/routes/contacts.py:292
+#, python-format
+msgid "已记录 outreach 给 %(contact_name)s。回应时回来标记结果。"
+msgstr ""
+"Outreach to %(contact_name)s recorded. Come back to mark the outcome when you"
+" get a reply."
+
+#: compass/routes/contacts.py:323
+msgid "已标记发出。回应时回来 ✓ 记结果。"
+msgstr "Marked as sent. Come back to ✓ record the outcome when you get a reply."
+
+#: compass/routes/contacts.py:365
+msgid "已记录回应。"
+msgstr "Response recorded."
+
+#: compass/routes/exports.py:282
+msgid "DOCX 导出需要选用户上传的 DOCX 模板。先到 /templates/inspire 上传一份。"
+msgstr ""
+"DOCX export requires a user-uploaded DOCX template. Upload one at "
+"/templates/inspire first."
+
+#: compass/routes/exports.py:287
+#, python-format
+msgid "找不到模板: %(theme_id)s"
+msgstr "Template not found: %(theme_id)s"
+
+#: compass/routes/exports.py:300
+#, python-format
+msgid "DOCX 渲染失败: %(exc)s"
+msgstr "DOCX render failed: %(exc)s"
+
+#: compass/routes/exports.py:363
+msgid "PDF 直出需要选用户上传的 DOCX 模板。先到 /templates/inspire 上传一份。"
+msgstr ""
+"Direct PDF export requires a user-uploaded DOCX template. Upload one at "
+"/templates/inspire first."
+
+#: compass/routes/exports.py:368
+msgid "PDF 直出只支持 DOCX 用户模板。HTML 模板请用 /preview + Cmd+P。"
+msgstr ""
+"Direct PDF export only supports DOCX user templates. For HTML templates use "
+"/preview + Cmd+P."
+
+#: compass/routes/exports.py:413
+#, python-format
+msgid "PDF 渲染失败: %(exc)s"
+msgstr "PDF render failed: %(exc)s"
+
+#: compass/routes/feedback.py:254
+#, python-format
+msgid "已保存 %(n)s 条偏好。"
+msgstr "Saved %(n)s preferences."
+
+#: compass/routes/feedback.py:294
+msgid "已更新偏好。"
+msgstr "Preference updated."
+
+#: compass/routes/feedback.py:312
+msgid "已删除偏好。"
+msgstr "Preference deleted."
+
+#: compass/routes/feedback.py:330
+msgid "已续期 30 天。"
+msgstr "Extended 30 days."
+
+#: compass/routes/feedback.py:343
+msgid "已重新激活该偏好。"
+msgstr "Preference reactivated."
+
+#: compass/routes/feedback.py:368
+#, python-format
+msgid "已设置 %(region)s 工资底线。"
+msgstr "Salary floor set for %(region)s."
+
+#: compass/routes/feedback.py:380
+#, python-format
+msgid "已移除 %(region)s 工资底线。"
+msgstr "Salary floor removed for %(region)s."
+
+#: compass/routes/feedback.py:433
+#, python-format
+msgid "已记录解决方式: %(resolution)s"
+msgstr "Resolution recorded: %(resolution)s"
+
+#: compass/routes/gmail.py:77
+msgid "没有配置 LLM_API_KEY — 无法分类邮件。"
+msgstr "LLM_API_KEY not configured — cannot classify emails."
+
+#: compass/routes/gmail.py:91
+#, python-format
+msgid "Gmail sync 失败: %(exc)s"
+msgstr "Gmail sync failed: %(exc)s"
+
+#: compass/routes/gmail.py:95
+#, python-format
+msgid "Gmail sync 出错: %(exc)s"
+msgstr "Gmail sync error: %(exc)s"
+
+#: compass/routes/identity.py:83
+msgid "请选择简历文件。"
+msgstr "Please select a resume file."
+
+#: compass/routes/identity.py:89
+msgid "(无扩展名)"
+msgstr "(no extension)"
+
+#: compass/routes/identity.py:90
+#, python-format
+msgid "不支持的文件类型: %(suffix)s。请用 PDF / DOCX / TXT。"
+msgstr "Unsupported file type: %(suffix)s. Use PDF / DOCX / TXT."
+
+#: compass/routes/identity.py:105
+msgid "无法解析简历。请尝试 PDF 或 DOCX。"
+msgstr "Cannot parse resume. Try PDF or DOCX."
+
+#: compass/routes/identity.py:142
+#, python-format
+msgid "已建立新身份版本 %(iv_id)s (%(iv_language)s)。"
+msgstr "New identity version %(iv_id)s (%(iv_language)s) created."
+
+#: compass/routes/identity.py:152 compass/routes/identity.py:207
+#: compass/routes/identity.py:273 compass/routes/identity.py:364
+#: compass/routes/identity.py:398
+msgid "Fact not found."
+msgstr "Fact not found."
+
+#: compass/routes/identity.py:162
+msgid "已停用该 fact（不会出现在新生成的简历里）。"
+msgstr "Fact disabled (won't appear in new resumes)."
+
+#: compass/routes/identity.py:193
+msgid "文本不能为空。"
+msgstr "Text cannot be empty."
+
+#: compass/routes/identity.py:199
+#, python-format
+msgid "未知 sensitive_category: %(new_sensitive)s"
+msgstr "Unknown sensitive_category: %(new_sensitive)s"
+
+#: compass/routes/identity.py:254
+msgid "已更新 fact（原文保留在审计记录）。"
+msgstr "Fact updated (original kept in audit log)."
+
+#: compass/routes/identity.py:267
+msgid "没有配置 LLM_API_KEY。"
+msgstr "LLM_API_KEY not configured."
+
+#: compass/routes/identity.py:280
+#, python-format
+msgid "无法生成问题: %(exc)s"
+msgstr "Cannot generate question: %(exc)s"
+
+#: compass/routes/identity.py:283
+msgid "LLM 未返回有效问题，重试或更换 fact。"
+msgstr "LLM didn't return a valid question — retry or pick another fact."
+
+#: compass/routes/identity.py:297 compass/routes/identity.py:333
+msgid "Session not found."
+msgstr "Session not found."
+
+#: compass/routes/identity.py:322
+#, python-format
+msgid "采访合成完成，新增 %(n)s 条 fact。"
+msgstr "Interview synthesis complete, added %(n)s facts."
+
+#: compass/routes/identity.py:324
+#, python-format
+msgid "合成失败: %(exc)s"
+msgstr "Synthesis failed: %(exc)s"
+
+#: compass/routes/identity.py:327
+msgid "已保存当前回答。点击 '完成访谈' 触发合成。"
+msgstr "Current answers saved. Click 'Finish interview' to trigger synthesis."
+
+#: compass/routes/identity.py:403
+#, python-format
+msgid "回滚失败：%(exc)s"
+msgstr "Rollback failed: %(exc)s"
+
+#: compass/routes/identity.py:406
+msgid "当前文本已等于该版本，无需回滚。"
+msgstr "Current text equals that version — no rollback needed."
+
+#: compass/routes/identity.py:408
+msgid "↺ 已回滚到该版本（新建了一条 rolled_back 修订）。"
+msgstr "↺ Rolled back to that version (created a rolled_back revision)."
+
+#: compass/routes/jobs.py:216 compass/routes/jobs.py:483 compass/routes/jobs.py:509
+#: compass/routes/jobs.py:548 compass/routes/jobs.py:698
+#: compass/routes/resume.py:89 compass/routes/resume.py:293
+msgid "Job not found."
+msgstr "Job not found."
+
+#: compass/routes/jobs.py:535
+#, python-format
+msgid "状态: %(new_status)s"
+msgstr "Status: %(new_status)s"
+
+#: compass/routes/jobs.py:633 compass/templates/contacts/_sent_confirmation.html:2
+msgid "✓ 已记录"
+msgstr "✓ Recorded"
+
+#: compass/routes/jobs.py:633
+msgid "↻ 已切换"
+msgstr "↻ Toggled"
+
+#: compass/routes/jobs.py:633
+msgid "✗ 已取消"
+msgstr "✗ Cancelled"
+
+#: compass/routes/jobs.py:634
+msgid "已记录"
+msgstr "Recorded"
+
+#: compass/routes/jobs.py:691
+msgid "没有配置 LLM_API_KEY，无法分类。"
+msgstr "LLM_API_KEY not configured — cannot classify."
+
+#: compass/routes/jobs.py:716
+#, python-format
+msgid "分类完成: Tier %(match_tier)s (score %(match_score)s)"
+msgstr "Classification done: Tier %(match_tier)s (score %(match_score)s)"
+
+#: compass/routes/jobs.py:749
+msgid "没有配置 LLM_API_KEY，无法翻译。"
+msgstr "LLM_API_KEY not configured — cannot translate."
+
+#: compass/routes/jobs.py:776
+#, python-format
+msgid "翻译失败：%(exc)s"
+msgstr "Translation failed: %(exc)s"
+
+#: compass/routes/jobs.py:1147
+msgid "全局配置已保存"
+msgstr "Global config saved"
+
+#: compass/routes/jobs.py:1229
+#, python-format
+msgid "Profile '%(p_label)s' 已保存"
+msgstr "Profile '%(p_label)s' saved"
+
+#: compass/routes/jobs.py:1247
+#, python-format
+msgid "已创建 '%(label)s'，请填写详情"
+msgstr "Created '%(label)s' — please fill in details"
+
+#: compass/routes/jobs.py:1269 compass/routes/jobs.py:1292
+#: compass/routes/jobs.py:1509
+msgid "Profile 不存在"
+msgstr "Profile does not exist"
+
+#: compass/routes/jobs.py:1273 compass/templates/jobs/searches/_panel.html:40
+msgid "启用"
+msgstr "Enabled"
+
+#: compass/routes/jobs.py:1273
+msgid "禁用"
+msgstr "disabled"
+
+#: compass/routes/jobs.py:1274
+#, python-format
+msgid "Profile '%(p_label)s' 已%(status)s"
+msgstr "Profile '%(p_label)s' %(status)s"
+
+#: compass/routes/jobs.py:1287
+msgid "删除已取消（缺少二次确认）"
+msgstr "Delete cancelled (missing second confirmation)"
+
+#: compass/routes/jobs.py:1328
+msgid "没有启用的 profile — 先去求职意图配置一个"
+msgstr "No enabled profile — go configure one in search intent first"
+
+#: compass/routes/jobs.py:1375 compass/routes/jobs.py:1584
+#, python-format
+msgid "抓取失败: %(exc)s"
+msgstr "Scrape failed: %(exc)s"
+
+#: compass/routes/jobs.py:1512
+msgid "先填关键词，再让 AI 预测同义词"
+msgstr "Fill in keywords first, then let AI predict synonyms"
+
+#: compass/routes/jobs.py:1540
+#, python-format
+msgid "AI 预测失败: %(exc)s"
+msgstr "AI prediction failed: %(exc)s"
+
+#: compass/routes/jobs.py:1545
+#, python-format
+msgid "AI 添加 %(n_added)s 个同义词候选 — 请审阅，不需要的删掉"
+msgstr ""
+"AI added %(n_added)s synonym candidates — review and delete what you don't "
+"need"
+
+#: compass/routes/jobs.py:1547
+msgid "AI 没找到新的同义词（或没配 LLM key）"
+msgstr "AI found no new synonyms (or LLM key not configured)"
+
+#: compass/routes/jobs.py:1557
+msgid "Profile 不存在或已禁用"
+msgstr "Profile does not exist or is disabled"
+
+#: compass/routes/jobs.py:1701
+msgid "LLM 配置已保存"
+msgstr "LLM config saved"
+
+#: compass/routes/jobs.py:1714
+#, python-format
+msgid "未知预设: %(preset_id)s"
+msgstr "Unknown preset: %(preset_id)s"
+
+#: compass/routes/jobs.py:1735
+#, python-format
+msgid "已应用预设: %(label)s"
+msgstr "Preset applied: %(label)s"
+
+#: compass/routes/jobs.py:2030
+msgid "请至少填一组（启用的）关键词和地点。"
+msgstr "Please fill at least one (enabled) keyword + location group."
+
+#: compass/routes/jobs.py:2096
+msgid "还没配置抓取意图。下面是抓取面板，填一组就能跑。"
+msgstr ""
+"No scrape intent configured yet. The scrape panel below — fill one group to "
+"run."
+
+#: compass/routes/reflection.py:77
+msgid "已记录当前 calibration 快照。"
+msgstr "Current calibration snapshot recorded."
+
+#: compass/routes/reflection.py:104
+#, python-format
+msgid "已重新生成 %(n)s 条系统假设。"
+msgstr "Regenerated %(n)s system assumptions."
+
+#: compass/routes/reflection.py:106
+#, python-format
+msgid "无法重生成假设: %(exc)s"
+msgstr "Cannot regenerate assumptions: %(exc)s"
+
+#: compass/routes/reflection.py:109
+#, python-format
+msgid "出错: %(exc)s"
+msgstr "Error: %(exc)s"
+
+#: compass/routes/reflection.py:118
+msgid "已记录你的修正。"
+msgstr "Your correction recorded."
+
+#: compass/routes/rejection.py:50
+msgid "请粘贴拒信文本"
+msgstr "Please paste the rejection text"
+
+#: compass/routes/rejection.py:57
+#, python-format
+msgid "LLM 调用失败：%(exc)s"
+msgstr "LLM call failed: %(exc)s"
+
+#: compass/routes/resume.py:82
+msgid "没有配置 LLM_API_KEY，无法运行简历改写。"
+msgstr "LLM_API_KEY not configured — cannot run resume rewrite."
+
+#: compass/routes/resume.py:133 compass/routes/resume.py:317
+#, python-format
+msgid "LLM 错误: %(exc)s"
+msgstr "LLM error: %(exc)s"
+
+#: compass/routes/resume.py:142 compass/routes/resume.py:238
+#: compass/routes/resume.py:339
+msgid "Attempt not found."
+msgstr "Attempt not found."
+
+#: compass/routes/resume.py:186
+msgid "无效决定。"
+msgstr "Invalid decision."
+
+#: compass/routes/resume.py:195 compass/routes/resume.py:286
+msgid "Variant not found."
+msgstr "Variant not found."
+
+#: compass/routes/resume.py:262
+#, python-format
+msgid "已一键接受 %(n)s 条变换。"
+msgstr "Accepted %(n)s transforms in one click."
+
+#: compass/routes/resume.py:279
+msgid "没有配置 LLM_API_KEY，无法重生成变换。"
+msgstr "LLM_API_KEY not configured — cannot regenerate transforms."
+
+#: compass/routes/resume.py:289
+msgid "这条已批准/编辑过，重生会丢掉你的决定。先撤销再重生。"
+msgstr ""
+"This row is already approved/edited — regenerating would lose your decision. "
+"Undo first, then regenerate."
+
+#: compass/routes/resume.py:313
+msgid "↻ 已重新生成 — 这条建议变成新版本。"
+msgstr "↻ Regenerated — this suggestion is now a new version."
+
+#: compass/routes/resume.py:315
+#, python-format
+msgid "重生失败: %(exc)s"
+msgstr "Regenerate failed: %(exc)s"
+
+#: compass/routes/resume.py:403
+msgid "没有新的变更可沉淀（所有 ✓/✎ 与当前 fact 文本一致）。"
+msgstr "No new changes to sediment (all ✓/✎ match current fact text)."
+
+#: compass/routes/themes.py:130
+msgid "请填模板名称。"
+msgstr "Please enter a template name."
+
+#: compass/routes/themes.py:142
+msgid ""
+"这是二进制文件（DOCX/PDF）。HTML 上传只接受 .html。如果想从 DOCX 学样式，去 → 模板灵感 "
+"(/templates/inspire)。"
+msgstr ""
+"Binary file (DOCX/PDF). HTML upload only accepts .html. To learn style from "
+"DOCX, go to → Template Inspire (/templates/inspire)."
+
+#: compass/routes/themes.py:150
+#, python-format
+msgid "读不出文件: %(err)s"
+msgstr "Cannot read file: %(err)s"
+
+#: compass/routes/themes.py:156
+msgid "请上传 .html 文件或粘贴 HTML 内容。"
+msgstr "Please upload a .html file or paste HTML content."
+
+#: compass/routes/themes.py:160
+msgid "模板太大（>1 MB）。请精简后再上传。"
+msgstr "Template too large (>1 MB). Please trim and re-upload."
+
+#: compass/routes/themes.py:170
+#, python-format
+msgid "HTML 模板语法错误，无法保存: %(err)s"
+msgstr "HTML template syntax error, cannot save: %(err)s"
+
+#: compass/routes/themes.py:176 compass/routes/themes.py:405
+#, python-format
+msgid "保存失败: %(err)s"
+msgstr "Save failed: %(err)s"
+
+#: compass/routes/themes.py:179
+#, python-format
+msgid "已上传模板 '%(name)s' (id=%(id)s)。"
+msgstr "Template '%(name)s' uploaded (id=%(id)s)."
+
+#: compass/routes/themes.py:186
+#, python-format
+msgid "已删除模板 %(id)s。"
+msgstr "Template %(id)s deleted."
+
+#: compass/routes/themes.py:188
+#, python-format
+msgid "未找到模板 %(id)s。"
+msgstr "Template %(id)s not found."
+
+#: compass/routes/themes.py:202
+#, python-format
+msgid "模板渲染失败: %(err)s"
+msgstr "Template render failed: %(err)s"
+
+#: compass/routes/themes.py:210
+#, python-format
+msgid "模板语法错误（行 %(line)s）: %(err)s"
+msgstr "Template syntax error (line %(line)s): %(err)s"
+
+#: compass/routes/themes.py:212
+#, python-format
+msgid "模板渲染异常: %(err)s"
+msgstr "Template render exception: %(err)s"
+
+#: compass/routes/themes.py:266
+msgid "没有配置 LLM_API_KEY，借鉴功能不可用"
+msgstr "LLM_API_KEY not configured — inspire feature unavailable"
+
+#: compass/routes/themes.py:270
+msgid "请选择文件"
+msgstr "Please select a file"
+
+#: compass/routes/themes.py:274
+msgid "文件过大（>15MB）— 请压缩"
+msgstr "File too large (>15MB) — please compress"
+
+#: compass/routes/themes.py:375
+msgid "Inspire 结果已过期 — 请重新上传"
+msgstr "Inspire result expired — please re-upload"
+
+#: compass/routes/themes.py:382
+msgid "请填模板名称"
+msgstr "Please enter a template name"
+
+#: compass/routes/themes.py:411
+#, python-format
+msgid "✓ 已保存为模板「%(name)s」(id=%(id)s)"
+msgstr "✓ Saved as template '%(name)s' (id=%(id)s)"
+
+#: compass/templates/base.html:6
+msgid "指南"
+msgstr "Guide"
+
+#: compass/templates/base.html:666
+msgid "网络已断开 · 本地浏览/编辑可用；LLM 改写、一键抓取、Gmail 同步、JD 翻译等需要外网的功能将失败"
+msgstr ""
+"Network offline · local browse/edit works; LLM rewrite, scrape, Gmail sync, "
+"JD translation will fail."
+
+#: compass/templates/base.html:681
+msgid "抓取进度"
+msgstr "Scrape progress"
+
+#: compass/templates/base.html:684 compass/templates/base.html:718
+#: compass/templates/dashboard.html:45
+msgid "⚡ 一键抓取"
+msgstr "⚡ Scrape now"
+
+#: compass/templates/base.html:685
+msgid "已用时 0:00"
+msgstr "Elapsed 0:00"
+
+#: compass/templates/base.html:688
+msgid "当前 profile"
+msgstr "Current profile"
+
+#: compass/templates/base.html:689
+msgid "准备中…"
+msgstr "Preparing…"
+
+#: compass/templates/base.html:693
+msgid "当前 keyword"
+msgstr "Current keyword"
+
+#: compass/templates/base.html:698
+msgid "累计"
+msgstr "Total"
+
+#: compass/templates/base.html:700 compass/templates/dashboard.html:22
+#: compass/templates/jobs/searches/_panel.html:147
+msgid "📥 抓取"
+msgstr "📥 Scrape"
+
+#: compass/templates/base.html:701
+msgid "✓ 新增"
+msgstr "✓ New"
+
+#: compass/templates/base.html:702
+msgid "↻ 已存在"
+msgstr "↻ Existing"
+
+#: compass/templates/base.html:703
+msgid "⛔ 规则挡"
+msgstr "⛔ Rule-blocked"
+
+#: compass/templates/base.html:704
+msgid "⚠ 失败"
+msgstr "⚠ Failed"
+
+#: compass/templates/base.html:716
+msgid "已用时"
+msgstr "Elapsed"
+
+#: compass/templates/base.html:717
+msgid "— 抓取完成，正在分类入库 …"
+msgstr "— Scrape done, classifying & indexing…"
+
+#: compass/templates/base.html:719
+msgid "⚡ 一键抓取（当前 keyword 较慢，最长 90s）"
+msgstr "⚡ Scrape (current keyword slow, max 90s)"
+
+#: compass/templates/base.html:722
+msgid "抓取请求失败:"
+msgstr "Scrape request failed:"
+
+#: compass/templates/base.html:723
+msgid "查看终端日志"
+msgstr "Check terminal logs"
+
+#: compass/templates/base.html:724
+msgid "请稍候，LLM 处理中…（可能需要 30 秒+）"
+msgstr "Please wait, LLM processing… (may take 30+ seconds)"
+
+#: compass/templates/base.html:882
+msgid "· 指南"
+msgstr "· Guide"
+
+#: compass/templates/base.html:884
+msgid "收起/展开侧栏 (按 [ 切换)"
+msgstr "Collapse/expand sidebar ([ to toggle)"
+
+#: compass/templates/base.html:884
+msgid "收起侧栏"
+msgstr "Collapse sidebar"
+
+#: compass/templates/base.html:893
+msgid "用保存的求职意图配置一键抓取（演化老接口）"
+msgstr "Scrape using saved search intent (legacy entry)"
+
+#: compass/templates/base.html:896
+msgid "一键抓取"
+msgstr "Scrape"
+
+#: compass/templates/base.html:908
+msgid "主面板"
+msgstr "Main panel"
+
+#: compass/templates/base.html:912 compass/templates/jobs/list.html:9
+#: compass/templates/resume/workbench.html:29
+#: compass/templates/resume/workbench.html:45
+msgid "岗位"
+msgstr "Jobs"
+
+#: compass/templates/base.html:916
+msgid "求职意图 multi-profile 配置 — 关键词/地点/dealbreaker"
+msgstr "Search intent — multi-profile config (keywords / locations / dealbreakers)"
+
+#: compass/templates/base.html:917
+msgid "求职意图"
+msgstr "Search intent"
+
+#: compass/templates/base.html:921 compass/templates/funnel/dashboard.html:7
+#: compass/templates/funnel/dashboard.html:57
+msgid "漏斗"
+msgstr "Funnel"
+
+#: compass/templates/base.html:925
+msgid "人脉"
+msgstr "Network"
+
+#: compass/templates/base.html:929
+msgid "反馈历史 — preference_brief 偏好提取的累积"
+msgstr "Feedback history — accumulated preference extraction"
+
+#: compass/templates/base.html:930 compass/templates/feedback/dashboard.html:5
+msgid "反馈历史"
+msgstr "Feedback history"
+
+#: compass/templates/base.html:934
+msgid "反思系统"
+msgstr "Reflection system"
+
+#: compass/templates/base.html:938 compass/templates/reflection/dashboard.html:7
+msgid "漂移仪表盘"
+msgstr "Drift dashboard"
+
+#: compass/templates/base.html:945 compass/templates/reflection/dashboard.html:269
+msgid "系统假设"
+msgstr "System assumptions"
+
+#: compass/templates/base.html:949 compass/templates/identity/overview.html:6
+msgid "身份"
+msgstr "Identity"
+
+#: compass/templates/base.html:953
+msgid "所有沉淀事件 + 每条 fact 的修订历史"
+msgstr "All sediment events + revision history for each fact"
+
+#: compass/templates/base.html:954
+msgid "沉淀历史"
+msgstr "Sediment history"
+
+#: compass/templates/base.html:958
+msgid "边界"
+msgstr "Boundary"
+
+#: compass/templates/base.html:962
+msgid "改写历史"
+msgstr "Rewrite history"
+
+#: compass/templates/base.html:966
+msgid "工具"
+msgstr "Tools"
+
+#: compass/templates/base.html:970 compass/templates/themes/manage.html:7
+msgid "简历模板"
+msgstr "Resume templates"
+
+#: compass/templates/base.html:974
+msgid "LLM provider / key / model 配置"
+msgstr "LLM provider / key / model config"
+
+#: compass/templates/base.html:975 compass/templates/jobs/llm.html:106
+msgid "LLM 配置"
+msgstr "LLM config"
+
+#: compass/templates/base.html:981
+msgid "面试谈判工具"
+msgstr "Interview & negotiation"
+
+#: compass/templates/base.html:987
+msgid "薪资谈判模拟 — LLM 估市场范围 + 给可 paste 话术"
+msgstr "Salary negotiation sim — LLM estimates range + ready-to-paste lines"
+
+#: compass/templates/base.html:988
+msgid "薪资谈判"
+msgstr "Salary negotiation"
+
+#: compass/templates/base.html:992
+msgid "被拒原因追踪 — 粘贴拒信 LLM 提取 → 反喂 calibration"
+msgstr "Rejection tracking — paste rejection email, LLM extracts → feeds calibration"
+
+#: compass/templates/base.html:993
+msgid "被拒分析"
+msgstr "Rejection analysis"
+
+#: compass/templates/base.html:999
+msgid "Gmail 同步"
+msgstr "Gmail sync"
+
+#: compass/templates/base.html:1003 compass/templates/blacklist/overview.html:5
+msgid "黑名单"
+msgstr "Blacklist"
+
+#: compass/templates/base.html:1011
+msgid "💡 升级到 Claude"
+msgstr "💡 Upgrade to Claude"
+
+#: compass/templates/base.html:1012
+msgid "。Skill 生态需 Claude API。"
+msgstr ". Skill ecosystem requires Claude API."
+
+#: compass/templates/base.html:1013
+msgid "里设"
+msgstr "in settings"
+
+#: compass/templates/base.html:1039
+msgid "本次会话隐藏"
+msgstr "Hide for this session"
+
+#: compass/templates/dashboard.html:11
+msgid "📋 看岗位"
+msgstr "📋 View jobs"
+
+#: compass/templates/dashboard.html:12 compass/templates/dashboard.html:114
+#: compass/templates/errors/404.html:11
+msgid "📊 漂移仪表盘"
+msgstr "📊 Drift dashboard"
+
+#: compass/templates/dashboard.html:32
+msgid "滤掉"
+msgstr "Filtered out"
+
+#: compass/templates/dashboard.html:34
+msgid "入库"
+msgstr "Stored"
+
+#: compass/templates/dashboard.html:40
+msgid "还没跑过抓取。"
+msgstr "No scrapes run yet."
+
+#: compass/templates/dashboard.html:47
+msgid "🧭 调整意图"
+msgstr "🧭 Adjust intent"
+
+#: compass/templates/dashboard.html:54
+msgid "🎯 漏斗"
+msgstr "🎯 Funnel"
+
+#: compass/templates/dashboard.html:55 compass/templates/dashboard.html:111
+msgid "详细 →"
+msgstr "Details →"
+
+#: compass/templates/dashboard.html:58
+msgid "抓回"
+msgstr "Fetched"
+
+#: compass/templates/dashboard.html:59
+msgid "可推"
+msgstr "Pushable"
+
+#: compass/templates/dashboard.html:60
+msgid "已投"
+msgstr "Submitted"
+
+#: compass/templates/dashboard.html:61
+msgid "面试"
+msgstr "Interviews"
+
+#: compass/templates/dashboard.html:75
+msgid "📌 待办"
+msgstr "📌 To-do"
+
+#: compass/templates/dashboard.html:102
+msgid "暂无待办。"
+msgstr "No to-dos."
+
+#: compass/templates/dashboard.html:110
+msgid "🪞 反思"
+msgstr "🪞 Reflection"
+
+#: compass/templates/dashboard.html:115
+msgid "🪞 系统假设"
+msgstr "🪞 System assumptions"
+
+#: compass/templates/dashboard.html:116
+msgid "👤 身份"
+msgstr "👤 Identity"
+
+#: compass/templates/dashboard.html:117
+msgid "⚖️ 边界"
+msgstr "⚖️ Boundary"
+
+#: compass/templates/setup.html:6
+msgid "Compass · 首次配置"
+msgstr "Compass · First-time setup"
+
+#: compass/templates/setup.html:115
+msgid "首次配置"
+msgstr "First-time setup"
+
+#: compass/templates/setup.html:116
+msgid "Compass 需要一个 LLM API key 才能跑 AI 功能（简历改写、岗位匹配等）。"
+msgstr ""
+"Compass needs an LLM API key to run AI features (resume rewriting, job "
+"matching, etc.)."
+
+#: compass/templates/setup.html:123
+msgid "填完保存后"
+msgstr "After saving"
+
+#: compass/templates/setup.html:123
+msgid "key 会写入"
+msgstr "the key will be written to"
+
+#: compass/templates/setup.html:123
+msgid "文件，只存在你本地。"
+msgstr "file — local only."
+
+#: compass/templates/setup.html:135
+msgid "Claude (Anthropic) — 推荐"
+msgstr "Claude (Anthropic) — recommended"
+
+#: compass/templates/setup.html:156
+msgid "sk-ant-... 或 sk-..."
+msgstr "sk-ant-… or sk-…"
+
+#: compass/templates/setup.html:164
+msgid "保存并启动"
+msgstr "Save and start"
+
+#: compass/templates/setup_saved.html:6
+msgid "Compass · 配置已保存"
+msgstr "Compass · Configuration saved"
+
+#: compass/templates/setup_saved.html:68
+msgid "配置已保存"
+msgstr "Configuration saved"
+
+#: compass/templates/setup_saved.html:69
+msgid "LLM key 已写入"
+msgstr "LLM key written to"
+
+#: compass/templates/setup_saved.html:69
+msgid "文件。"
+msgstr "file."
+
+#: compass/templates/setup_saved.html:72
+msgid "可以开始用了："
+msgstr "You can start now:"
+
+#: compass/templates/setup_saved.html:73
+msgid "点这里进 dashboard →"
+msgstr "Click here to open the dashboard →"
+
+#: compass/templates/blacklist/overview.html:11
+#: compass/templates/calibration/overview.html:12
+#: compass/templates/connections/overview.html:27
+#: compass/templates/feedback/dashboard.html:9
+#: compass/templates/funnel/dashboard.html:19
+#: compass/templates/gmail/overview.html:13
+#: compass/templates/identity/overview.html:16
+#: compass/templates/jobs/kanban.html:17 compass/templates/jobs/list.html:19
+#: compass/templates/reflection/assumptions.html:9
+#: compass/templates/reflection/dashboard.html:85
+msgid "不熟？看这是什么 / 为什么用 / 什么时候来"
+msgstr "New here? See what this is / why use it / when to come back"
+
+#: compass/templates/blacklist/overview.html:13
+#: compass/templates/calibration/overview.html:14
+#: compass/templates/connections/overview.html:29
+#: compass/templates/feedback/dashboard.html:11
+#: compass/templates/funnel/dashboard.html:21
+#: compass/templates/gmail/overview.html:15
+#: compass/templates/identity/overview.html:18
+#: compass/templates/jobs/kanban.html:19 compass/templates/jobs/list.html:21
+#: compass/templates/jobs/searches/overview.html:18
+#: compass/templates/reflection/assumptions.html:11
+#: compass/templates/reflection/dashboard.html:87
+msgid "这是什么"
+msgstr "What this is"
+
+#: compass/templates/blacklist/overview.html:14
+msgid "抓取阶段的过滤器。任何 job 如果："
+msgstr "A filter applied during scraping. Any job where:"
+
+#: compass/templates/blacklist/overview.html:16
+msgid "公司名包含黑名单的公司（子串匹配）"
+msgstr "Company name contains a blacklisted company (substring match)"
+
+#: compass/templates/blacklist/overview.html:17
+msgid "JD 描述里出现黑名单关键词（子串匹配）"
+msgstr "JD contains a blacklisted keyword (substring match)"
+
+#: compass/templates/blacklist/overview.html:19
+msgid "在写入数据库前**直接丢弃**——不浪费 LLM 调用做 tier 分类。"
+msgstr "is **dropped before DB write** — no LLM call wasted on tier classification."
+
+#: compass/templates/blacklist/overview.html:21
+msgid "痛点：substring 匹配的两个 bug"
+msgstr "Pain point: two bugs in substring matching"
+
+#: compass/templates/blacklist/overview.html:23
+msgid "跨语言失效"
+msgstr "Cross-language fail"
+
+#: compass/templates/blacklist/overview.html:23
+msgid "：你写英文 \"spam recruiter\" 屏蔽不到意大利语 \"agenzia spam\""
+msgstr ": writing English 'spam recruiter' won't block Italian 'agenzia spam'"
+
+#: compass/templates/blacklist/overview.html:24
+msgid "词不达意"
+msgstr "Imprecise wording"
+
+#: compass/templates/blacklist/overview.html:24
+msgid "：你写\"廉价职位\"屏蔽——但实际 JD 用 \"entry level\" 或 \"junior\""
+msgstr ": writing 'cheap roles' to block — but real JDs say 'entry level' or 'junior'"
+
+#: compass/templates/blacklist/overview.html:26
+msgid "底下\"用自然语言描述\"功能 + 反思层\"效果分析\"是 Compass 解决这两个 bug 的方式。"
+msgstr ""
+"The 'natural language description' below + the reflection layer's "
+"'effectiveness analysis' is how Compass fixes these two bugs."
+
+#: compass/templates/blacklist/overview.html:32
+msgid "💬 用自然语言描述（推荐）"
+msgstr "💬 Describe in natural language (recommended)"
+
+#: compass/templates/blacklist/overview.html:39
+msgid "例：不要 unpaid 实习，不要 mlm，不要纯销售，不要外包公司，不要总要加班的。"
+msgstr ""
+"e.g. no unpaid internships, no MLM, no pure sales, no outsourcing firms, no "
+"constant overtime."
+
+#: compass/templates/blacklist/overview.html:42
+#: compass/templates/blacklist/overview.html:150
+msgid "✨ LLM 生成屏蔽建议"
+msgstr "✨ LLM blacklist suggestions"
+
+#: compass/templates/blacklist/overview.html:52
+msgid "✓ 加入选中的到下方黑名单"
+msgstr "✓ Add selected to blacklist below"
+
+#: compass/templates/blacklist/overview.html:79
+#: compass/templates/calibration/overview.html:79
+msgid "💾 保存"
+msgstr "💾 Save"
+
+#: compass/templates/blacklist/overview.html:104
+msgid "· 被判 Tier 5 共"
+msgstr "· classified as Tier 5"
+
+#: compass/templates/blacklist/overview.html:104
+msgid "次"
+msgstr "times"
+
+#: compass/templates/blacklist/overview.html:142
+msgid "先描述一下你不想要什么样的工作"
+msgstr "First describe what kind of jobs you don't want"
+
+#: compass/templates/blacklist/overview.html:143
+msgid "思考中..."
+msgstr "Thinking…"
+
+#: compass/templates/blacklist/overview.html:144
+msgid "LLM 正在思考..."
+msgstr "LLM is thinking…"
+
+#: compass/templates/blacklist/overview.html:145
+#: compass/templates/jobs/searches/_panel.html:327
+msgid "失败"
+msgstr "Failed"
+
+#: compass/templates/blacklist/overview.html:146
+msgid "LLM 判断:"
+msgstr "LLM verdict:"
+
+#: compass/templates/blacklist/overview.html:147
+#: compass/templates/gmail/result.html:32
+msgid "公司"
+msgstr "Company"
+
+#: compass/templates/blacklist/overview.html:148
+#: compass/templates/jobs/searches/overview.html:21
+msgid "关键词"
+msgstr "Keywords"
+
+#: compass/templates/blacklist/overview.html:149
+#: compass/templates/jobs/searches/_panel.html:328
+msgid "网络错误:"
+msgstr "Network error:"
+
+#: compass/templates/blacklist/overview.html:151
+#, python-brace-format
+msgid "已加入 {n_c} 个公司 + {n_k} 个关键词到下方编辑区。记得点 \"💾 保存\"。"
+msgstr ""
+"Added {n_c} companies + {n_k} keywords to the editor below. Remember to click"
+" '💾 Save'."
+
+#: compass/templates/blacklist/overview.html:152
+msgid "✓ 已加入（记得保存）"
+msgstr "✓ Added (remember to save)"
+
+#: compass/templates/calibration/overview.html:5
+msgid "Calibration · 边界"
+msgstr "Calibration · Boundary"
+
+#: compass/templates/calibration/overview.html:15
+msgid "Compass 学到的\"你接受到哪种程度\"——不是你的偏好，是你的"
+msgstr ""
+"What Compass learned about how far you'll accept — not your preferences but "
+"your"
+
+#: compass/templates/calibration/overview.html:15
+msgid "伦理边界"
+msgstr "ethical boundary"
+
+#: compass/templates/calibration/overview.html:17
+msgid "：你接受 L0–L4 哪一档（L5 永远禁止——事实编造）"
+msgstr ": which of L0–L4 you accept (L5 always forbidden — fact fabrication)"
+
+#: compass/templates/calibration/overview.html:18
+msgid "：你拒绝过的强势动词（如 \"led\" / \"owned\"）"
+msgstr ": strong verbs you've rejected (e.g. 'led' / 'owned')"
+
+#: compass/templates/calibration/overview.html:19
+msgid "：你接受过的合适动词"
+msgstr ": verbs you've accepted as appropriate"
+
+#: compass/templates/calibration/overview.html:20
+msgid "：硬锁的类目（学历 / 语言级别等）"
+msgstr ": hard-locked categories (education / language level / etc.)"
+
+#: compass/templates/calibration/overview.html:22
+msgid "为什么需要它（学边界不学偏好）"
+msgstr "Why this exists (learn boundary, not preference)"
+
+#: compass/templates/calibration/overview.html:23
+msgid ""
+"RLHF 标准做法学\"用户喜欢什么\"——会形成茧房。Compass "
+"反过来：学\"用户接受到什么程度\"——这是伦理判断而非偏好倾向，不会让视野收窄。学习"
+msgstr ""
+"Standard RLHF learns 'what users like' — creates a filter bubble. Compass "
+"inverts: learns 'how far the user accepts' — an ethical judgment, not a "
+"preference bias, so the view never narrows. Learning is"
+
+#: compass/templates/calibration/overview.html:23
+msgid "缓慢漂移"
+msgstr "slow drift"
+
+#: compass/templates/calibration/overview.html:23
+msgid "（每次最多 ±1）+ 反向调节（adversarial voice 永远不学）防止失控。"
+msgstr ""
+"(±1 per step max) + reverse regulation (adversarial voice never learns) to "
+"prevent runaway."
+
+#: compass/templates/calibration/overview.html:24
+#: compass/templates/connections/overview.html:33
+#: compass/templates/feedback/dashboard.html:20
+#: compass/templates/funnel/dashboard.html:26
+#: compass/templates/gmail/overview.html:26
+#: compass/templates/identity/overview.html:22 compass/templates/jobs/list.html:32
+#: compass/templates/jobs/searches/overview.html:26
+#: compass/templates/reflection/assumptions.html:15
+#: compass/templates/reflection/dashboard.html:91
+msgid "什么时候来这里"
+msgstr "When to visit"
+
+#: compass/templates/calibration/overview.html:26
+msgid "感觉简历改写\"过分美化\"或\"过度保守\"——直接编辑边界"
+msgstr ""
+"Resume rewrites feel 'over-polished' or 'too conservative' — edit the "
+"boundary directly"
+
+#: compass/templates/calibration/overview.html:27
+msgid "每个月点\"重新学习\"——读最近 30 天决策更新"
+msgstr "Monthly: click 'Re-learn' — reads the last 30 days of decisions"
+
+#: compass/templates/calibration/overview.html:28
+msgid "触发漂移警报时——可能要\"价值观回归\"清空学习"
+msgstr "When drift alert triggers — may need 'values reset' to clear learning"
+
+#: compass/templates/calibration/overview.html:35
+msgid "⚠ 检测到漂移"
+msgstr "⚠ Drift detected"
+
+#: compass/templates/calibration/overview.html:44
+#: compass/templates/reflection/dashboard.html:117
+msgid "当前边界"
+msgstr "Current boundary"
+
+#: compass/templates/calibration/overview.html:53
+msgid "locked sensitive 类目:"
+msgstr "Locked sensitive categories:"
+
+#: compass/templates/calibration/overview.html:61
+msgid "直接编辑"
+msgstr "Edit directly"
+
+#: compass/templates/calibration/overview.html:68
+msgid "do verbs（逗号分隔）:"
+msgstr "do verbs (comma-separated):"
+
+#: compass/templates/calibration/overview.html:72
+msgid "avoid verbs（逗号分隔）:"
+msgstr "avoid verbs (comma-separated):"
+
+#: compass/templates/calibration/overview.html:76
+msgid "locked sensitive 类目（逗号分隔，例如: education_credential, language_level）:"
+msgstr ""
+"locked sensitive categories (comma-separated, e.g. education_credential, "
+"language_level):"
+
+#: compass/templates/calibration/overview.html:84
+msgid "学习 / 重置"
+msgstr "Learn / Reset"
+
+#: compass/templates/calibration/overview.html:90
+msgid "🔄 重新学习（最近 30 天）"
+msgstr "🔄 Re-learn (last 30 days)"
+
+#: compass/templates/connections/overview.html:7
+msgid "人脉网络"
+msgstr "Network of contacts"
+
+#: compass/templates/connections/overview.html:8
+msgid "导入 LinkedIn 连接 — jobs 详情页显示「该公司有谁是你认识的」。内推回应率比冷投高 15-30 倍。"
+msgstr ""
+"Import LinkedIn connections — job detail pages show 'who you know at this "
+"company'. Referral response rate is 15-30× cold applications."
+
+#: compass/templates/connections/overview.html:15
+msgid "活跃连接"
+msgstr "Active connections"
+
+#: compass/templates/connections/overview.html:20
+msgid "覆盖公司"
+msgstr "Companies covered"
+
+#: compass/templates/connections/overview.html:22
+msgid "≥1 人脉的公司"
+msgstr "companies with ≥1 connection"
+
+#: compass/templates/connections/overview.html:30
+msgid ""
+"从你 LinkedIn 导出的 connections.csv 建本地索引。jobs 详情页查\"该公司是否有你认识的人\"瞬间出结果，**不爬 "
+"LinkedIn**——是合法的「你自己的数据」。"
+msgstr ""
+"Builds a local index from your LinkedIn connections.csv export. Job pages "
+"instantly answer 'do I know anyone there'. **No scraping** — it's your own "
+"data, legal."
+
+#: compass/templates/connections/overview.html:31
+#: compass/templates/feedback/dashboard.html:18
+#: compass/templates/funnel/dashboard.html:23
+#: compass/templates/reflection/assumptions.html:13
+#: compass/templates/reflection/dashboard.html:89
+msgid "为什么需要它"
+msgstr "Why this exists"
+
+#: compass/templates/connections/overview.html:32
+#, python-format
+msgid ""
+"冷投 ATS 简历 1-3%% 回应；走人脉内推 30-50%% 回应——15 倍差。你已经在 LinkedIn 上有的连接是最高 ROI "
+"的资产，但现在没工具把它和正在投的 job 做 join。这页就是这个 join。"
+msgstr ""
+"Cold ATS application response rate: 1-3%%. Via referral: 30-50%% — a 15× gap."
+" Your existing LinkedIn connections are your highest-ROI asset, but no tool "
+"joins them to the jobs you're applying to. This page is that join."
+
+#: compass/templates/connections/overview.html:35
+msgid "第一次"
+msgstr "First time"
+
+#: compass/templates/connections/overview.html:35
+msgid ""
+"：去 LinkedIn Settings → Data Privacy → \"Get a copy of your data\" → 下载 → 解压拿 "
+"Connections.csv → 上传"
+msgstr ""
+": Go to LinkedIn Settings → Data Privacy → 'Get a copy of your data' → "
+"download → unzip → grab Connections.csv → upload"
+
+#: compass/templates/connections/overview.html:36
+msgid "每 6 个月"
+msgstr "Every 6 months"
+
+#: compass/templates/connections/overview.html:36
+msgid "：重新导出 + 上传，刷新过期信息"
+msgstr ": re-export and upload to refresh stale info"
+
+#: compass/templates/connections/overview.html:37
+msgid "jobs detail 页看到「你认识的人在 X (3)」时——那条信息就是这里查出来的"
+msgstr "When job pages show 'You know people at X (3)' — that comes from this index"
+
+#: compass/templates/connections/overview.html:43
+msgid "导入 LinkedIn 连接"
+msgstr "Import LinkedIn connections"
+
+#: compass/templates/connections/overview.html:47
+msgid "→ 上传到这里。"
+msgstr "→ upload here."
+
+#: compass/templates/connections/overview.html:52
+msgid "📥 导入"
+msgstr "📥 Import"
+
+#: compass/templates/connections/overview.html:61
+msgid "top 公司（≥1 人脉）"
+msgstr "Top companies (≥1 connection)"
+
+#: compass/templates/connections/overview.html:70
+msgid "自动驱动 scrape 优先级"
+msgstr "auto-drives scrape priority"
+
+#: compass/templates/connections/overview.html:70
+msgid "——查这些公司的招聘比关键词搜更高 ROI。"
+msgstr "— targeting these companies has higher ROI than keyword search."
+
+#: compass/templates/connections/overview.html:76
+msgid "📝 PKM markdown 导出（可选）"
+msgstr "📝 PKM markdown export (optional)"
+
+#: compass/templates/connections/overview.html:83
+msgid "↻ 同步全部到 markdown"
+msgstr "↻ Sync all to markdown"
+
+#: compass/templates/connections/overview.html:90
+msgid "当前关闭"
+msgstr "Currently off"
+
+#: compass/templates/connections/overview.html:90
+msgid "。打开：在"
+msgstr ". To enable: in"
+
+#: compass/templates/connections/overview.html:90
+msgid "加"
+msgstr "add"
+
+#: compass/templates/connections/overview.html:90
+msgid "然后重启。"
+msgstr "and restart."
+
+#: compass/templates/connections/overview.html:96
+msgid "最近导入"
+msgstr "Recent imports"
+
+#: compass/templates/connections/overview.html:97
+msgid "最新 30 条（用于检查导入是否成功）"
+msgstr "Latest 30 entries (to verify import success)"
+
+#: compass/templates/contacts/_cold_results.html:7
+msgid ""
+"的公开联系人。\n"
+"      可能是公司太小 / 太冷门 / 搜索引擎临时挂了。"
+msgstr ""
+"public contacts. Maybe the company is too small / niche / search engine "
+"temporarily down."
+
+#: compass/templates/contacts/_draft_result.html:10
+msgid "⚙️ LLM 配置"
+msgstr "⚙️ LLM config"
+
+#: compass/templates/contacts/_draft_result.html:10
+msgid "检查 key / 模型 / base_url，再点 测试连接 验证。"
+msgstr "Check key / model / base_url, then click Test connection to verify."
+
+#: compass/templates/contacts/_draft_result.html:46
+msgid "为什么不让系统替我发？"
+msgstr "Why doesn't the system send for me?"
+
+#: compass/templates/contacts/_panel.html:48
+msgid "导入更多 LinkedIn 连接"
+msgstr "Import more LinkedIn connections"
+
+#: compass/templates/contacts/_panel.html:83
+msgid "🔍 cold 搜索 —"
+msgstr "🔍 Cold search —"
+
+#: compass/templates/contacts/_panel.html:83
+msgid "阶段未启用"
+msgstr "phase not enabled"
+
+#: compass/templates/contacts/_panel.html:86
+msgid "路径——你认识的人。"
+msgstr "path — people you know."
+
+#: compass/templates/contacts/_panel.html:95
+msgid "📜 已发送给该 job 的 outreach"
+msgstr "📜 Outreach already sent for this job"
+
+#: compass/templates/contacts/_panel.html:107
+#: compass/templates/contacts/_panel.html:113
+msgid "无回应"
+msgstr "No response"
+
+#: compass/templates/contacts/_panel.html:108
+msgid "有回应 → 详细"
+msgstr "Got a response → details"
+
+#: compass/templates/contacts/_panel.html:123
+msgid "起草 outreach"
+msgstr "Draft outreach"
+
+#: compass/templates/contacts/_panel.html:139
+msgid "目的"
+msgstr "Purpose"
+
+#: compass/templates/contacts/_panel.html:141
+msgid "referral_request — 直接请求内推"
+msgstr "referral_request — directly ask for a referral"
+
+#: compass/templates/contacts/_panel.html:142
+msgid "informational — 15 分钟交流，不直接要内推"
+msgstr "informational — 15-min chat, no direct referral ask"
+
+#: compass/templates/contacts/_panel.html:143
+msgid "direct_question — 一个具体问题"
+msgstr "direct_question — one specific question"
+
+#: compass/templates/contacts/_panel.html:147
+msgid "载体"
+msgstr "Channel"
+
+#: compass/templates/contacts/_panel.html:149
+msgid "LinkedIn DM (≤280 字符)"
+msgstr "LinkedIn DM (≤280 chars)"
+
+#: compass/templates/contacts/_panel.html:150
+msgid "LinkedIn 连接请求 (≤300 字符)"
+msgstr "LinkedIn connection request (≤300 chars)"
+
+#: compass/templates/contacts/_panel.html:151
+msgid "邮件 (≤150 字)"
+msgstr "Email (≤150 words)"
+
+#: compass/templates/contacts/_panel.html:156
+msgid "→ 起草"
+msgstr "→ Draft"
+
+#: compass/templates/contacts/_panel.html:157
+#: compass/templates/feedback/_conflicts_banner.html:55
+#: compass/templates/feedback/_extract_preview.html:68
+#: compass/templates/feedback/_line_card.html:98
+#: compass/templates/identity/overview.html:94
+#: compass/templates/jobs/detail.html:391
+#: compass/templates/jobs/searches/_panel.html:179
+#: compass/templates/resume/_review_panel.html:408
+msgid "取消"
+msgstr "Cancel"
+
+#: compass/templates/contacts/_panel.html:158
+msgid "⏳ LLM 起草中…"
+msgstr "⏳ LLM drafting…"
+
+#: compass/templates/contacts/_sent_confirmation.html:4
+msgid "已写入 OutreachAttempt 表（id:"
+msgstr "Written to OutreachAttempt table (id:"
+
+#: compass/templates/contacts/_sent_confirmation.html:10
+#: compass/templates/feedback/_extract_preview.html:20
+#: compass/templates/feedback/_save_confirmation.html:25
+msgid "关闭"
+msgstr "Close"
+
+#: compass/templates/errors/404.html:6
+msgid "这条路径不存在或已经迁移。"
+msgstr "This URL doesn't exist or has been moved."
+
+#: compass/templates/errors/404.html:9
+msgid "📋 岗位列表"
+msgstr "📋 Job list"
+
+#: compass/templates/errors/404.html:10
+#: compass/templates/jobs/searches/overview.html:7
+msgid "🧭 求职意图"
+msgstr "🧭 Search intent"
+
+#: compass/templates/errors/404.html:17
+msgid "技术细节"
+msgstr "Technical details"
+
+#: compass/templates/errors/404.html:22
+msgid "如果你**期望**这个 URL 存在（比如老书签），可能是 5-06/5-07 in-place 重做后路由改名了——查"
+msgstr ""
+"If you **expected** this URL to exist (e.g. an old bookmark), routes may have"
+" been renamed in the 5-06/5-07 in-place refactor — check"
+
+#: compass/templates/errors/404.html:22
+msgid "找 5-07 entry。"
+msgstr "find the 5-07 entry."
+
+#: compass/templates/errors/500.html:5
+msgid "⚠️ Compass 遇到内部错误"
+msgstr "⚠️ Compass hit an internal error"
+
+#: compass/templates/errors/500.html:6
+msgid "完整 traceback 见下方 +"
+msgstr "Full traceback below +"
+
+#: compass/templates/errors/500.html:11
+msgid "真正的错误"
+msgstr "the actual error"
+
+#: compass/templates/errors/500.html:21
+msgid "💡 可能的原因 + 修复"
+msgstr "💡 Likely causes + fixes"
+
+#: compass/templates/errors/500.html:27
+msgid "📋 回 岗位列表"
+msgstr "📋 Back to job list"
+
+#: compass/templates/errors/500.html:28
+msgid "← 返回上一页"
+msgstr "← Back"
+
+#: compass/templates/errors/500.html:30
+msgid "🔄 重试"
+msgstr "🔄 Retry"
+
+#: compass/templates/errors/500.html:37
+msgid "完整 Traceback（点击折叠）"
+msgstr "Full traceback (click to collapse)"
+
+#: compass/templates/export/preview.html:56
+msgid "← 返回 Compass"
+msgstr "← Back to Compass"
+
+#: compass/templates/export/preview.html:57
+msgid "🖨 打印 / 保存为 PDF"
+msgstr "🖨 Print / Save as PDF"
+
+#: compass/templates/export/preview.html:58
+msgid "📥 下载 JSON Resume"
+msgstr "📥 Download JSON Resume"
+
+#: compass/templates/feedback/_conflicts_banner.html:6
+msgid "哪个是真的你？"
+msgstr "Which is the real you?"
+
+#: compass/templates/feedback/_conflicts_banner.html:6
+msgid "每条都需要你处理或确认。"
+msgstr "Each one needs your action or confirmation."
+
+#: compass/templates/feedback/_conflicts_banner.html:12
+msgid "反馈说"
+msgstr "Feedback says"
+
+#: compass/templates/feedback/_conflicts_banner.html:17
+msgid "但 stated 说"
+msgstr "but stated preference says"
+
+#: compass/templates/feedback/_conflicts_banner.html:46
+msgid "改成更具体的版本（保留主张但加 scope）："
+msgstr "Edit to a more specific version (keep the claim but add scope):"
+
+#: compass/templates/feedback/_conflicts_banner.html:48
+msgid "例：避开 fintech junior（仍要 fintech 但避免初级）"
+msgstr "e.g. avoid fintech junior (still want fintech, just not entry-level)"
+
+#: compass/templates/feedback/_conflicts_banner.html:51
+msgid "可选 scope：例 'for junior roles' / 'in Germany'"
+msgstr "Optional scope: e.g. 'for junior roles' / 'in Germany'"
+
+#: compass/templates/feedback/_conflicts_banner.html:54
+msgid "应用"
+msgstr "Apply"
+
+#: compass/templates/feedback/_extract_preview.html:3
+msgid "提取预览"
+msgstr "Extraction preview"
+
+#: compass/templates/feedback/_extract_preview.html:12
+msgid "⚠ 不够具体:"
+msgstr "⚠ Not specific enough:"
+
+#: compass/templates/feedback/_extract_preview.html:13
+msgid "建议你重新写一条更明确的反馈。"
+msgstr "We suggest rewriting your feedback more precisely."
+
+#: compass/templates/feedback/_extract_preview.html:19
+msgid "没有提取到有效偏好。换种说法再试。"
+msgstr "No valid preference extracted. Try rephrasing."
+
+#: compass/templates/feedback/_extract_preview.html:39
+msgid "保留"
+msgstr "Keep"
+
+#: compass/templates/feedback/_extract_preview.html:45
+msgid "+ 新增"
+msgstr "+ Add"
+
+#: compass/templates/feedback/_extract_preview.html:50
+#: compass/templates/feedback/_line_card.html:87
+msgid "✓ 倾向"
+msgstr "✓ Prefer"
+
+#: compass/templates/feedback/_extract_preview.html:51
+#: compass/templates/feedback/_line_card.html:88
+msgid "✗ 避开"
+msgstr "✗ Avoid"
+
+#: compass/templates/feedback/_extract_preview.html:56
+msgid "scope（可选）"
+msgstr "scope (optional)"
+
+#: compass/templates/feedback/_extract_preview.html:67
+msgid "✓ 保存到 brief"
+msgstr "✓ Save to brief"
+
+#: compass/templates/feedback/_input_widget.html:23
+msgid "你在反馈"
+msgstr "You're giving feedback on"
+
+#: compass/templates/feedback/_input_widget.html:27
+msgid "哪里好/哪里不好"
+msgstr "what's good / what's not"
+
+#: compass/templates/feedback/_input_widget.html:27
+msgid "— 下次推送和改写会读到"
+msgstr "— next push and rewrite will read this"
+
+#: compass/templates/feedback/_input_widget.html:52
+msgid "⏳ 提取中…"
+msgstr "⏳ Extracting…"
+
+#: compass/templates/feedback/_input_widget.html:53
+msgid "→ 提取"
+msgstr "→ Extract"
+
+#: compass/templates/feedback/_jobs_tab.html:19
+#: compass/templates/feedback/_resume_tab.html:18
+msgid "— 看下能不能合并。"
+msgstr "— see if it can be merged."
+
+#: compass/templates/feedback/_jobs_tab.html:25
+#: compass/templates/feedback/_resume_tab.html:23
+msgid "当前生效偏好"
+msgstr "Active preferences"
+
+#: compass/templates/feedback/_jobs_tab.html:33
+msgid "还没有偏好。在 jobs 详情页 thumbs 后点\"💬 想多说一点\"开始反馈。"
+msgstr "No preferences yet. After thumbs on a job, click '💬 Say more' to start."
+
+#: compass/templates/feedback/_jobs_tab.html:38
+#: compass/templates/feedback/dashboard.html:16
+msgid "地区工资底线"
+msgstr "Region salary floor"
+
+#: compass/templates/feedback/_jobs_tab.html:39
+msgid "按地区设置 yearly 阈值，低于的岗位自动降一档 Tier（确定性规则，不依赖 LLM 判断）。"
+msgstr ""
+"Set yearly thresholds per region; jobs below auto-demote one Tier "
+"(deterministic — no LLM)."
+
+#: compass/templates/feedback/_jobs_tab.html:45
+msgid "地区"
+msgstr "Region"
+
+#: compass/templates/feedback/_jobs_tab.html:46
+#: compass/templates/feedback/_jobs_tab.html:85
+msgid "月底线"
+msgstr "Monthly floor"
+
+#: compass/templates/feedback/_jobs_tab.html:47
+msgid "年底线"
+msgstr "Yearly floor"
+
+#: compass/templates/feedback/_jobs_tab.html:48
+#: compass/templates/feedback/_jobs_tab.html:90
+msgid "货币"
+msgstr "Currency"
+
+#: compass/templates/feedback/_jobs_tab.html:74
+msgid "还没有工资底线。"
+msgstr "No salary floors yet."
+
+#: compass/templates/feedback/_jobs_tab.html:80
+msgid "地区（国家或城市）"
+msgstr "Region (country or city)"
+
+#: compass/templates/feedback/_jobs_tab.html:101
+msgid "+ 添加 / 更新"
+msgstr "+ Add / Update"
+
+#: compass/templates/feedback/_jobs_tab.html:108
+#: compass/templates/feedback/_resume_tab.html:37
+msgid "历史 / Archive"
+msgstr "History / Archive"
+
+#: compass/templates/feedback/_jobs_tab.html:109
+msgid "已过期或被清理的偏好（最近 30 条）。点 ↻ 重新激活。"
+msgstr "Expired or cleared preferences (last 30). Click ↻ to reactivate."
+
+#: compass/templates/feedback/_jobs_tab.html:129
+#: compass/templates/feedback/_resume_tab.html:53
+msgid "↻ 激活"
+msgstr "↻ Activate"
+
+#: compass/templates/feedback/_line_card.html:65
+msgid "✎ 编辑"
+msgstr "✎ Edit"
+
+#: compass/templates/feedback/_line_card.html:68
+msgid "↻ 续 30 天"
+msgstr "↻ Extend 30 days"
+
+#: compass/templates/feedback/_line_card.html:95
+msgid "可选 scope（"
+msgstr "Optional scope ("
+
+#: compass/templates/feedback/_line_card.html:97
+#: compass/templates/jobs/llm.html:300
+msgid "保存"
+msgstr "Save"
+
+#: compass/templates/feedback/_resume_tab.html:31
+msgid "还没有简历偏好。在简历改写预览页针对某条 bullet 反馈即可累积。"
+msgstr ""
+"No resume preferences yet. Feedback on bullets in the rewrite preview to "
+"accumulate them."
+
+#: compass/templates/feedback/_save_confirmation.html:3
+msgid "✓ 已保存"
+msgstr "✓ Saved"
+
+#: compass/templates/feedback/_save_confirmation.html:20
+msgid "→ 看反馈历史"
+msgstr "→ View feedback history"
+
+#: compass/templates/feedback/_save_confirmation.html:23
+msgid "没有保存任何偏好（全部被你取消勾选了）。"
+msgstr "No preferences saved (you unchecked them all)."
+
+#: compass/templates/feedback/dashboard.html:6
+msgid "你给系统的偏好信号——你说要什么、要避开什么。下次推送和简历改写都会读这些。"
+msgstr ""
+"Preference signals you've given the system — what you want and what to avoid."
+" Used by the next push and rewrite."
+
+#: compass/templates/feedback/dashboard.html:12
+msgid "所有 thumbs / status / 简历反馈累积出的偏好简报，分两层："
+msgstr ""
+"Preference brief accumulated from all thumbs / status / resume feedback, in "
+"two layers:"
+
+#: compass/templates/feedback/dashboard.html:14
+msgid "找工作偏好"
+msgstr "Job preferences"
+
+#: compass/templates/feedback/dashboard.html:14
+msgid "— 影响 tier_classifier 给新岗位打分"
+msgstr "— affects how tier_classifier scores new jobs"
+
+#: compass/templates/feedback/dashboard.html:15
+msgid "简历偏好"
+msgstr "Resume preferences"
+
+#: compass/templates/feedback/dashboard.html:15
+msgid "— 影响 resume_writer 改写风格"
+msgstr "— affects resume_writer rewrite style"
+
+#: compass/templates/feedback/dashboard.html:16
+msgid "（仅 jobs）— 按地区设置 yearly 阈值，低于自动降 Tier"
+msgstr "(jobs only) — yearly threshold per region; below auto-demotes Tier"
+
+#: compass/templates/feedback/dashboard.html:19
+msgid "thumbs 不应该是礼仪动作。你反馈过的偏好系统真的会读——这页是让你"
+msgstr ""
+"Thumbs shouldn't be a ritual. Your feedback is actually read — this page lets"
+" you"
+
+#: compass/templates/feedback/dashboard.html:19
+msgid "看见这件事"
+msgstr "see this happen"
+
+#: compass/templates/feedback/dashboard.html:22
+msgid "顶部红色 banner 报\"stated vs revealed 分歧\"时——必须来处理"
+msgstr "When the red banner reports 'stated vs revealed mismatch' — must handle it"
+
+#: compass/templates/feedback/dashboard.html:23
+msgid "觉得推送跑偏 → 看下当前生效偏好是不是合你预期"
+msgstr "Feed feels off → check whether active preferences match your expectations"
+
+#: compass/templates/feedback/dashboard.html:24
+msgid "每周一次扫一眼，过期偏好考虑续期或放手"
+msgstr "Weekly: scan, decide whether to extend expired prefs or let go"
+
+#: compass/templates/funnel/dashboard.html:11
+msgid "时间窗口"
+msgstr "Time window"
+
+#: compass/templates/funnel/dashboard.html:22
+msgid "7 阶段转化漏斗："
+msgstr "7-stage conversion funnel:"
+
+#: compass/templates/funnel/dashboard.html:22
+msgid "。每阶段的转化率显式可见，加上 by-Tier 分布。"
+msgstr ". Per-stage conversion rates are explicit, plus a by-Tier breakdown."
+
+#: compass/templates/funnel/dashboard.html:24
+msgid "很多人投了几十个简历没回响——但不知道是哪一步坏了：JD 不准 / 简历过不了 ATS / 面试表现差 / 定位偏了。漏斗让你"
+msgstr ""
+"Many apply to dozens with no response — but can't tell which step broke: JD "
+"mismatch / resume fails ATS / interview / positioning. The funnel lets you"
+
+#: compass/templates/funnel/dashboard.html:24
+msgid "看见瓶颈"
+msgstr "see the bottleneck"
+
+#: compass/templates/funnel/dashboard.html:24
+#, python-format
+msgid "——比如 applied → interview 转化只有 5%%，那是简历问题不是定位问题。"
+msgstr "— e.g. applied → interview at 5%% is a resume problem, not positioning."
+
+#: compass/templates/funnel/dashboard.html:25
+msgid "配合"
+msgstr "Combined with"
+
+#: compass/templates/funnel/dashboard.html:25
+#: compass/templates/gmail/overview.html:5
+msgid "Gmail 集成"
+msgstr "Gmail integration"
+
+#: compass/templates/funnel/dashboard.html:25
+msgid "，applied/interview/offer/rejected 状态可"
+msgstr ", applied/interview/offer/rejected status can"
+
+#: compass/templates/funnel/dashboard.html:25
+msgid "自动"
+msgstr "automatically"
+
+#: compass/templates/funnel/dashboard.html:25
+msgid "从邮件检测——不用手动改。"
+msgstr "be detected from email — no manual updates needed."
+
+#: compass/templates/funnel/dashboard.html:28
+msgid "每周一次扫一眼整体转化率"
+msgstr "Weekly: scan overall conversion rates"
+
+#: compass/templates/funnel/dashboard.html:29
+msgid "感觉\"投了很多没回音\"时——找瓶颈环节"
+msgstr "When you feel 'sent many, no response' — find the bottleneck"
+
+#: compass/templates/funnel/dashboard.html:30
+msgid "看 by-Tier 分布——Tier 1/2/3 哪一档实际转化最高（验证 5-tier 是否合理）"
+msgstr ""
+"Check by-Tier — which of Tier 1/2/3 actually converts best (validates the "
+"5-tier model)"
+
+#: compass/templates/funnel/dashboard.html:89
+msgid "按 Tier 分布"
+msgstr "By Tier"
+
+#: compass/templates/funnel/dashboard.html:103
+msgid "转化率"
+msgstr "Conversion rate"
+
+#: compass/templates/funnel/dashboard.html:139
+msgid "→应聘率"
+msgstr "→ application rate"
+
+#: compass/templates/funnel/dashboard.html:140
+msgid "→面试率"
+msgstr "→ interview rate"
+
+#: compass/templates/funnel/dashboard.html:168
+msgid "暂无数据。"
+msgstr "No data yet."
+
+#: compass/templates/funnel/dashboard.html:178
+msgid "🪞 怎么看这些切片"
+msgstr "🪞 How to read these slices"
+
+#: compass/templates/funnel/dashboard.html:180
+msgid "scraped 数量大但 applied 少"
+msgstr "Scraped many but applied few"
+
+#: compass/templates/funnel/dashboard.html:180
+msgid "— 说明那个来源/地区/角色你不感兴趣，但抓了——考虑加黑名单或调整 keywords"
+msgstr ""
+"— that source/region/role doesn't interest you — consider blacklist or "
+"keyword tweaks"
+
+#: compass/templates/funnel/dashboard.html:181
+msgid "applied 多但 interview 率低"
+msgstr "Many applied, low interview rate"
+
+#: compass/templates/funnel/dashboard.html:181
+msgid "— 简历对那类岗位可能不准——简历改写时调整针对性"
+msgstr "— resume may not fit that role type — adjust targeting in rewrites"
+
+#: compass/templates/funnel/dashboard.html:182
+msgid "interview 率高的来源/角色"
+msgstr "Sources/roles with high interview rate"
+
+#: compass/templates/funnel/dashboard.html:182
+msgid "— 把它当 signal——下次抓取多投资源/精力到这些方向"
+msgstr "— treat as signal — invest more resources/effort there next scrape"
+
+#: compass/templates/funnel/dashboard.html:183
+msgid "某个 key 出现 offer"
+msgstr "An offer appeared for some keyword"
+
+#: compass/templates/funnel/dashboard.html:183
+msgid "— 那是你真正成功的渠道——记下来，下个月继续走这条路"
+msgstr "— that's your real win channel — record it, double down next month"
+
+#: compass/templates/gmail/overview.html:8
+msgid "自动更新状态"
+msgstr "Auto-update status"
+
+#: compass/templates/gmail/overview.html:16
+msgid "授权 Compass 读你的 Gmail（只读，scope: gmail.readonly）。点同步后："
+msgstr ""
+"Authorize Compass to read your Gmail (readonly, scope: gmail.readonly). After"
+" sync:"
+
+#: compass/templates/gmail/overview.html:18
+msgid "抓最近 14 天匹配求职关键词的邮件"
+msgstr "Fetch emails from the last 14 days matching job-search keywords"
+
+#: compass/templates/gmail/overview.html:19
+msgid ""
+"LLM 分类每封：application_received / interview_invite / rejection / offer / "
+"scheduling / follow_up / not_job_related"
+msgstr ""
+"LLM classifies each: application_received / interview_invite / rejection / "
+"offer / scheduling / follow_up / not_job_related"
+
+#: compass/templates/gmail/overview.html:20
+msgid "按公司+岗位模糊匹配到 Compass 里的 Job"
+msgstr "Fuzzy-match by company + role to Compass Jobs"
+
+#: compass/templates/gmail/overview.html:21
+msgid "自动更新"
+msgstr "Auto-update"
+
+#: compass/templates/gmail/overview.html:21
+msgid "+ 写 ReflectionEvent"
+msgstr "+ write a ReflectionEvent"
+
+#: compass/templates/gmail/overview.html:23
+msgid "为什么需要它（funnel 闭环的关键缺失）"
+msgstr "Why this exists (the missing piece in the funnel loop)"
+
+#: compass/templates/gmail/overview.html:24
+msgid "Compass 的漏斗追踪 status (applied/interview/offer)——但"
+msgstr "Compass's funnel tracks status (applied/interview/offer) — but"
+
+#: compass/templates/gmail/overview.html:24
+msgid "几乎没人会手动改 status"
+msgstr "almost nobody updates status manually"
+
+#: compass/templates/gmail/overview.html:24
+msgid "。结果 funnel 数据永远是片段，calibration learner 拿不到真投递结果。"
+msgstr ""
+". Funnel data stays fragmented; the calibration learner never sees real "
+"submission outcomes."
+
+#: compass/templates/gmail/overview.html:25
+msgid ""
+"Gmail 集成 = 让\"投递结果\"自动从邮件回流。这是 Reflective Flywheel 真正闭环的来源——calibration "
+"第一次能看到\"我 thumbs-up 的工作 vs 实际拿 offer 的工作\"对照。"
+msgstr ""
+"Gmail integration = submission outcomes flow back automatically from email. "
+"This is the real closing of the Reflective Flywheel — calibration can finally"
+" compare 'jobs I thumbs-upped vs jobs that actually became offers'."
+
+#: compass/templates/gmail/overview.html:28
+msgid "第一次：配置 OAuth client_secret + 授权（一次性，5 分钟）"
+msgstr "First time: configure OAuth client_secret + authorize (one-time, 5 min)"
+
+#: compass/templates/gmail/overview.html:29
+msgid "每周一次手动点\"同步\"——更新过去 14 天 status 变化"
+msgstr "Weekly: click 'Sync' — refreshes status changes from the past 14 days"
+
+#: compass/templates/gmail/overview.html:30
+msgid "看到 funnel 数据怪（applied 数量明显少于实际投递）→ 跑同步"
+msgstr "Funnel data looks off (applied count << real apps) → run sync"
+
+#: compass/templates/gmail/overview.html:32
+msgid "隐私（重要）"
+msgstr "Privacy (important)"
+
+#: compass/templates/gmail/overview.html:34
+msgid "只读 Gmail（不能发 / 不能改）"
+msgstr "Read-only Gmail (cannot send / cannot modify)"
+
+#: compass/templates/gmail/overview.html:35
+msgid "邮件正文用完即弃——不持久化到 Compass DB"
+msgstr "Email bodies are discarded after use — not persisted to Compass DB"
+
+#: compass/templates/gmail/overview.html:36
+msgid "只存\"分类结果 + subject 摘要\""
+msgstr "Only stores 'classification result + subject summary'"
+
+#: compass/templates/gmail/overview.html:37
+msgid "OAuth token 在本机；可在 myaccount.google.com 撤销"
+msgstr "OAuth token is local; revoke at myaccount.google.com"
+
+#: compass/templates/gmail/overview.html:43
+msgid "当前状态"
+msgstr "Current status"
+
+#: compass/templates/gmail/overview.html:63
+msgid "第一次使用：配置 Google OAuth"
+msgstr "First-time use: configure Google OAuth"
+
+#: compass/templates/gmail/overview.html:65
+msgid "访问"
+msgstr "Visit"
+
+#: compass/templates/gmail/overview.html:66
+msgid "启用 Gmail API（如尚未启用）"
+msgstr "Enable the Gmail API (if not already)"
+
+#: compass/templates/gmail/overview.html:67
+msgid "创建一个 OAuth 2.0 Client ID，类型选"
+msgstr "Create an OAuth 2.0 Client ID, type:"
+
+#: compass/templates/gmail/overview.html:68
+msgid "下载 client secret JSON，重命名为"
+msgstr "Download the client secret JSON, rename to"
+
+#: compass/templates/gmail/overview.html:71
+msgid "放到这个目录（自动跟随程序所在位置）："
+msgstr "Place in this directory (auto-follows the app location):"
+
+#: compass/templates/gmail/overview.html:91
+msgid "回到这里点"
+msgstr "Come back here and click"
+
+#: compass/templates/gmail/overview.html:91
+#: compass/templates/gmail/overview.html:100
+msgid "同步"
+msgstr "Sync"
+
+#: compass/templates/gmail/overview.html:91
+msgid "按钮 — Compass 会引导你完成 OAuth 浏览器授权流程"
+msgstr "button — Compass walks you through the OAuth browser flow"
+
+#: compass/templates/gmail/overview.html:101
+msgid "扫描你 Gmail 里过去 14 天与求职相关的邮件，LLM 分类后**自动更新** Compass 中匹配 job 的状态。"
+msgstr ""
+"Scans your Gmail for the last 14 days of job-related emails, classifies with "
+"LLM, and **auto-updates** matching job status in Compass."
+
+#: compass/templates/gmail/overview.html:115
+msgid "隐私说明"
+msgstr "Privacy notes"
+
+#: compass/templates/gmail/overview.html:117
+msgid "Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件"
+msgstr "Compass uses Gmail readonly scope — cannot send or modify"
+
+#: compass/templates/gmail/overview.html:118
+msgid "邮件正文用完即弃——不持久化邮件内容到 Compass DB"
+msgstr "Email bodies are discarded — content is never persisted in Compass DB"
+
+#: compass/templates/gmail/overview.html:119
+msgid "只存\"分类结果 + subject 摘要\"作为 ReflectionEvent"
+msgstr "Only stores 'classification + subject summary' as a ReflectionEvent"
+
+#: compass/templates/gmail/overview.html:120
+msgid "OAuth token 存在本机"
+msgstr "OAuth token lives locally"
+
+#: compass/templates/gmail/overview.html:120
+msgid "——可随时删除撤销"
+msgstr "— delete to revoke anytime"
+
+#: compass/templates/gmail/overview.html:121
+msgid "你也可以在"
+msgstr "You can also revoke at"
+
+#: compass/templates/gmail/overview.html:121
+msgid "Google Account 权限页"
+msgstr "Google Account permissions page"
+
+#: compass/templates/gmail/overview.html:121
+msgid "撤销 Compass 访问"
+msgstr "revoke Compass access"
+
+#: compass/templates/gmail/result.html:5
+msgid "← 返回 Gmail"
+msgstr "← Back to Gmail"
+
+#: compass/templates/gmail/result.html:7
+msgid "Gmail 同步结果"
+msgstr "Gmail sync result"
+
+#: compass/templates/gmail/result.html:10
+msgid "统计"
+msgstr "Stats"
+
+#: compass/templates/gmail/result.html:12
+msgid "扫描邮件:"
+msgstr "Emails scanned:"
+
+#: compass/templates/gmail/result.html:13
+msgid "识别为求职邮件:"
+msgstr "Identified as job-related:"
+
+#: compass/templates/gmail/result.html:14
+msgid "匹配到 Compass job:"
+msgstr "Matched to Compass job:"
+
+#: compass/templates/gmail/result.html:15
+msgid "自动更新状态:"
+msgstr "Auto-updated status:"
+
+#: compass/templates/gmail/result.html:17
+msgid "分类分布:"
+msgstr "Classification breakdown:"
+
+#: compass/templates/gmail/result.html:26
+msgid "详细记录"
+msgstr "Detailed records"
+
+#: compass/templates/gmail/result.html:30
+msgid "邮件主题"
+msgstr "Email subject"
+
+#: compass/templates/gmail/result.html:31
+#: compass/templates/jobs/_match_card.html:11
+#: compass/templates/jobs/_match_card.html:28
+msgid "分类"
+msgstr "Category"
+
+#: compass/templates/gmail/result.html:33
+msgid "匹配?"
+msgstr "Match?"
+
+#: compass/templates/gmail/result.html:34
+msgid "状态变了?"
+msgstr "Status changed?"
+
+#: compass/templates/identity/_fact_card.html:12
+msgid "✓ 用户访谈验证"
+msgstr "✓ User-interview verified"
+
+#: compass/templates/identity/_fact_card.html:34
+msgid "演变 — 看这条改过几次、来自哪个 job、可以回滚到旧版"
+msgstr ""
+"Evolution — see how often this changed, from which job, and roll back to an "
+"older version"
+
+#: compass/templates/identity/_fact_card.html:39
+msgid "LLM 针对这条 fact 主动问你 3-5 个深挖问题（量化 / 影响 / 角色），提炼出更精确的 sub-facts。改写时这些细节让 LLM 不用猜。"
+msgstr ""
+"LLM asks 3-5 deep-dive questions on this fact (quantify / impact / role) and "
+"synthesizes more precise sub-facts. Rewrites won't have to guess."
+
+#: compass/templates/identity/_fact_card.html:40
+msgid "🎤 访谈深挖"
+msgstr "🎤 Interview deep-dive"
+
+#: compass/templates/identity/_fact_card.html:44
+msgid "软删除（隐藏不显示）— 不影响历史改写，DB 里仍在，可恢复"
+msgstr "Soft-delete (hide) — past rewrites unaffected, still in DB, recoverable"
+
+#: compass/templates/identity/fact_history.html:7
+msgid "📜 这一条的演变"
+msgstr "📜 This fact's evolution"
+
+#: compass/templates/identity/fact_history.html:9
+msgid "修订，旧记录永远在。"
+msgstr "revisions; old records persist forever."
+
+#: compass/templates/identity/fact_history.html:13
+#: compass/templates/identity/sediments.html:14
+msgid "← 返回 fact 列表"
+msgstr "← Back to fact list"
+
+#: compass/templates/identity/fact_history.html:20
+#: compass/templates/identity/fact_history.html:85
+msgid "当前"
+msgstr "Current"
+
+#: compass/templates/identity/fact_history.html:34
+msgid "✎ 直接编辑当前文本"
+msgstr "✎ Edit the current text directly"
+
+#: compass/templates/identity/fact_history.html:36
+msgid "修订。想基于某个旧版微调？先在下面点 ↺ 把它设为当前，再回来编辑。"
+msgstr ""
+"revisions. Want to tweak an older version? Click ↺ to set it current, then "
+"edit."
+
+#: compass/templates/identity/fact_history.html:44
+msgid "为什么改？(可选，会写进修订 note)"
+msgstr "Why the change? (optional, written to revision note)"
+
+#: compass/templates/identity/fact_history.html:46
+msgid "💾 保存为新修订"
+msgstr "💾 Save as new revision"
+
+#: compass/templates/identity/fact_history.html:106
+msgid "设为当前 — 会新建一条 rolled_back 修订"
+msgstr "Set as current — creates a rolled_back revision"
+
+#: compass/templates/identity/fact_history.html:123
+msgid "没有历史记录。"
+msgstr "No history yet."
+
+#: compass/templates/identity/fact_history.html:128
+msgid "为什么不能删除某次修订"
+msgstr "Why a single revision can't be deleted"
+
+#: compass/templates/identity/fact_history.html:128
+msgid ""
+"：删一条中间修订会让后面的修订失去\"基于的版本\"，语义崩塌（Git 也是这样设计的）。想\"撤销\"某次改动？点更早一版的「↺ 设为当前」就行 — "
+"不删历史，append 一条新版即可。"
+msgstr ""
+": deleting a mid-history revision orphans later ones (semantically broken — "
+"Git works the same way). To 'undo' a change: click ↺ Set as current on an "
+"older version — append-only, never delete history."
+
+#: compass/templates/identity/interview.html:5
+#: compass/templates/identity/upload.html:5
+msgid "← 返回身份"
+msgstr "← Back to identity"
+
+#: compass/templates/identity/interview.html:7
+msgid "访谈式发现"
+msgstr "Interview-driven discovery"
+
+#: compass/templates/identity/interview.html:13
+msgid "原始 fact"
+msgstr "Original fact"
+
+#: compass/templates/identity/interview.html:22
+msgid "如实回答 — 不知道就空着"
+msgstr "Answer honestly — leave blank if unsure"
+
+#: compass/templates/identity/interview.html:28
+msgid "💾 保存（继续编辑）"
+msgstr "💾 Save (keep editing)"
+
+#: compass/templates/identity/interview.html:29
+msgid "✓ 完成访谈 + 合成 facts"
+msgstr "✓ Finish interview + synthesize facts"
+
+#: compass/templates/identity/overview.html:13
+msgid ""
+"事实层 — 你简历的\"main 分支\"。改写流水线产生的 variants 只在沙盒里生效；点「📌 沉淀」才会更新这里。每条 fact "
+"都有完整修订历史，可单独回滚。"
+msgstr ""
+"Facts layer — your resume's 'main' branch. Rewrite-pipeline variants only "
+"live in the sandbox; click '📌 Sediment' to update here. Every fact has a "
+"complete revision history and can be rolled back individually."
+
+#: compass/templates/identity/overview.html:19
+msgid "你的 resume facts —— 原子事实（比如\"Built X in coursework\"）。每个 fact 有"
+msgstr "Your resume facts — atomic facts (e.g. 'Built X in coursework'). Each fact has"
+
+#: compass/templates/identity/overview.html:19
+msgid "（experience / education / skill / project / language / certification）+ 可选"
+msgstr ""
+"(experience / education / skill / project / language / certification) + "
+"optional"
+
+#: compass/templates/identity/overview.html:19
+msgid "（学历 / 语言级别 / 工作日期等会触发 L5 硬拦截的）。"
+msgstr ""
+"(education / language level / employment dates etc. that trigger L5 hard-"
+"block)."
+
+#: compass/templates/identity/overview.html:20
+msgid "为什么需要它（Git 模型搬到简历）"
+msgstr "Why this exists (Git model applied to resumes)"
+
+#: compass/templates/identity/overview.html:21
+msgid ""
+"事实是 main 分支。每份针对某 job 改写的简历是 PR（RewriteAttempt + Variants）。直到你点「📌 沉淀」之前，main "
+"不会动；沉淀 = merge to main，会写进 fact 的修订历史，永远可回滚。这样防止\"在简历 A 写 5 years，简历 B 写 6 "
+"years\"的渐进漂移——不同 variants 共享同一 source of truth。"
+msgstr ""
+"Facts are the main branch. Each job-targeted rewrite is a PR (RewriteAttempt "
+"+ Variants). Until you click '📌 Sediment', main is untouched; sedimenting = "
+"merge-to-main, written into fact revision history, always rollback-able. "
+"Prevents drift like 'CV A says 5 years, CV B says 6'; every variant shares "
+"one source of truth."
+
+#: compass/templates/identity/overview.html:24
+msgid "第一次使用"
+msgstr "First use"
+
+#: compass/templates/identity/overview.html:24
+msgid "：上传简历 → LLM 抽 facts"
+msgstr ": upload resume → LLM extracts facts"
+
+#: compass/templates/identity/overview.html:25
+msgid "新经历（升职 / 新项目）→ 上传新简历建新 IdentityVersion"
+msgstr ""
+"New experience (promotion / new project) → upload a fresh resume to create a "
+"new IdentityVersion"
+
+#: compass/templates/identity/overview.html:26
+msgid "觉得某个 fact 不再代表你 → 点 🗑 停用（不删，archive）"
+msgstr "Fact no longer represents you → click 🗑 to deactivate (archive, not delete)"
+
+#: compass/templates/identity/overview.html:27
+msgid "对某个 fact 的 explanation 不够清晰 → 🎤 跑访谈深挖"
+msgstr "A fact's explanation feels unclear → 🎤 run interview deep-dive"
+
+#: compass/templates/identity/overview.html:34
+#: compass/templates/resume/workbench.html:38
+msgid "还没有上传简历。"
+msgstr "No resume uploaded yet."
+
+#: compass/templates/identity/overview.html:35
+msgid "📤 上传简历"
+msgstr "📤 Upload resume"
+
+#: compass/templates/identity/overview.html:40
+msgid "当前身份版本"
+msgstr "Current identity version"
+
+#: compass/templates/identity/overview.html:45
+msgid "↻ 上传新版本"
+msgstr "↻ Upload new version"
+
+#: compass/templates/identity/overview.html:59
+msgid "编辑 fact"
+msgstr "Edit fact"
+
+#: compass/templates/identity/overview.html:68
+msgid "文本"
+msgstr "Text"
+
+#: compass/templates/identity/overview.html:72
+msgid "敏感类别（触发 L5 硬拦截 — 无关变换的禁止）"
+msgstr "Sensitive category (triggers L5 hard-block — no irrelevant transforms)"
+
+#: compass/templates/identity/overview.html:75
+msgid "（不敏感）"
+msgstr "(not sensitive)"
+
+#: compass/templates/identity/overview.html:76
+msgid "education_credential — 学历/学位"
+msgstr "education_credential — diploma/degree"
+
+#: compass/templates/identity/overview.html:77
+msgid "language_level — 语言等级"
+msgstr "language_level — language proficiency"
+
+#: compass/templates/identity/overview.html:78
+msgid "employment_dates — 任职日期"
+msgstr "employment_dates — employment dates"
+
+#: compass/templates/identity/overview.html:79
+msgid "health_status — 健康/出勤"
+msgstr "health_status — health/attendance"
+
+#: compass/templates/identity/overview.html:80
+msgid "legal_status — 签证/工作许可"
+msgstr "legal_status — visa/work permit"
+
+#: compass/templates/identity/overview.html:88
+msgid "改动原因（可选 — 留 audit log）"
+msgstr "Reason for change (optional — written to audit log)"
+
+#: compass/templates/identity/overview.html:90
+msgid "例：LLM 把 EE 写成了 ME"
+msgstr "e.g. LLM wrote 'EE' as 'ME'"
+
+#: compass/templates/identity/overview.html:96
+msgid "✓ 保存"
+msgstr "✓ Save"
+
+#: compass/templates/identity/sediments.html:7
+msgid "📌 沉淀历史"
+msgstr "📌 Sedimentation history"
+
+#: compass/templates/identity/sediments.html:20
+msgid "还没有任何沉淀。"
+msgstr "No sedimentations yet."
+
+#: compass/templates/identity/sediments.html:65
+msgid "查看这条的演变 →"
+msgstr "View this one's evolution →"
+
+#: compass/templates/identity/sediments.html:83
+msgid "没有\"删除某次沉淀\"按钮是有意的"
+msgstr "There's no 'delete a single sedimentation' button — by design"
+
+#: compass/templates/identity/sediments.html:83
+msgid ""
+"：删除中间的沉淀会让后续 fact 修订失去\"基于的版本\"。\n"
+"  想撤销某次沉淀的影响？进对应的 fact 历史，把更早的版本设为当前即可（append-only）。"
+msgstr ""
+": deleting a mid-history sedimentation orphans later fact revisions. To undo "
+"a sedimentation's effect: in the fact's history, click ↺ Set as current on an"
+" earlier version (append-only)."
+
+#: compass/templates/identity/upload.html:7
+msgid "上传简历"
+msgstr "Upload resume"
+
+#: compass/templates/identity/upload.html:8
+msgid "支持 PDF / DOCX / TXT / MD。Compass 会用 LLM 抽取结构化 profile，然后拆解成不可变 facts。"
+msgstr ""
+"Supports PDF / DOCX / TXT / MD. Compass uses LLM to extract a structured "
+"profile, then decomposes into immutable facts."
+
+#: compass/templates/identity/upload.html:14
+msgid "📤 上传 + 抽取"
+msgstr "📤 Upload + extract"
+
+#: compass/templates/jobs/_effort_pack.html:4
+msgid "📋 投递准备包"
+msgstr "📋 Application prep pack"
+
+#: compass/templates/jobs/_effort_pack.html:7
+msgid "分钟。"
+msgstr "minutes."
+
+#: compass/templates/jobs/_effort_pack.html:36
+#: compass/templates/jobs/_step_action_buttons.html:8
+msgid "撤销手动 done"
+msgstr "Undo manual done"
+
+#: compass/templates/jobs/_effort_pack.html:40
+msgid "手动标 done"
+msgstr "Mark done manually"
+
+#: compass/templates/jobs/_effort_pack.html:44
+#: compass/templates/jobs/_step_action_buttons.html:22
+msgid "撤销跳过"
+msgstr "Undo skip"
+
+#: compass/templates/jobs/_effort_pack.html:53
+msgid "跳过这步（不适用此 job）"
+msgstr "Skip this step (n/a for this job)"
+
+#: compass/templates/jobs/_effort_pack.html:67
+msgid "🎉 全部完成"
+msgstr "🎉 All done"
+
+#: compass/templates/jobs/_list_results.html:37
+msgid "抓取时间"
+msgstr "Scrape time"
+
+#: compass/templates/jobs/_list_results.html:39
+msgid "发布时间"
+msgstr "Posted"
+
+#: compass/templates/jobs/_list_results.html:41
+msgid "详情 →"
+msgstr "Details →"
+
+#: compass/templates/jobs/_list_results.html:60
+msgid "清除全部过滤"
+msgstr "Clear all filters"
+
+#: compass/templates/jobs/_list_results.html:111
+#: compass/templates/jobs/_match_card.html:65
+msgid "未分类"
+msgstr "Unclassified"
+
+#: compass/templates/jobs/_list_results.html:130
+msgid "没匹配的岗位。换个过滤 / 搜索词试试？"
+msgstr "No matching jobs. Try different filters / keywords?"
+
+#: compass/templates/jobs/_list_results.html:131
+msgid "清除全部"
+msgstr "Clear all"
+
+#: compass/templates/jobs/_list_results.html:154
+#: compass/templates/themes/inspire.html:68
+msgid "建议"
+msgstr "Suggestion"
+
+#: compass/templates/jobs/_list_results.html:159
+msgid "📥 用现有意图重新抓取"
+msgstr "📥 Re-scrape with current intent"
+
+#: compass/templates/jobs/_list_results.html:161
+msgid "🧭 调整求职意图"
+msgstr "🧭 Adjust search intent"
+
+#: compass/templates/jobs/_list_results.html:165
+msgid "还没跑过抓取 — 上方面板填一组关键词 + 地点，点📥 抓取。"
+msgstr ""
+"No scrapes yet — in the panel above, fill a keyword + location group and "
+"click 📥 Scrape."
+
+#: compass/templates/jobs/_list_results.html:166
+msgid "或从 v1 数据迁移："
+msgstr "Or migrate from v1 data:"
+
+#: compass/templates/jobs/_match_card.html:5
+msgid "分类失败:"
+msgstr "Classification failed:"
+
+#: compass/templates/jobs/_match_card.html:29
+msgid "尚未分类。点击下方\"重新分类\"运行 LLM。"
+msgstr "Not yet classified. Click 'Reclassify' below to run the LLM."
+
+#: compass/templates/jobs/_match_card.html:34
+msgid "动作"
+msgstr "Action"
+
+#: compass/templates/jobs/_match_card.html:44
+msgid "🔄 重新分类"
+msgstr "🔄 Reclassify"
+
+#: compass/templates/jobs/_match_card.html:50 compass/templates/jobs/detail.html:61
+msgid "🔗 打开原 JD"
+msgstr "🔗 Open original JD"
+
+#: compass/templates/jobs/_match_card.html:60
+msgid "是什么"
+msgstr "What it is"
+
+#: compass/templates/jobs/_match_card.html:60
+msgid "：手动让 LLM 再看一遍这条 JD，重新打 Tier 1-5、score、reason。"
+msgstr ": manually re-runs the LLM on this JD to re-score Tier 1-5, score, reason."
+
+#: compass/templates/jobs/_match_card.html:61
+msgid "什么时候用"
+msgstr "When to use"
+
+#: compass/templates/jobs/_match_card.html:61
+msgid "（4 个典型场景）："
+msgstr "(4 typical scenarios):"
+
+#: compass/templates/jobs/_match_card.html:63
+msgid "觉得 LLM 之前判错了 — 让它再看一次（可能拿到不同结果，因为 brief 变了）"
+msgstr ""
+"Think the LLM mis-judged — let it look again (different result possible, "
+"brief has changed)"
+
+#: compass/templates/jobs/_match_card.html:64
+msgid "你刚改了"
+msgstr "You just changed your"
+
+#: compass/templates/jobs/_match_card.html:64
+msgid "偏好 brief"
+msgstr "preference brief"
+
+#: compass/templates/jobs/_match_card.html:64
+msgid "— 想看 LLM 现在怎么判"
+msgstr "— see how the LLM judges now"
+
+#: compass/templates/jobs/_match_card.html:65
+msgid "这条之前"
+msgstr "This one previously"
+
+#: compass/templates/jobs/_match_card.html:65
+msgid "（抓取时没配 LLM API key）— 现在补分类"
+msgstr "(LLM API key wasn't set at scrape time) — classify now"
+
+#: compass/templates/jobs/_match_card.html:66
+msgid "想刷新 score / 看新数据下还合不合适"
+msgstr "Refresh the score / see if it still fits"
+
+#: compass/templates/jobs/_outreach_log.html:11
+msgid "待发草稿"
+msgstr "Pending drafts"
+
+#: compass/templates/jobs/_outreach_log.html:16
+msgid "已发"
+msgstr "Sent"
+
+#: compass/templates/jobs/_outreach_log.html:21
+msgid "已回应"
+msgstr "Responded"
+
+#: compass/templates/jobs/_outreach_log.html:30
+msgid "带来面试"
+msgstr "Led to interview"
+
+#: compass/templates/jobs/_outreach_log.html:43
+msgid "草稿不发出去 = 0 价值"
+msgstr "Unsent drafts = 0 value"
+
+#: compass/templates/jobs/_outreach_log.html:43
+msgid "— 现在花 30 秒发掉。"
+msgstr "— spend 30 seconds and send."
+
+#: compass/templates/jobs/_outreach_log.html:56
+msgid "看 / 隐藏 草稿原文（点开回忆当初写了啥）"
+msgstr "Show / hide draft (open to recall what you wrote)"
+
+#: compass/templates/jobs/_outreach_log.html:64
+msgid "去 LinkedIn / 联系人页面，复制草稿粘贴发送"
+msgstr "Go to LinkedIn / contact page; copy + paste the draft to send"
+
+#: compass/templates/jobs/_outreach_log.html:71
+msgid "标记为已发出 — 草稿移到「已发送」区，effort pack 自动 ✓"
+msgstr "Mark as sent — draft moves to Sent; effort pack auto-✓"
+
+#: compass/templates/jobs/_outreach_log.html:102
+msgid "看草稿原文（回忆当初写的啥）"
+msgstr "View draft (recall what you wrote)"
+
+#: compass/templates/jobs/_outreach_log.html:108
+msgid "✓ 已回应"
+msgstr "✓ Responded"
+
+#: compass/templates/jobs/_outreach_log.html:117
+msgid "🎯 带来面试"
+msgstr "🎯 Led to interview"
+
+#: compass/templates/jobs/_outreach_log.html:140
+msgid "标记收到正向回应"
+msgstr "Mark as positive response received"
+
+#: compass/templates/jobs/_outreach_log.html:140
+msgid "📥 有回应"
+msgstr "📥 Got reply"
+
+#: compass/templates/jobs/_outreach_log.html:147
+msgid "标记被拒 / 没回"
+msgstr "Mark as rejected / no reply"
+
+#: compass/templates/jobs/_outreach_log.html:147
+msgid "✗ 没结果"
+msgstr "✗ No result"
+
+#: compass/templates/jobs/_quick_feedback.html:18
+msgid "👍/👎 快速判断 · 选「为什么」"
+msgstr "👍/👎 Quick verdict · pick a 'why'"
+
+#: compass/templates/jobs/_quick_feedback.html:20
+msgid "同 axis 同 sentiment 再点 = 取消；点反方向 = 翻转。"
+msgstr "Same axis + sentiment again = cancel; opposite = flip."
+
+#: compass/templates/jobs/_quick_feedback.html:21
+msgid "想说更多 → 用页面最底「💬 详细反馈」。"
+msgstr "Want to say more → use '💬 Detailed feedback' at the bottom."
+
+#: compass/templates/jobs/_quick_feedback.html:27
+msgid "这个 job 你已标:"
+msgstr "You've marked this job:"
+
+#: compass/templates/jobs/_quick_feedback.html:42
+msgid "喜欢"
+msgstr "Like"
+
+#: compass/templates/jobs/_quick_feedback.html:46
+msgid "不喜欢"
+msgstr "Dislike"
+
+#: compass/templates/jobs/_quick_feedback.html:51
+msgid "这条吸引你的是…（点亮已选；再点取消）"
+msgstr "What attracts you about this… (highlighted = selected; click to cancel)"
+
+#: compass/templates/jobs/_quick_feedback.html:52
+msgid "这条让你不想要的是…（点亮已选；再点取消）"
+msgstr "What puts you off… (highlighted = selected; click to cancel)"
+
+#: compass/templates/jobs/_quick_feedback.html:77
+msgid "跨 jobs 累计：去重 distinct job 数（30 天内）"
+msgstr "Cumulative across jobs: distinct job count (last 30 days)"
+
+#: compass/templates/jobs/_quick_feedback.html:118
+msgid "或继续 click"
+msgstr "or keep clicking"
+
+#: compass/templates/jobs/_quick_feedback.html:129
+#: compass/templates/jobs/_quick_feedback.html:131
+msgid "为"
+msgstr "for"
+
+#: compass/templates/jobs/_status_card.html:4
+msgid "状态"
+msgstr "Status"
+
+#: compass/templates/jobs/_status_card.html:5
+msgid "当前:"
+msgstr "Current:"
+
+#: compass/templates/jobs/_step_action_buttons.html:8
+msgid "↺ 撤销 done"
+msgstr "↺ Undo done"
+
+#: compass/templates/jobs/_step_action_buttons.html:13
+msgid "手动标完成"
+msgstr "Mark done manually"
+
+#: compass/templates/jobs/_step_action_buttons.html:13
+msgid "✓ 标完成"
+msgstr "✓ Mark done"
+
+#: compass/templates/jobs/_step_action_buttons.html:17
+msgid "跳过这步"
+msgstr "Skip this step"
+
+#: compass/templates/jobs/_step_action_buttons.html:17
+msgid "– 跳过"
+msgstr "– Skip"
+
+#: compass/templates/jobs/_step_action_buttons.html:22
+msgid "↺ 撤销 skip"
+msgstr "↺ Undo skip"
+
+#: compass/templates/jobs/_step_action_buttons.html:25
+msgid "✓ 已自动检测完成"
+msgstr "✓ Auto-detected as done"
+
+#: compass/templates/jobs/_thumbs_card.html:6
+msgid "👍/👎 快速判断"
+msgstr "👍/👎 Quick verdict"
+
+#: compass/templates/jobs/_thumbs_card.html:9
+msgid "想说更多 → 用页面最底的「💬 详细反馈」框（LLM 会提炼成 preference brief）"
+msgstr ""
+"More to say → use '💬 Detailed feedback' at the bottom (LLM distills into "
+"preference brief)"
+
+#: compass/templates/jobs/_thumbs_card.html:18
+msgid "为什么喜欢？（可选）"
+msgstr "Why you like it (optional)"
+
+#: compass/templates/jobs/_thumbs_card.html:20
+msgid "👍 喜欢"
+msgstr "👍 Like"
+
+#: compass/templates/jobs/_thumbs_card.html:29
+msgid "为什么不合适？（可选）"
+msgstr "Why it doesn't fit (optional)"
+
+#: compass/templates/jobs/_thumbs_card.html:31
+msgid "👎 不合适"
+msgstr "👎 Doesn't fit"
+
+#: compass/templates/jobs/detail.html:6
+msgid "← 返回列表"
+msgstr "← Back to list"
+
+#: compass/templates/jobs/detail.html:15
+msgid "键盘 ← 跳上一个"
+msgstr "Keyboard ← previous"
+
+#: compass/templates/jobs/detail.html:15 compass/templates/jobs/detail.html:17
+msgid "← 上一个"
+msgstr "← Previous"
+
+#: compass/templates/jobs/detail.html:23
+msgid "键盘 → 跳下一个"
+msgstr "Keyboard → next"
+
+#: compass/templates/jobs/detail.html:23 compass/templates/jobs/detail.html:25
+msgid "下一个 →"
+msgstr "Next →"
+
+#: compass/templates/jobs/detail.html:50
+msgid "🌐 远程"
+msgstr "🌐 Remote"
+
+#: compass/templates/jobs/detail.html:216
+msgid "📖 第一步：读 JD"
+msgstr "📖 Step 1: Read the JD"
+
+#: compass/templates/jobs/detail.html:221
+msgid "2 分钟读完决定后续 30 分钟值不值得花。先看 JD，再看 LLM 给出的 Tier 判断。"
+msgstr ""
+"2 minutes of reading decides whether the next 30 min are worth spending. Read"
+" the JD first, then check the LLM's Tier verdict."
+
+#: compass/templates/jobs/detail.html:225
+msgid "JD 原文"
+msgstr "Original JD"
+
+#: compass/templates/jobs/detail.html:249
+msgid "⏳ 翻译中…"
+msgstr "⏳ Translating…"
+
+#: compass/templates/jobs/detail.html:257
+msgid "JD 关键词覆盖"
+msgstr "JD keyword coverage"
+
+#: compass/templates/jobs/detail.html:262
+msgid "绿 = 已在简历"
+msgstr "green = already in resume"
+
+#: compass/templates/jobs/detail.html:264
+msgid "橙 = JD 要但缺"
+msgstr "orange = JD wants, missing"
+
+#: compass/templates/jobs/detail.html:305
+msgid "系统判断"
+msgstr "System verdict"
+
+#: compass/templates/jobs/detail.html:317
+msgid "📝 第二步：针对此 job 改写简历"
+msgstr "📝 Step 2: Rewrite resume for this job"
+
+#: compass/templates/jobs/detail.html:345
+msgid "▶ 跑改写流水线"
+msgstr "▶ Run rewrite pipeline"
+
+#: compass/templates/jobs/detail.html:348
+msgid "📚 查看历史版本"
+msgstr "📚 View history"
+
+#: compass/templates/jobs/detail.html:364
+msgid "↻ 再跑一次会做什么"
+msgstr "↻ What re-running does"
+
+#: compass/templates/jobs/detail.html:371
+msgid "· 你的 ✓ 决定不会动"
+msgstr "· Your ✓ decisions stay"
+
+#: compass/templates/jobs/detail.html:376
+msgid "· 你改写过的版本不会丢"
+msgstr "· Edited versions are kept"
+
+#: compass/templates/jobs/detail.html:381
+msgid "· 旧建议会消失，"
+msgstr "· Old suggestions disappear,"
+
+#: compass/templates/jobs/detail.html:381
+msgid "无法恢复"
+msgstr "cannot be recovered"
+
+#: compass/templates/jobs/detail.html:386
+msgid "· 拒绝原因作为反向提示，避免生成相似版本"
+msgstr "· Rejection reasons act as negative prompts to avoid similar output"
+
+#: compass/templates/jobs/detail.html:393
+msgid "↻ 确认再跑"
+msgstr "↻ Confirm re-run"
+
+#: compass/templates/jobs/detail.html:407
+msgid "这次改写没有生成 variants — 可能是 fact-keyword 没匹配上，或简历 facts 太少。换个 job 或先补充 facts。"
+msgstr ""
+"This rewrite produced no variants — maybe fact-keywords didn't match, or you "
+"have too few resume facts. Try another job or add more facts."
+
+#: compass/templates/jobs/detail.html:411
+msgid "还没跑过改写流水线"
+msgstr "Rewrite pipeline hasn't run yet"
+
+#: compass/templates/jobs/detail.html:416
+msgid "抽 JD 关键词"
+msgstr "Extract JD keywords"
+
+#: compass/templates/jobs/detail.html:417
+msgid "把简历 facts 跟关键词配对"
+msgstr "Pair resume facts with keywords"
+
+#: compass/templates/jobs/detail.html:418
+msgid "逐 bullet 改写（多 amplification level）"
+msgstr "Rewrite bullet by bullet (multiple amplification levels)"
+
+#: compass/templates/jobs/detail.html:419
+msgid "每条做 claim grounding（防编造）"
+msgstr "Claim-ground each one (anti-fabrication)"
+
+#: compass/templates/jobs/detail.html:420
+msgid "Adversarial voice 给反对意见"
+msgstr "Adversarial voice gives counter-arguments"
+
+#: compass/templates/jobs/detail.html:421
+msgid "三角色 judge（ATS / HR 6s scan / 招聘经理）打分"
+msgstr "Three-role judge (ATS / HR 6-sec scan / hiring manager) scores"
+
+#: compass/templates/jobs/detail.html:424
+msgid "同一个页面"
+msgstr "Same page"
+
+#: compass/templates/jobs/detail.html:424
+msgid "逐条 ✓ 接受 / ✎ 编辑 / ✗ 拒绝。"
+msgstr "✓ Accept / ✎ Edit / ✗ Reject each one."
+
+#: compass/templates/jobs/detail.html:435
+msgid "🤝 第三步：联系人 + outreach"
+msgstr "🤝 Step 3: Contacts + outreach"
+
+#: compass/templates/jobs/detail.html:441
+msgid "outreach 任务已自动完成"
+msgstr "outreach task auto-completed"
+
+#: compass/templates/jobs/detail.html:441
+msgid "✓ outreach 已发"
+msgstr "✓ Outreach sent"
+
+#: compass/templates/jobs/detail.html:456
+msgid "⏳ 加载联系人中…"
+msgstr "⏳ Loading contacts…"
+
+#: compass/templates/jobs/detail.html:470
+msgid "📤 第五步：投递 + 标记 applied"
+msgstr "📤 Step 5: Apply + mark as applied"
+
+#: compass/templates/jobs/detail.html:475
+msgid "完整准备但没投出去 = 0。投递后切换状态到 applied，自动激活 cold contacts follow-up + 进入 sent 阶段。"
+msgstr ""
+"Full prep but no submission = 0. After applying, switch status to applied — "
+"auto-activates cold-contacts follow-up and enters the sent stage."
+
+#: compass/templates/jobs/detail.html:487
+msgid "🎯 第六步：面试准备"
+msgstr "🎯 Step 6: Interview prep"
+
+#: compass/templates/jobs/detail.html:492
+msgid "到了面试这步——别裸面。两件 Claude Code Skill 推荐跑："
+msgstr ""
+"When you reach the interview — don't go in cold. Two Claude Code Skills are "
+"recommended:"
+
+#: compass/templates/jobs/detail.html:495
+msgid "— 公司近况 / 团队 / 文化研究"
+msgstr "— company recent news / team / culture research"
+
+#: compass/templates/jobs/detail.html:496
+msgid "— 简历 vs JD 关键词覆盖"
+msgstr "— resume vs JD keyword coverage"
+
+#: compass/templates/jobs/kanban.html:8
+msgid "按状态分列，每个 job 一张卡。横向是 pipeline 进度。"
+msgstr "Columns by status, one card per job. Horizontal = pipeline progress."
+
+#: compass/templates/jobs/kanban.html:11 compass/templates/jobs/list.html:13
+msgid "📋 列表"
+msgstr "📋 List"
+
+#: compass/templates/jobs/kanban.html:20
+msgid "所有 jobs 按 status 列：未读 → 已看 → 已投 → 面试中 → Offer / 被拒。一眼看到自己求职 pipeline 的「形状」。"
+msgstr ""
+"All jobs by status column: unread → viewed → applied → interviewing → offer /"
+" rejected. See your pipeline 'shape' at a glance."
+
+#: compass/templates/jobs/kanban.html:21
+msgid "为什么需要它（vs 列表视图）"
+msgstr "Why this exists (vs list view)"
+
+#: compass/templates/jobs/kanban.html:22
+msgid "列表视图回答「我有哪些 jobs」，Kanban 回答「我每个阶段堆了多少东西」。看到「面试中」列只有 1 个 —"
+msgstr ""
+"List view answers 'what jobs do I have'; Kanban answers 'how much is piled in"
+" each stage'. Seeing only 1 in 'interviewing' —"
+
+#: compass/templates/jobs/kanban.html:22
+msgid "瓶颈在 applied → interview 那一步"
+msgstr "bottleneck is at applied → interview"
+
+#: compass/templates/jobs/kanban.html:22
+msgid "，不是源头不够。"
+msgstr ", not lack of supply."
+
+#: compass/templates/jobs/kanban.html:23
+msgid "注意"
+msgstr "Note"
+
+#: compass/templates/jobs/kanban.html:25
+msgid "Tier 5（客观不可达）和 status=passed 不显示——pipeline 板上的噪音"
+msgstr ""
+"Tier 5 (objectively out of reach) and status=passed are hidden — noise on the"
+" pipeline board"
+
+#: compass/templates/jobs/kanban.html:26
+msgid "点卡跳详情页；状态切换在详情页改完会自动反映这里"
+msgstr "Click a card for details; status changes there reflect here automatically"
+
+#: compass/templates/jobs/kanban.html:27
+msgid "每列上方的数字 = 该列卡数"
+msgstr "Number above each column = card count for that column"
+
+#: compass/templates/jobs/kanban.html:113
+msgid "空"
+msgstr "Empty"
+
+#: compass/templates/jobs/list.html:10
+msgid "按 Tier 分组——核心 / 邻近 / 学习 / 远距 / 不可达。Tier 5 静默存档。"
+msgstr ""
+"Grouped by Tier — core / adjacent / learning / distant / unreachable. Tier 5 "
+"silently archived."
+
+#: compass/templates/jobs/list.html:22
+msgid "jobspy 多站抓回来的 jobs，按 5 个 Tier 分组："
+msgstr "Jobs from multi-site jobspy scrape, grouped into 5 Tiers:"
+
+#: compass/templates/jobs/list.html:24
+msgid "Tier 1 核心专业圈"
+msgstr "Tier 1 — core specialty"
+
+#: compass/templates/jobs/list.html:24
+#, python-format
+msgid "— 你背景直接对口的（推送主力，70%% 配额）"
+msgstr "— directly matches your background (main feed, 70%% quota)"
+
+#: compass/templates/jobs/list.html:25
+msgid "Tier 2 邻近迁移圈"
+msgstr "Tier 2 — adjacent pivot"
+
+#: compass/templates/jobs/list.html:25
+msgid "— 你能转的相邻方向（"
+msgstr "— adjacent directions you can pivot to ("
+
+#: compass/templates/jobs/list.html:25
+msgid "反茧房甜点"
+msgstr "anti-bubble sweet spot"
+
+#: compass/templates/jobs/list.html:26
+msgid "Tier 3 可学习扩展"
+msgstr "Tier 3 — learning-reachable"
+
+#: compass/templates/jobs/list.html:26
+#, python-format
+msgid "— 补 1-2 个 skill 即可进入（带 learning_gap，10%%）"
+msgstr "— add 1-2 skills to qualify (learning_gap, 10%%)"
+
+#: compass/templates/jobs/list.html:27
+msgid "Tier 4 远距迁移"
+msgstr "Tier 4 — distant pivot"
+
+#: compass/templates/jobs/list.html:27
+msgid "— 完全转方向（默认不推，仅强信号触发）"
+msgstr "— full pivot (not pushed by default, only on strong signal)"
+
+#: compass/templates/jobs/list.html:28
+msgid "Tier 5 不可达"
+msgstr "Tier 5 — unreachable"
+
+#: compass/templates/jobs/list.html:28
+msgid "— 学历/签证/语言硬不够（永远静默存档）"
+msgstr "— hard mismatch on credentials/visa/language (always silently archived)"
+
+#: compass/templates/jobs/list.html:30
+msgid "为什么需要它（vs Job Mate 的 push/skip 二元）"
+msgstr "Why this exists (vs Job Mate's binary push/skip)"
+
+#: compass/templates/jobs/list.html:31
+#, python-format
+msgid "二元判断丢弃 90%% 信息，且消灭反茧房可能。5-tier 让\"邻近迁移\"成为显式甜点——你不用刻意找跨方向工作，系统自动给你 20%% 配额。"
+msgstr ""
+"Binary judgment drops 90%% of information and kills the anti-bubble "
+"possibility. 5-Tier makes 'adjacent pivot' an explicit sweet spot — you don't"
+" have to deliberately seek cross-field jobs; the system gives you a 20%% "
+"quota automatically."
+
+#: compass/templates/jobs/list.html:34
+msgid "配置好抓取关键词 + 地区，跑\"📥 抓取\"（多组配置支持不同地区不同关键词）"
+msgstr ""
+"Set scrape keywords + region, run '📥 Scrape' (multi-group config supports "
+"different regions/keywords)"
+
+#: compass/templates/jobs/list.html:35
+msgid "抓完进单条 job 详情页跑\"重新分类\"——LLM 给出 tier 判断"
+msgstr ""
+"After scraping, open a job's detail page and click 'Reclassify' — LLM gives a"
+" Tier verdict"
+
+#: compass/templates/jobs/list.html:36
+msgid "每天看 Tier 1（核心）+ 偶尔看 Tier 2（反茧房）—— Tier 5 永远不点"
+msgstr ""
+"Daily: read Tier 1 (core) + occasional Tier 2 (anti-bubble) — never click "
+"Tier 5"
+
+#: compass/templates/jobs/list.html:53 compass/templates/jobs/list.html:72
+#: compass/templates/jobs/list.html:84
+msgid "全部"
+msgstr "All"
+
+#: compass/templates/jobs/list.html:70
+msgid "状态:"
+msgstr "Status:"
+
+#: compass/templates/jobs/list.html:77
+msgid "⏳ 加载中…"
+msgstr "⏳ Loading…"
+
+#: compass/templates/jobs/list.html:82
+msgid "📍 地区:"
+msgstr "📍 Region:"
+
+#: compass/templates/jobs/list.html:106
+msgid "🔍 搜索 标题 / 公司 / 地点…（实时筛选当前结果）"
+msgstr "🔍 Search title / company / location… (live-filter current results)"
+
+#: compass/templates/jobs/list.html:109
+msgid "📡 全库搜："
+msgstr "📡 Full-DB search:"
+
+#: compass/templates/jobs/list.html:115
+msgid "服务端过滤关键词"
+msgstr "server-side keyword filter"
+
+#: compass/templates/jobs/list.html:120
+msgid "排序："
+msgstr "Sort:"
+
+#: compass/templates/jobs/list.html:124
+msgid "按 Tier 分组"
+msgstr "Group by Tier"
+
+#: compass/templates/jobs/list.html:126
+msgid "抓取时间 ↓"
+msgstr "Scrape time ↓"
+
+#: compass/templates/jobs/list.html:128
+msgid "抓取时间 ↑"
+msgstr "Scrape time ↑"
+
+#: compass/templates/jobs/list.html:130
+msgid "📅 按日期分组"
+msgstr "📅 Group by date"
+
+#: compass/templates/jobs/llm.html:109
+msgid "（已 .gitignore，不上传）。"
+msgstr "(in .gitignore, not uploaded)."
+
+#: compass/templates/jobs/llm.html:114
+msgid "近 30 天用量参考"
+msgstr "Last 30 days usage reference"
+
+#: compass/templates/jobs/llm.html:118
+msgid "估算 LLM 调用次数"
+msgstr "Estimated LLM calls"
+
+#: compass/templates/jobs/llm.html:120
+msgid "按 model 估算 30 天成本："
+msgstr "30-day cost estimate per model:"
+
+#: compass/templates/jobs/llm.html:141
+msgid "⚡ 一键应用预设"
+msgstr "⚡ Apply preset"
+
+#: compass/templates/jobs/llm.html:154
+msgid "应用后立即生效，不动 API Key。"
+msgstr "Applied immediately — API key untouched."
+
+#: compass/templates/jobs/llm.html:162
+msgid "claude — Anthropic 官方"
+msgstr "claude — Anthropic official"
+
+#: compass/templates/jobs/llm.html:163
+msgid "openai — OpenAI 官方"
+msgstr "openai — OpenAI official"
+
+#: compass/templates/jobs/llm.html:164
+msgid "custom — OpenAI-compatible 自定义 endpoint"
+msgstr "custom — OpenAI-compatible custom endpoint"
+
+#: compass/templates/jobs/llm.html:189
+msgid "本地部署"
+msgstr "Local deployment"
+
+#: compass/templates/jobs/llm.html:189
+msgid "（Ollama / LMStudio）的 API Key 可以填任意非空字符串。"
+msgstr "(Ollama / LMStudio) accepts any non-empty string as the API key."
+
+#: compass/templates/jobs/llm.html:199
+msgid "sk-ant-... 或 sk-proj-... 或本地任意字符串"
+msgstr "sk-ant-… or sk-proj-… or any local string"
+
+#: compass/templates/jobs/llm.html:201
+msgid "测试连接"
+msgstr "Test connection"
+
+#: compass/templates/jobs/llm.html:216
+msgid "自由输入 model id，如 deepseek-chat / llama3.3"
+msgstr "Freely enter model id, e.g. deepseek-chat / llama3.3"
+
+#: compass/templates/jobs/llm.html:239
+msgid "可选功能（ADR-0015）"
+msgstr "Optional features (ADR-0015)"
+
+#: compass/templates/jobs/llm.html:245
+msgid "五维度建议菜单（B 改动）"
+msgstr "5-dimension suggestion menu (B change)"
+
+#: compass/templates/jobs/llm.html:246
+msgid "每条 variant 多 1 次 LLM 调用生成 verb/tone 候选，UI 展开\"📊 建议分解\"panel。"
+msgstr ""
+"1 extra LLM call per variant to generate verb/tone candidates; UI expands '📊 "
+"Suggestion breakdown' panel."
+
+#: compass/templates/jobs/llm.html:253
+msgid "多语言简历渲染（E 改动）"
+msgstr "Multilingual resume rendering (E change)"
+
+#: compass/templates/jobs/llm.html:254
+msgid "按 search_config.global.user_languages 给每个 variant 翻译。每语言 +1 次 LLM。"
+msgstr ""
+"Translate each variant per search_config.global.user_languages. +1 LLM call "
+"per language."
+
+#: compass/templates/jobs/llm.html:261
+msgid "原语言 ATS 字面扫描（C 改动）"
+msgstr "Original-language ATS literal scan (C change)"
+
+#: compass/templates/jobs/llm.html:262
+msgid "judge 阶段附加 deterministic 字面命中扫描。"
+msgstr "Adds a deterministic literal-match scan in the judge stage."
+
+#: compass/templates/jobs/llm.html:262
+msgid "不调 LLM，免费。"
+msgstr "No LLM call, free."
+
+#: compass/templates/jobs/llm.html:266
+msgid "默认全关——开了之后下次 rewrite 就触发。"
+msgstr "Off by default — once on, the next rewrite triggers it."
+
+#: compass/templates/jobs/llm.html:273
+msgid "Per-step model override（高级）"
+msgstr "Per-step model override (advanced)"
+
+#: compass/templates/jobs/llm.html:281
+msgid "用 sonnet (创造/推理)"
+msgstr "Use sonnet (creative / reasoning)"
+
+#: compass/templates/jobs/llm.html:309
+msgid ""
+"自由输入 model id。本地 Ollama 可输入 <code>llama3.3</code> / "
+"<code>qwen2.5-coder:32b</code> / <code>deepseek-r1</code> 等。"
+msgstr ""
+"Free-form model id. For local Ollama, enter <code>llama3.3</code> / "
+"<code>qwen2.5-coder:32b</code> / <code>deepseek-r1</code> etc."
+
+#: compass/templates/jobs/llm.html:310
+msgid "所有 LLM 调用默认用这个。每个 model 后面的描述写明适合哪些 step。"
+msgstr ""
+"All LLM calls default to this. Each model's description states which steps it"
+" suits."
+
+#: compass/templates/jobs/llm.html:311
+msgid "⏳ 调用中..."
+msgstr "⏳ Calling…"
+
+#: compass/templates/jobs/llm.html:312
+msgid "响应正常"
+msgstr "responded OK"
+
+#: compass/templates/jobs/llm.html:313
+msgid "✗ 网络错误:"
+msgstr "✗ Network error:"
+
+#: compass/templates/jobs/pre_submit_reflection.html:5
+msgid "← 返回职位详情"
+msgstr "← Back to job detail"
+
+#: compass/templates/jobs/pre_submit_reflection.html:7
+msgid "🪞 投递前一秒"
+msgstr "🪞 One second before submitting"
+
+#: compass/templates/jobs/pre_submit_reflection.html:9
+msgid "标记为"
+msgstr "Mark as"
+
+#: compass/templates/jobs/pre_submit_reflection.html:14
+msgid "这是什么？为什么要打断我？"
+msgstr "What is this? Why interrupt me?"
+
+#: compass/templates/jobs/pre_submit_reflection.html:16
+msgid "这是 Compass 的反向通道"
+msgstr "This is Compass's reverse channel"
+
+#: compass/templates/jobs/pre_submit_reflection.html:25
+msgid "它不阻止你"
+msgstr "It doesn't stop you"
+
+#: compass/templates/jobs/pre_submit_reflection.html:25
+msgid "。看完确认即可继续。但你看了，就被记录了——这就够了。"
+msgstr ""
+". Read, confirm, continue. But the fact that you read it is recorded — that's"
+" enough."
+
+#: compass/templates/jobs/pre_submit_reflection.html:31
+msgid "⚠ 最近 21 天 Adversarial Voice 提出的反对"
+msgstr "⚠ Adversarial Voice objections in the last 21 days"
+
+#: compass/templates/jobs/pre_submit_reflection.html:52
+msgid "边界漂移轨迹"
+msgstr "Boundary drift trajectory"
+
+#: compass/templates/jobs/pre_submit_reflection.html:68
+msgid "🎯 这个岗位的 Tier 比你平均更高（更\"够一够\"）"
+msgstr "🎯 This job's Tier is higher than your average (more of a 'stretch')"
+
+#: compass/templates/jobs/pre_submit_reflection.html:78
+msgid "这个岗位的 Tier 比你平均更低"
+msgstr "This job's Tier is below your average"
+
+#: compass/templates/jobs/pre_submit_reflection.html:89
+msgid "价值观回归到期"
+msgstr "Values reset due"
+
+#: compass/templates/jobs/pre_submit_reflection.html:91
+msgid ""
+"天。\n"
+"      建议"
+msgstr "days. Suggested:"
+
+#: compass/templates/jobs/pre_submit_reflection.html:92
+msgid "扫一眼系统假设"
+msgstr "scan the system assumptions"
+
+#: compass/templates/jobs/pre_submit_reflection.html:92
+msgid "——但不强求。"
+msgstr "— but not required."
+
+#: compass/templates/jobs/pre_submit_reflection.html:98
+msgid "💬 六个月前的你说"
+msgstr "💬 Six months ago you said"
+
+#: compass/templates/jobs/searches/_panel.html:12
+msgid "📥 抓取配置"
+msgstr "📥 Scrape config"
+
+#: compass/templates/jobs/searches/_panel.html:13
+msgid "点开配置多组（每组：地点 + 关键词），结果汇总"
+msgstr ""
+"Expand to configure multiple groups (each: location + keywords); results "
+"aggregated"
+
+#: compass/templates/jobs/searches/_panel.html:35
+msgid "g.enabled ? '点击禁用这一组（不会被一键抓取）' : '点击启用这一组'"
+msgstr "(if enabled) 'Click to disable this group' / (else) 'Click to enable'"
+
+#: compass/templates/jobs/searches/_panel.html:41
+msgid "已禁用"
+msgstr "Disabled"
+
+#: compass/templates/jobs/searches/_panel.html:45
+msgid "g.country || '从地点推断国旗'"
+msgstr "(country flag inferred from location)"
+
+#: compass/templates/jobs/searches/_panel.html:48
+msgid "地点（逗号分隔）"
+msgstr "Locations (comma-separated)"
+
+#: compass/templates/jobs/searches/_panel.html:58
+msgid "LLM 提议多语言 + 同语言同义词，避免抓不到当地语言职位"
+msgstr ""
+"LLM proposes multilingual + same-language synonyms to avoid missing local-"
+"language jobs"
+
+#: compass/templates/jobs/searches/_panel.html:67
+msgid "只抓取最近 N 小时内发布的岗位 — 168=7天, 720=30天"
+msgstr "Only scrape jobs posted in the last N hours — 168=7 days, 720=30 days"
+
+#: compass/templates/jobs/searches/_panel.html:67
+msgid "最近多久"
+msgstr "How recent"
+
+#: compass/templates/jobs/searches/_panel.html:70
+msgid "24 小时"
+msgstr "24 hours"
+
+#: compass/templates/jobs/searches/_panel.html:71
+msgid "3 天"
+msgstr "3 days"
+
+#: compass/templates/jobs/searches/_panel.html:72
+msgid "7 天"
+msgstr "7 days"
+
+#: compass/templates/jobs/searches/_panel.html:73
+msgid "30 天"
+msgstr "30 days"
+
+#: compass/templates/jobs/searches/_panel.html:74
+msgid "不限"
+msgstr "Unlimited"
+
+#: compass/templates/jobs/searches/_panel.html:77
+msgid "删除这一组"
+msgstr "Delete this group"
+
+#: compass/templates/jobs/searches/_panel.html:87
+msgid "组标签"
+msgstr "Group label"
+
+#: compass/templates/jobs/searches/_panel.html:87
+msgid "(用户可读名)"
+msgstr "(human-readable name)"
+
+#: compass/templates/jobs/searches/_panel.html:89
+msgid "例：德国-法兰克福"
+msgstr "e.g. Germany-Frankfurt"
+
+#: compass/templates/jobs/searches/_panel.html:92
+#: compass/templates/jobs/searches/_panel.html:96
+msgid "(空 = 从地点推断)"
+msgstr "(empty = inferred from location)"
+
+#: compass/templates/jobs/searches/_panel.html:100
+msgid "这条求职意图想找什么"
+msgstr "What this search intent is looking for"
+
+#: compass/templates/jobs/searches/_panel.html:100
+msgid "(LLM tier 分类参考)"
+msgstr "(used by LLM Tier classification)"
+
+#: compass/templates/jobs/searches/_panel.html:102
+msgid "电气工程师 + 金融咨询 + 数据分析；排除餐饮/护理/驾驶"
+msgstr ""
+"Electrical engineering + financial consulting + data analysis; exclude "
+"restaurant/care/driving"
+
+#: compass/templates/jobs/searches/_panel.html:106
+msgid "必须包含国家"
+msgstr "Must-include countries"
+
+#: compass/templates/jobs/searches/_panel.html:106
+msgid "(每行一个，dealbreaker)"
+msgstr "(one per line, dealbreaker)"
+
+#: compass/templates/jobs/searches/_panel.html:112
+msgid "阻断语言"
+msgstr "Blocked languages"
+
+#: compass/templates/jobs/searches/_panel.html:112
+msgid "(每行一个 ISO 码)"
+msgstr "(one ISO code per line)"
+
+#: compass/templates/jobs/searches/_panel.html:118
+msgid "公司黑名单"
+msgstr "Company blacklist"
+
+#: compass/templates/jobs/searches/_panel.html:118
+#: compass/templates/jobs/searches/_panel.html:123
+msgid "(每行一个)"
+msgstr "(one per line)"
+
+#: compass/templates/jobs/searches/_panel.html:123
+msgid "关键词黑名单"
+msgstr "Keyword blacklist"
+
+#: compass/templates/jobs/searches/_panel.html:128
+#: compass/templates/jobs/searches/overview.html:24
+msgid "关键词别名"
+msgstr "Keyword aliases"
+
+#: compass/templates/jobs/searches/_panel.html:128
+msgid "(每行 \"key=alias1,alias2,...\")"
+msgstr "(per line: 'key=alias1,alias2,...')"
+
+#: compass/templates/jobs/searches/_panel.html:144
+msgid "📥 抓取（运行所有组）"
+msgstr "📥 Scrape (run all groups)"
+
+#: compass/templates/jobs/searches/_panel.html:147
+msgid "后，本组配置写入"
+msgstr "After saving, this group's config is written to"
+
+#: compass/templates/jobs/searches/_panel.html:147
+msgid "（服务端持久）。未保存的草稿仅缓存在浏览器，刷新后以服务端为准。"
+msgstr ""
+"(server-persisted). Unsaved drafts are browser-only; refresh reverts to "
+"server."
+
+#: compass/templates/jobs/searches/_panel.html:154
+msgid "多语言别名建议 — \""
+msgstr "Multilingual alias suggestions — '"
+
+#: compass/templates/jobs/searches/_panel.html:160
+msgid "LLM 思考中..."
+msgstr "LLM thinking…"
+
+#: compass/templates/jobs/searches/_panel.html:166
+msgid "LLM 没返回有效别名（试试更具体的关键词）"
+msgstr "LLM returned no valid aliases (try a more specific keyword)"
+
+#: compass/templates/jobs/searches/_panel.html:182
+msgid "✓ 加入选中的"
+msgstr "✓ Add selected"
+
+#: compass/templates/jobs/searches/_panel.html:326
+msgid "请先填一个关键词，再点 \"建议别名\""
+msgstr "Fill in a keyword first, then click 'Suggest aliases'"
+
+#: compass/templates/jobs/searches/overview.html:8
+msgid "配置多组（地点 + 关键词 + dealbreaker），同一意图复用到 LLM 分级 / 抓取 / 简历改写。"
+msgstr ""
+"Configure multiple groups (location + keywords + dealbreaker); the same "
+"intent flows into LLM tiering / scrape / resume rewrite."
+
+#: compass/templates/jobs/searches/overview.html:11
+msgid "📋 看抓取结果 →"
+msgstr "📋 View scrape results →"
+
+#: compass/templates/jobs/searches/overview.html:16
+msgid "不熟？看这是什么 / 为什么要配 / 字段含义"
+msgstr "New? See what this is / why configure / field meanings"
+
+#: compass/templates/jobs/searches/overview.html:19
+msgid "每一组 = 一个"
+msgstr "Each group = a"
+
+#: compass/templates/jobs/searches/overview.html:19
+msgid "（可启用 / 禁用），抓取按 profile 跑："
+msgstr "(can enable/disable); scrape runs per profile:"
+
+#: compass/templates/jobs/searches/overview.html:21
+msgid "地点"
+msgstr "Location"
+
+#: compass/templates/jobs/searches/overview.html:21
+msgid "喂给 jobspy（LinkedIn / Indeed）"
+msgstr "fed to jobspy (LinkedIn / Indeed)"
+
+#: compass/templates/jobs/searches/overview.html:22
+msgid "（country_must_be / language_blocked / 黑名单）= 硬过滤，命中即 drop"
+msgstr "(country_must_be / language_blocked / blacklist) = hard filter, drop on hit"
+
+#: compass/templates/jobs/searches/overview.html:23
+msgid "用户意图描述"
+msgstr "User intent description"
+
+#: compass/templates/jobs/searches/overview.html:23
+msgid "= LLM 分级时的 context（\"这条意图想找的方向\"）"
+msgstr "= LLM tiering context ('what this intent is aiming at')"
+
+#: compass/templates/jobs/searches/overview.html:24
+msgid "= 自动多语言展开（例：Data Analyst → Datenanalyst, Analista Dati）"
+msgstr ""
+"= auto multilingual expansion (e.g. Data Analyst → Datenanalyst, Analista "
+"Dati)"
+
+#: compass/templates/jobs/searches/overview.html:28
+msgid "新地区 / 新方向 → 加一组"
+msgstr "New region/direction → add a group"
+
+#: compass/templates/jobs/searches/overview.html:29
+msgid "抓取后看到\"没找到工作\" → 来这里松一下 dealbreaker（可能 country_must_be 太严）"
+msgstr ""
+"Saw 'no jobs found' after scrape → loosen dealbreakers here (country_must_be "
+"may be too strict)"
+
+#: compass/templates/jobs/searches/overview.html:30
+msgid "本地语言职位漏抓 → 加 keyword_aliases"
+msgstr "Local-language jobs missed → add keyword_aliases"
+
+#: compass/templates/negotiation/form.html:5
+msgid "💼 薪资谈判模拟"
+msgstr "💼 Salary negotiation simulator"
+
+#: compass/templates/negotiation/form.html:24
+msgid "Offer 金额 *"
+msgstr "Offer amount *"
+
+#: compass/templates/negotiation/form.html:30
+msgid "币种"
+msgstr "Currency"
+
+#: compass/templates/negotiation/form.html:41
+msgid "计薪"
+msgstr "Salary basis"
+
+#: compass/templates/negotiation/form.html:43
+msgid "每月"
+msgstr "Monthly"
+
+#: compass/templates/negotiation/form.html:44
+msgid "每年"
+msgstr "Yearly"
+
+#: compass/templates/negotiation/form.html:51
+msgid "城市"
+msgstr "City"
+
+#: compass/templates/negotiation/form.html:55
+msgid "国家"
+msgstr "Country"
+
+#: compass/templates/negotiation/form.html:62
+msgid "角色 *"
+msgstr "Role *"
+
+#: compass/templates/negotiation/form.html:68
+msgid "资深级别"
+msgstr "Seniority"
+
+#: compass/templates/negotiation/form.html:79
+msgid "你的心理底线（可选）"
+msgstr "Your mental floor (optional)"
+
+#: compass/templates/negotiation/form.html:86
+msgid "补充信息（可选）"
+msgstr "Additional info (optional)"
+
+#: compass/templates/negotiation/form.html:88
+msgid "例：我已 offer 另一份 3500；公司缺该岗位等了 6 个月；我有 ML 经验对这个角色加分..."
+msgstr ""
+"e.g. I have another offer at 3500; the company has had this role open 6 "
+"months; my ML experience is a plus for this role…"
+
+#: compass/templates/negotiation/form.html:94
+msgid "🎯 模拟谈判"
+msgstr "🎯 Simulate negotiation"
+
+#: compass/templates/negotiation/form.html:95
+msgid "用 LLM 估市场范围 + 给一段直接能用的话术"
+msgstr "LLM estimates the market range + provides ready-to-use lines"
+
+#: compass/templates/negotiation/form.html:100
+msgid "为什么不是聊天机器人？"
+msgstr "Why not a chatbot?"
+
+#: compass/templates/negotiation/form.html:104
+msgid "可见。"
+msgstr "is visible."
+
+#: compass/templates/negotiation/result.html:6
+msgid "💼 谈判模拟结果"
+msgstr "💼 Negotiation simulation result"
+
+#: compass/templates/negotiation/result.html:7
+msgid "← 重新模拟"
+msgstr "← Simulate again"
+
+#: compass/templates/negotiation/result.html:11
+msgid "输入"
+msgstr "Inputs"
+
+#: compass/templates/negotiation/result.html:23
+msgid "📊 市场范围估计"
+msgstr "📊 Market range estimate"
+
+#: compass/templates/negotiation/result.html:26
+msgid "下限 (P25)"
+msgstr "Lower (P25)"
+
+#: compass/templates/negotiation/result.html:30
+msgid "中位"
+msgstr "Median"
+
+#: compass/templates/negotiation/result.html:34
+msgid "上限 (P75)"
+msgstr "Upper (P75)"
+
+#: compass/templates/negotiation/result.html:49
+msgid "🎯 可争取范围"
+msgstr "🎯 Negotiable range"
+
+#: compass/templates/negotiation/result.html:58
+msgid "💬 模拟谈判脚本"
+msgstr "💬 Simulated negotiation script"
+
+#: compass/templates/negotiation/result.html:62
+msgid "你 · 提出"
+msgstr "You · proposal"
+
+#: compass/templates/negotiation/result.html:68
+msgid "HM · 大概率回应"
+msgstr "HM · likely response"
+
+#: compass/templates/negotiation/result.html:74
+msgid "你 · 后续"
+msgstr "You · follow-up"
+
+#: compass/templates/negotiation/result.html:81
+msgid "📌 总结建议"
+msgstr "📌 Summary advice"
+
+#: compass/templates/negotiation/result.html:86
+msgid "原始 LLM 响应 (debug)"
+msgstr "Raw LLM response (debug)"
+
+#: compass/templates/reflection/assumptions.html:5
+msgid "系统对你的假设"
+msgstr "System's assumptions about you"
+
+#: compass/templates/reflection/assumptions.html:6
+msgid "这是 Compass 当前关于你的 6 个核心信念。每一条你都可以质疑、覆盖、或要求重新生成。"
+msgstr ""
+"These are Compass's current 6 core beliefs about you. You can challenge, "
+"override, or regenerate each."
+
+#: compass/templates/reflection/assumptions.html:12
+msgid ""
+"LLM 看你的 facts + 最近的反思事件流，写出 6 "
+"条\"系统对你的当前信念\"——比如\"你似乎更看重技术深度而非广度\"、\"你倾向于中型公司而非 startup\"。"
+msgstr ""
+"The LLM reads your facts + recent reflection events and writes 6 'current "
+"beliefs about you' — e.g. 'you value technical depth over breadth', 'you "
+"prefer mid-sized companies over startups'."
+
+#: compass/templates/reflection/assumptions.html:14
+msgid "所有\"个性化\"系统都有黑盒画像——它怎么理解你、你看不到。这正是信息茧房失控的根源。Compass 反过来："
+msgstr ""
+"Every 'personalized' system has a black-box profile — how it understands you,"
+" invisible to you. That's the root of filter-bubble runaway. Compass inverts:"
+
+#: compass/templates/reflection/assumptions.html:14
+msgid "把画像可见化、可推翻"
+msgstr "Make the profile visible and overridable"
+
+#: compass/templates/reflection/assumptions.html:14
+msgid "。每条假设你能写\"不同意\"覆盖，下次重生成时尊重你的修正。"
+msgstr ""
+". You can write 'disagree' to override each; the next regen respects your "
+"correction."
+
+#: compass/templates/reflection/assumptions.html:17
+msgid "用了一段时间后（产生足够 reflection events）—— 第一次最好等积累 10+ 个动作"
+msgstr ""
+"After some use (enough reflection events) — best wait for 10+ actions for the"
+" first run"
+
+#: compass/templates/reflection/assumptions.html:18
+msgid "每月手动点\"重新生成\"—— 看 6 条假设有没有真的反映你"
+msgstr "Monthly: click 'Regenerate' — check whether the 6 beliefs actually reflect you"
+
+#: compass/templates/reflection/assumptions.html:19
+msgid "觉得 Compass 推送越来越不准时—— 大概率是某条假设错了，你来推翻"
+msgstr ""
+"When Compass's pushes feel off — most likely an assumption is wrong; you "
+"override it"
+
+#: compass/templates/reflection/assumptions.html:26
+msgid "⚠ 没有配置 LLM_API_KEY，无法生成假设。请在"
+msgstr "⚠ LLM_API_KEY not configured — cannot generate assumptions. Please set it in"
+
+#: compass/templates/reflection/assumptions.html:26
+msgid "中填入后重启。"
+msgstr "after filling in, restart."
+
+#: compass/templates/reflection/assumptions.html:43
+msgid "还没有任何系统假设——点上面的按钮触发第一次生成。"
+msgstr ""
+"No system assumptions yet — click the button above to trigger first "
+"generation."
+
+#: compass/templates/reflection/assumptions.html:55
+msgid "系统的信心:"
+msgstr "System confidence:"
+
+#: compass/templates/reflection/assumptions.html:65
+msgid "写下你认为更准确的表述..."
+msgstr "Write what you think is more accurate…"
+
+#: compass/templates/reflection/assumptions.html:67
+msgid "保存修正"
+msgstr "Save correction"
+
+#: compass/templates/reflection/assumptions.html:69
+msgid "清除修正"
+msgstr "Clear correction"
+
+#: compass/templates/reflection/dashboard.html:8
+msgid "看见你的边界是怎么变的——反向调节飞轮失控的核心。"
+msgstr "See how your boundary changes — the heart of preventing flywheel runaway."
+
+#: compass/templates/reflection/dashboard.html:12
+msgid "📌 现在抓快照"
+msgstr "📌 Snapshot now"
+
+#: compass/templates/reflection/dashboard.html:24
+msgid "🔄 反思飞轮闭环健康分"
+msgstr "🔄 Reflective flywheel health score"
+
+#: compass/templates/reflection/dashboard.html:31
+msgid "thumbs ↔ tier 闭环"
+msgstr "thumbs ↔ tier loop"
+
+#: compass/templates/reflection/dashboard.html:38
+msgid "brief 渗透率"
+msgstr "brief saturation"
+
+#: compass/templates/reflection/dashboard.html:45
+msgid "undo 率"
+msgstr "undo rate"
+
+#: compass/templates/reflection/dashboard.html:54
+msgid "条 nudge calibration"
+msgstr "nudge calibrations"
+
+#: compass/templates/reflection/dashboard.html:79
+msgid "→ 看完整 + 粘新拒信"
+msgstr "→ See full + paste new rejection"
+
+#: compass/templates/reflection/dashboard.html:88
+msgid "显示你的"
+msgstr "Displays your"
+
+#: compass/templates/reflection/dashboard.html:88
+msgid "（边界设定）随时间的变化轨迹 + Tier 分布健康度（"
+msgstr "(boundary settings) trajectory over time + Tier distribution health ("
+
+#: compass/templates/reflection/dashboard.html:88
+msgid "）+ 你声称的偏好和实际行为的对照。"
+msgstr ") + your stated preferences vs actual behavior comparison."
+
+#: compass/templates/reflection/dashboard.html:90
+msgid "Compass 学你的边界（学边界不学偏好）。但学习有失控风险——边界会"
+msgstr ""
+"Compass learns your boundary (boundary, not preference). But learning has "
+"runaway risk — the boundary can"
+
+#: compass/templates/reflection/dashboard.html:90
+msgid "单向漂移"
+msgstr "drift one-way"
+
+#: compass/templates/reflection/dashboard.html:90
+msgid "变成 sycophancy。这个仪表盘是反向调节四件套之一："
+msgstr "into sycophancy. This dashboard is one of the four reverse-regulation tools:"
+
+#: compass/templates/reflection/dashboard.html:90
+msgid "让漂移可见"
+msgstr "Make drift visible"
+
+#: compass/templates/reflection/dashboard.html:90
+msgid "。看见 = 阻止漂移最有效的方法。"
+msgstr ". Seeing = most effective way to stop drift."
+
+#: compass/templates/reflection/dashboard.html:93
+msgid "每 1–2 周来一次，看趋势"
+msgstr "Visit every 1–2 weeks, watch trends"
+
+#: compass/templates/reflection/dashboard.html:94
+msgid "看到顶部 ⚠ 警报（漂移过快 / Tier 2 反茧房甜点 starvation）时立刻来"
+msgstr ""
+"When the ⚠ banner triggers (drift too fast / Tier 2 anti-bubble starvation) —"
+" come immediately"
+
+#: compass/templates/reflection/dashboard.html:95
+msgid "觉得简历改写\"开始让我不舒服\"时——可能边界悄悄漂了"
+msgstr ""
+"When resume rewrites 'start making you uncomfortable' — the boundary may have"
+" quietly drifted"
+
+#: compass/templates/reflection/dashboard.html:103
+msgid "当前漂移"
+msgstr "Current drift"
+
+#: compass/templates/reflection/dashboard.html:106
+msgid "稳定"
+msgstr "Stable"
+
+#: compass/templates/reflection/dashboard.html:108
+msgid "漂移中"
+msgstr "Drifting"
+
+#: compass/templates/reflection/dashboard.html:110
+msgid "尚无数据"
+msgstr "No data yet"
+
+#: compass/templates/reflection/dashboard.html:125
+msgid "硬锁类目"
+msgstr "Hard-locked categories"
+
+#: compass/templates/reflection/dashboard.html:137
+msgid "累计风格规则"
+msgstr "Accumulated style rules"
+
+#: compass/templates/reflection/dashboard.html:150
+msgid "偏离指数（0=完美）"
+msgstr "Deviation index (0=perfect)"
+
+#: compass/templates/reflection/dashboard.html:157
+msgid "漂移轨迹"
+msgstr "Drift trajectory"
+
+#: compass/templates/reflection/dashboard.html:167
+msgid "点上方「现在抓快照」记一个起点；过一段时间再抓第二个，就能看到漂移线。"
+msgstr ""
+"Click 'Snapshot now' above to mark a starting point; take another later to "
+"see the drift line."
+
+#: compass/templates/reflection/dashboard.html:172
+msgid "ε-exploration 配额"
+msgstr "ε-exploration quota"
+
+#: compass/templates/reflection/dashboard.html:176
+msgid "实际"
+msgstr "Actual"
+
+#: compass/templates/reflection/dashboard.html:177
+msgid "目标"
+msgstr "Target"
+
+#: compass/templates/reflection/dashboard.html:201
+msgid "声称 vs 行为"
+msgstr "Stated vs behavior"
+
+#: compass/templates/reflection/dashboard.html:209
+msgid "尚无足够行为数据做对照。"
+msgstr "Not enough behavior data to compare yet."
+
+#: compass/templates/reflection/dashboard.html:223
+msgid "🪞 tier_quota: 你说想要的 vs 你实际点开的"
+msgstr "🪞 tier_quota: what you said you want vs what you actually open"
+
+#: compass/templates/reflection/dashboard.html:236
+msgid "声称（quota 总和归一化）"
+msgstr "Stated (quota sum normalized)"
+
+#: compass/templates/reflection/dashboard.html:237
+msgid "实际（点开 / 改写 / 👍）"
+msgstr "Actual (open / rewrite / 👍)"
+
+#: compass/templates/reflection/dashboard.html:238
+msgid "差"
+msgstr "Diff"
+
+#: compass/templates/reflection/dashboard.html:259
+msgid "系统 push"
+msgstr "System pushes"
+
+#: compass/templates/reflection/dashboard.html:259
+msgid "分布；这里对的是"
+msgstr "distribution; here we compare"
+
+#: compass/templates/reflection/dashboard.html:259
+msgid "你的实际行为"
+msgstr "your actual behavior"
+
+#: compass/templates/reflection/dashboard.html:267
+msgid "⚠ 价值观回归 checkpoint 到期"
+msgstr "⚠ Values-reset checkpoint due"
+
+#: compass/templates/reflection/dashboard.html:268
+msgid ""
+"距离上次回归审视已超过 14 天。\n"
+"       建议跑一次"
+msgstr "More than 14 days since last review. Suggested:"
+
+#: compass/templates/reflection/dashboard.html:269
+msgid "重新审视。"
+msgstr "re-review."
+
+#: compass/templates/rejection/overview.html:15
+msgid "📉 被拒原因追踪"
+msgstr "📉 Rejection reason tracking"
+
+#: compass/templates/rejection/overview.html:52
+msgid "还没有分析过的拒信。粘一封进来开始。"
+msgstr "No rejections analyzed yet. Paste one to start."
+
+#: compass/templates/rejection/overview.html:59
+msgid "📋 粘贴拒信 → 分析"
+msgstr "📋 Paste rejection → analyze"
+
+#: compass/templates/rejection/overview.html:62
+msgid "关联 job (可选)"
+msgstr "Linked job (optional)"
+
+#: compass/templates/rejection/overview.html:66
+msgid "（不关联具体 job）"
+msgstr "(no specific job)"
+
+#: compass/templates/rejection/overview.html:72
+msgid "job id (可选)"
+msgstr "job id (optional)"
+
+#: compass/templates/rejection/overview.html:78
+msgid "拒信文本 *"
+msgstr "Rejection text *"
+
+#: compass/templates/rejection/overview.html:85
+msgid "🔍 分析"
+msgstr "🔍 Analyze"
+
+#: compass/templates/rejection/overview.html:89
+msgid "为什么不自动从 Gmail 抓？"
+msgstr "Why not auto-scrape from Gmail?"
+
+#: compass/templates/rejection/result.html:27
+msgid "📉 拒信分析结果"
+msgstr "📉 Rejection analysis result"
+
+#: compass/templates/rejection/result.html:42
+msgid "📌 提到缺失的技能"
+msgstr "📌 Skills mentioned as missing"
+
+#: compass/templates/rejection/result.html:54
+msgid "原文引用"
+msgstr "Original quote"
+
+#: compass/templates/rejection/result.html:65
+msgid "✅ 已 nudge calibration"
+msgstr "✅ Nudged calibration"
+
+#: compass/templates/rejection/result.html:77
+msgid "← 再分析一封"
+msgstr "← Analyze another"
+
+#: compass/templates/rejection/result.html:78
+msgid "📊 看 Reflection Dashboard"
+msgstr "📊 View Reflection Dashboard"
+
+#: compass/templates/resume/_decomposition_panel.html:17
+msgid "需处理"
+msgstr "Needs action"
+
+#: compass/templates/resume/_decomposition_panel.html:19
+msgid "有提醒"
+msgstr "Has reminder"
+
+#: compass/templates/resume/_decomposition_panel.html:21
+msgid "全绿"
+msgstr "All clear"
+
+#: compass/templates/resume/_review_panel.html:31
+msgid "原语言"
+msgstr "Original language"
+
+#: compass/templates/resume/_review_panel.html:50
+msgid "📝 改写审核"
+msgstr "📝 Rewrite review"
+
+#: compass/templates/resume/_review_panel.html:67
+msgid "📄 经典"
+msgstr "📄 Classic"
+
+#: compass/templates/resume/_review_panel.html:68
+msgid "📋 现代双栏"
+msgstr "📋 Modern two-column"
+
+#: compass/templates/resume/_review_panel.html:69
+msgid "🧱 紧凑"
+msgstr "🧱 Compact"
+
+#: compass/templates/resume/_review_panel.html:91
+msgid "选择导出的语言版本（变体翻译跟简历语言对齐 — ADR-0015 第 5 条）"
+msgstr ""
+"Choose export language version (variant translation aligned with resume "
+"language — ADR-0015 item 5)"
+
+#: compass/templates/resume/_review_panel.html:101
+msgid "🌐 预览"
+msgstr "🌐 Preview"
+
+#: compass/templates/resume/_review_panel.html:109
+msgid "按你上传的 DOCX 模板渲染，保留字体/间距/section/bullet 样式（ADR-0018）"
+msgstr ""
+"Renders using your uploaded DOCX template; preserves "
+"fonts/spacing/sections/bullet styles (ADR-0018)"
+
+#: compass/templates/resume/_review_panel.html:111
+#: compass/templates/resume/_review_panel.html:118
+msgid "⏳ 生成中…"
+msgstr "⏳ Generating…"
+
+#: compass/templates/resume/_review_panel.html:116
+msgid "DOCX → LibreOffice → PDF（首次 5-10 秒）。需要装 LibreOffice，点击后会提示"
+msgstr ""
+"DOCX → LibreOffice → PDF (first time 5-10s). Requires LibreOffice; the click "
+"will prompt if missing."
+
+#: compass/templates/resume/_review_panel.html:125
+msgid "Markdown — LinkedIn / Notion / Bear 复制粘贴"
+msgstr "Markdown — copy/paste into LinkedIn / Notion / Bear"
+
+#: compass/templates/resume/_review_panel.html:127
+msgid "纯文本 — 最朴素 ATS 友好"
+msgstr "Plain text — most ATS-friendly"
+
+#: compass/templates/resume/_review_panel.html:129
+msgid "JSON Resume schema — 跨工具用"
+msgstr "JSON Resume schema — for cross-tool use"
+
+#: compass/templates/resume/_review_panel.html:133
+msgid "一次产出 .docx + .pdf + .md + .txt + .json 的 zip（ADR-0018 P3）"
+msgstr "All-in-one zip with .docx + .pdf + .md + .txt + .json (ADR-0018 P3)"
+
+#: compass/templates/resume/_review_panel.html:134
+msgid "📦 全部"
+msgstr "📦 All formats"
+
+#: compass/templates/resume/_review_panel.html:135
+msgid "⏳ 打包中…"
+msgstr "⏳ Packing…"
+
+#: compass/templates/resume/_review_panel.html:157
+msgid "— 跳到列表 →"
+msgstr "— jump to list →"
+
+#: compass/templates/resume/_review_panel.html:158
+msgid "（导出前建议先决定完）"
+msgstr "(decide everything before exporting)"
+
+#: compass/templates/resume/_review_panel.html:160
+msgid "— 全部决定完，可以导出"
+msgstr "— all decided, ready to export"
+
+#: compass/templates/resume/_review_panel.html:231
+msgid "查看详情"
+msgstr "View details"
+
+#: compass/templates/resume/_review_panel.html:297
+msgid "📋 ATS 字面覆盖"
+msgstr "📋 ATS literal coverage"
+
+#: compass/templates/resume/_review_panel.html:377
+msgid "把 ✓/✎ 沉淀到 ResumeFact，影响以后所有再跑"
+msgstr "Sediment ✓/✎ into ResumeFact; affects all future runs"
+
+#: compass/templates/resume/_review_panel.html:388
+msgid "📌 沉淀到我的简历事实"
+msgstr "📌 Sediment into my resume facts"
+
+#: compass/templates/resume/_review_panel.html:398
+msgid "），永久可查"
+msgstr "), always queryable"
+
+#: compass/templates/resume/_review_panel.html:411
+msgid "📌 确认沉淀"
+msgstr "📌 Confirm sediment"
+
+#: compass/templates/resume/_review_panel.html:429
+msgid "应用了已 ✓ / ✎ 的变换；待决 = 原文"
+msgstr "Applies accepted ✓/✎ transforms; pending = original"
+
+#: compass/templates/resume/_review_panel.html:434
+msgid "简历预览"
+msgstr "Resume preview"
+
+#: compass/templates/resume/_review_panel.html:438
+msgid "拖动调整左右占比"
+msgstr "Drag to adjust left/right ratio"
+
+#: compass/templates/resume/_review_panel.html:445
+msgid "📝 Claude 建议"
+msgstr "📝 Claude suggestions"
+
+#: compass/templates/resume/_review_panel.html:468
+msgid "风险概览"
+msgstr "Risk overview"
+
+#: compass/templates/resume/_review_panel.html:536
+msgid "(原文丢失)"
+msgstr "(original lost)"
+
+#: compass/templates/resume/_review_panel.html:554
+msgid "接受这条改写"
+msgstr "Accept this rewrite"
+
+#: compass/templates/resume/_review_panel.html:558
+msgid "改后接受"
+msgstr "Edit then accept"
+
+#: compass/templates/resume/_review_panel.html:566
+msgid "只重生成这条"
+msgstr "Regenerate only this one"
+
+#: compass/templates/resume/_review_panel.html:572
+msgid "拒绝这条"
+msgstr "Reject this one"
+
+#: compass/templates/resume/_review_panel.html:583
+msgid "保存编辑"
+msgstr "Save edits"
+
+#: compass/templates/resume/_review_panel.html:592
+msgid "撤销"
+msgstr "Undo"
+
+#: compass/templates/resume/_review_panel.html:592
+msgid "↺ 撤销"
+msgstr "↺ Undo"
+
+#: compass/templates/resume/review.html:7
+msgid "← 返回岗位流程"
+msgstr "← Back to job flow"
+
+#: compass/templates/resume/review.html:9
+msgid "回改写历史"
+msgstr "Back to rewrite history"
+
+#: compass/templates/resume/workbench.html:7
+msgid "简历改写历史"
+msgstr "Resume rewrite history"
+
+#: compass/templates/resume/workbench.html:20
+msgid "不熟？看这是什么 / 为什么这样组织"
+msgstr "New? See what this is / why organized this way"
+
+#: compass/templates/resume/workbench.html:22
+msgid "这页是什么"
+msgstr "What this page is"
+
+#: compass/templates/resume/workbench.html:23
+msgid "每次给某个 job 跑改写流水线都会留一条 attempt。这页 = 所有 attempts，"
+msgstr ""
+"Each rewrite-pipeline run for a job leaves an attempt. This page = all "
+"attempts,"
+
+#: compass/templates/resume/workbench.html:23
+msgid "按 job 分组"
+msgstr "grouped by job"
+
+#: compass/templates/resume/workbench.html:23
+msgid "，每组里 v1/v2/v3 倒序（最新在最上）。"
+msgstr ", v1/v2/v3 within each group in reverse (newest first)."
+
+#: compass/templates/resume/workbench.html:24
+msgid "为什么按 job 分组 + 折叠"
+msgstr "Why group by job + collapse"
+
+#: compass/templates/resume/workbench.html:25
+msgid "同一 job 的多次改写是"
+msgstr "Multiple rewrites for the same job are"
+
+#: compass/templates/resume/workbench.html:25
+msgid "同一目标"
+msgstr "the same target"
+
+#: compass/templates/resume/workbench.html:25
+msgid "的迭代，应该并排比较。组数多时默认折叠，避免页面过长。"
+msgstr ""
+"'s iterations — best compared side by side. Many groups collapse by default "
+"to keep the page short."
+
+#: compass/templates/resume/workbench.html:26
+msgid "为什么不在这里发起新改写"
+msgstr "Why no new-rewrite trigger here"
+
+#: compass/templates/resume/workbench.html:27
+msgid "改写是针对某 job 的动作 — 没 job 就没目标。正确路径："
+msgstr "Rewrite is a per-job action — no job, no target. Correct path:"
+
+#: compass/templates/resume/workbench.html:29
+msgid "到"
+msgstr "Go to"
+
+#: compass/templates/resume/workbench.html:29
+msgid "找想投的 job"
+msgstr "find a job to apply to"
+
+#: compass/templates/resume/workbench.html:30
+msgid "详情页第 2 步「跑改写流水线」"
+msgstr "step 2 on the detail page: 'Run rewrite pipeline'"
+
+#: compass/templates/resume/workbench.html:31
+msgid "结果原地展示 — 同页 Claude-in-Word 风审核"
+msgstr "Results shown inline — Claude-in-Word style review on the same page"
+
+#: compass/templates/resume/workbench.html:39
+msgid "→ 上传简历 facts"
+msgstr "→ Upload resume facts"
+
+#: compass/templates/resume/workbench.html:43
+msgid "还没有改写记录。"
+msgstr "No rewrite history yet."
+
+#: compass/templates/resume/workbench.html:45
+msgid "选一个发起。"
+msgstr "Pick one to start."
+
+#: compass/templates/resume/workbench.html:47
+msgid "→ 去看岗位"
+msgstr "→ Browse jobs"
+
+#: compass/templates/resume/workbench.html:57
+msgid "搜索 job 标题 / 公司 / 状态…"
+msgstr "Search job title / company / status…"
+
+#: compass/templates/resume/workbench.html:64
+msgid "↧ 全展开"
+msgstr "↧ Expand all"
+
+#: compass/templates/resume/workbench.html:66
+msgid "↥ 全折叠"
+msgstr "↥ Collapse all"
+
+#: compass/templates/resume/workbench.html:122
+msgid "未评"
+msgstr "Unrated"
+
+#: compass/templates/resume/workbench.html:124
+msgid "审核 →"
+msgstr "Review →"
+
+#: compass/templates/themes/inspire.html:7
+msgid "📎 借鉴模板"
+msgstr "📎 Borrow a template"
+
+#: compass/templates/themes/inspire.html:8
+msgid "上传别人的简历模板（任意格式），Compass 自动识别 sample 数据 → 替换为占位符 → 生成你能直接用的 Jinja 模板。"
+msgstr ""
+"Upload someone's resume template (any format); Compass auto-identifies sample"
+" data → swaps in placeholders → produces a Jinja template you can use "
+"directly."
+
+#: compass/templates/themes/inspire.html:11
+msgid "← 返回模板"
+msgstr "← Back to templates"
+
+#: compass/templates/themes/inspire.html:17
+msgid "⚠ LLM 未配置"
+msgstr "⚠ LLM not configured"
+
+#: compass/templates/themes/inspire.html:18
+msgid "借鉴功能依赖 LLM 识别 sample 数据。请先在"
+msgstr "Borrow needs the LLM to identify sample data. Set it first in"
+
+#: compass/templates/themes/inspire.html:18
+msgid "设"
+msgstr "set"
+
+#: compass/templates/themes/inspire.html:18
+msgid "后重启。"
+msgstr "and restart."
+
+#: compass/templates/themes/inspire.html:22
+msgid "当前 LLM"
+msgstr "Current LLM"
+
+#: compass/templates/themes/inspire.html:23
+msgid "· 模型"
+msgstr "· model"
+
+#: compass/templates/themes/inspire.html:25
+msgid "（图片路推荐用 Claude，对视觉任务更稳）"
+msgstr "(image route: Claude recommended — more stable on vision tasks)"
+
+#: compass/templates/themes/inspire.html:32
+msgid "4 条路 — 上传什么 → 走哪条 → 保真多少"
+msgstr "4 routes — what you upload → which route → fidelity"
+
+#: compass/templates/themes/inspire.html:34
+msgid "方法对比"
+msgstr "Method comparison"
+
+#: compass/templates/themes/inspire.html:37
+msgid "输入格式"
+msgstr "Input format"
+
+#: compass/templates/themes/inspire.html:38
+msgid "走的路"
+msgstr "Route"
+
+#: compass/templates/themes/inspire.html:39
+msgid "保真度"
+msgstr "Fidelity"
+
+#: compass/templates/themes/inspire.html:40
+msgid "原理"
+msgstr "How"
+
+#: compass/templates/themes/inspire.html:44
+msgid "DOCX 路（docxtpl）"
+msgstr "DOCX route (docxtpl)"
+
+#: compass/templates/themes/inspire.html:46
+msgid "XML 结构原样保留，只替换 text run，颜色/字体/表格/图片全部不动"
+msgstr ""
+"XML structure preserved; only text runs replaced — colors/fonts/tables/images"
+" untouched"
+
+#: compass/templates/themes/inspire.html:50
+msgid "HTML 路（lxml）"
+msgstr "HTML route (lxml)"
+
+#: compass/templates/themes/inspire.html:52
+msgid "DOM 不动，只替换 text node；CSS / class / 嵌入图全部保留"
+msgstr ""
+"DOM untouched; only text nodes replaced — CSS / classes / embedded images "
+"preserved"
+
+#: compass/templates/themes/inspire.html:56
+msgid "PDF 路 → DOCX 路"
+msgstr "PDF → DOCX route"
+
+#: compass/templates/themes/inspire.html:58
+msgid "先 pdf2docx 转 .docx，再走 DOCX 路。复杂多列布局可能位置略偏"
+msgstr ""
+"pdf2docx → .docx first, then DOCX route. Complex multi-column layouts may "
+"shift slightly"
+
+#: compass/templates/themes/inspire.html:61
+msgid "/ 扫描 PDF"
+msgstr "/ scanned PDF"
+
+#: compass/templates/themes/inspire.html:62
+msgid "图片路（vision LLM）"
+msgstr "Image route (vision LLM)"
+
+#: compass/templates/themes/inspire.html:64
+msgid "vision LLM「看图」重画 HTML+CSS，字体细节/特殊背景会丢"
+msgstr ""
+"Vision LLM 'sees' the image and redraws HTML+CSS — font details and special "
+"backgrounds may be lost"
+
+#: compass/templates/themes/inspire.html:70
+msgid "有 .docx 就上传 .docx"
+msgstr "If you have .docx, upload .docx"
+
+#: compass/templates/themes/inspire.html:70
+msgid "— 保真度最高、成本最低"
+msgstr "— highest fidelity, lowest cost"
+
+#: compass/templates/themes/inspire.html:71
+msgid "找到的是 PDF？看里面文字能不能选中复制："
+msgstr "Got a PDF? Check if its text is selectable/copyable:"
+
+#: compass/templates/themes/inspire.html:71
+msgid "能选 → PDF 路"
+msgstr "Selectable → PDF route"
+
+#: compass/templates/themes/inspire.html:71
+msgid "不能选（扫描件）→ 自动切到图片路"
+msgstr "Not selectable (scanned) → auto-switches to image route"
+
+#: compass/templates/themes/inspire.html:72
+msgid "图片路最贵（vision LLM token 多）+ 保真度最低，"
+msgstr "Image route is most expensive (vision LLM tokens) + lowest fidelity,"
+
+#: compass/templates/themes/inspire.html:72
+msgid "能避免就避免"
+msgstr "avoid if possible"
+
+#: compass/templates/themes/inspire.html:73
+msgid "所有路都用同一份 sample 数据预览（hard-coded 假人 Alex Chen，不会泄漏真实数据）"
+msgstr ""
+"All routes preview with the same sample data (hard-coded dummy 'Alex Chen' — "
+"no real data leaks)"
+
+#: compass/templates/themes/inspire.html:76
+msgid "关于版权"
+msgstr "On copyright"
+
+#: compass/templates/themes/inspire.html:78
+msgid "朋友给的 / 你自己的旧版 / 免费 template / Creative Commons 作品"
+msgstr "Given by friends / your own old versions / free templates / Creative Commons"
+
+#: compass/templates/themes/inspire.html:82
+msgid "Compass 知道哪些数据字段（LLM 会用到这些）"
+msgstr "Data fields Compass knows (LLM uses these)"
+
+#: compass/templates/themes/inspire.html:94
+msgid "📎 上传模板"
+msgstr "📎 Upload template"
+
+#: compass/templates/themes/inspire.html:96
+msgid "。最大 15MB。"
+msgstr ". Max 15 MB."
+
+#: compass/templates/themes/inspire.html:110
+msgid "拖拽文件到这里 / 点击选择"
+msgstr "Drag the file here / click to pick"
+
+#: compass/templates/themes/inspire.html:121
+msgid "▶ 开始借鉴"
+msgstr "▶ Start borrowing"
+
+#: compass/templates/themes/inspire.html:124
+msgid "↺ 换一份"
+msgstr "↺ Try another"
+
+#: compass/templates/themes/inspire.html:147
+msgid "⚠ 注意"
+msgstr "⚠ Note"
+
+#: compass/templates/themes/inspire.html:154
+msgid "预览"
+msgstr "Preview"
+
+#: compass/templates/themes/inspire.html:162
+msgid "⬇ 模板源"
+msgstr "⬇ Template source"
+
+#: compass/templates/themes/inspire.html:165
+msgid "用 SAMPLE_RESUME 渲染过的 .docx — 在 Word/Pages 打开看真实效果"
+msgstr ".docx rendered with SAMPLE_RESUME — open in Word/Pages to see the real look"
+
+#: compass/templates/themes/inspire.html:165
+msgid "⬇ 样品 .docx"
+msgstr "⬇ Sample .docx"
+
+#: compass/templates/themes/inspire.html:171
+msgid "给模板起个名字"
+msgstr "Give the template a name"
+
+#: compass/templates/themes/inspire.html:173
+msgid "（可选）一句描述"
+msgstr "(optional) one-line description"
+
+#: compass/templates/themes/inspire.html:205
+#, python-format
+msgid "DOCX 路 (99%% 保真)"
+msgstr "DOCX route (99%% fidelity)"
+
+#: compass/templates/themes/inspire.html:206
+#, python-format
+msgid "HTML 路 (97%%)"
+msgstr "HTML route (97%%)"
+
+#: compass/templates/themes/inspire.html:207
+#, python-format
+msgid "PDF 路 (85-95%%)"
+msgstr "PDF route (85-95%%)"
+
+#: compass/templates/themes/inspire.html:208
+#, python-format
+msgid "图片路 (70-80%%)"
+msgstr "Image route (70-80%%)"
+
+#: compass/templates/themes/inspire.html:209
+msgid "未知格式"
+msgstr "Unknown format"
+
+#: compass/templates/themes/inspire.html:210
+msgid "上传中…"
+msgstr "Uploading…"
+
+#: compass/templates/themes/inspire.html:211
+msgid "分析中…"
+msgstr "Analyzing…"
+
+#: compass/templates/themes/inspire.html:212
+msgid "LLM 思考中…"
+msgstr "LLM thinking…"
+
+#: compass/templates/themes/inspire.html:213
+msgid "LLM 识别中…"
+msgstr "LLM recognizing…"
+
+#: compass/templates/themes/inspire.html:214
+msgid "仍在处理…（图片/PDF 路较慢）"
+msgstr "Still processing… (image/PDF route is slower)"
+
+#: compass/templates/themes/inspire.html:215
+msgid "未知错误"
+msgstr "Unknown error"
+
+#: compass/templates/themes/inspire.html:216
+msgid "网络错误："
+msgstr "Network error: "
+
+#: compass/templates/themes/manage.html:8
+msgid "选择内建模板，或上传你自己的（HTML + Jinja 占位符）。改写后的简历用所选模板渲染。"
+msgstr ""
+"Pick a built-in template or upload your own (HTML + Jinja placeholders). The "
+"rewritten resume renders with the chosen template."
+
+#: compass/templates/themes/manage.html:11
+msgid "📎 借鉴别人的模板"
+msgstr "📎 Borrow someone's template"
+
+#: compass/templates/themes/manage.html:16
+msgid "怎么用 / 怎么写自己的模板"
+msgstr "How to use / how to write your own template"
+
+#: compass/templates/themes/manage.html:18
+msgid "选模板"
+msgstr "Pick a template"
+
+#: compass/templates/themes/manage.html:19
+msgid "每个 job 详情页 prepare 阶段跑改写流水线后，进 review 页可以选模板预览 → Cmd+P 保存 PDF。"
+msgstr ""
+"After running the rewrite pipeline on a job's detail page, the review page "
+"lets you choose a template and preview → Cmd+P to save as PDF."
+
+#: compass/templates/themes/manage.html:21
+msgid "用我自己的模板"
+msgstr "Use my own template"
+
+#: compass/templates/themes/manage.html:22
+msgid "写一份带 Jinja 占位符的 HTML，上传即可。Compass 会传"
+msgstr "Write an HTML file with Jinja placeholders and upload. Compass passes"
+
+#: compass/templates/themes/manage.html:22
+msgid "（JSON Resume 对象）给你的模板。"
+msgstr "(a JSON Resume object) to your template."
+
+#: compass/templates/themes/manage.html:23
+msgid "可用变量"
+msgstr "Available variables"
+
+#: compass/templates/themes/manage.html:51
+msgid "渲染后的简历会自动用 approved 的 variants"
+msgstr "Rendered resume automatically uses approved variants"
+
+#: compass/templates/themes/manage.html:52
+msgid "当你已经在 review 页 ✓ 接受/✎ 编辑了某些 bullets，"
+msgstr "When you've ✓ accepted / ✎ edited bullets on the review page,"
+
+#: compass/templates/themes/manage.html:52
+msgid "里就是改写后的版本，不是原文。这一层在"
+msgstr ""
+"the rendered version uses the rewritten ones, not the originals. This layer "
+"is in"
+
+#: compass/templates/themes/manage.html:52
+msgid "完成，你模板不用管。"
+msgstr "handled for you — templates don't need to worry."
+
+#: compass/templates/themes/manage.html:53
+msgid "调试技巧"
+msgstr "Debug tips"
+
+#: compass/templates/themes/manage.html:55
+msgid "每个模板 ID 都有 sample 预览：点列表中的「预览样本」按钮"
+msgstr "Each template ID has a sample preview: click 'Preview sample' in the list"
+
+#: compass/templates/themes/manage.html:56
+msgid "样本数据是 hard-coded 的虚拟简历——不会泄漏你真实数据"
+msgstr "Sample data is a hard-coded dummy resume — no real data leaks"
+
+#: compass/templates/themes/manage.html:57
+msgid "Jinja 报错会在 Compass 错误页里显示完整 traceback"
+msgstr "Jinja errors show the full traceback in Compass's error page"
+
+#: compass/templates/themes/manage.html:71
+msgid "内建"
+msgstr "Built-in"
+
+#: compass/templates/themes/manage.html:73
+msgid "用户上传"
+msgstr "User-uploaded"
+
+#: compass/templates/themes/manage.html:89
+msgid "🗑 删除"
+msgstr "🗑 Delete"
+
+#: compass/templates/themes/manage.html:92
+msgid "不可删"
+msgstr "Cannot delete"
+
+#: compass/templates/themes/manage.html:101
+msgid "📤 上传你的模板"
+msgstr "📤 Upload your template"
+
+#: compass/templates/themes/manage.html:106
+msgid "名称 *"
+msgstr "Name *"
+
+#: compass/templates/themes/manage.html:107
+msgid "比如：我的咨询模板 / Europass 中文版"
+msgstr "e.g. My consulting template / Europass Chinese"
+
+#: compass/templates/themes/manage.html:112
+msgid "描述（可选）"
+msgstr "Description (optional)"
+
+#: compass/templates/themes/manage.html:113
+msgid "一句话说明：双栏 / 单栏 / 适用场景"
+msgstr "One-line: two-column / single-column / use case"
+
+#: compass/templates/themes/manage.html:118
+msgid "来源"
+msgstr "Source"
+
+#: compass/templates/themes/manage.html:120
+msgid "上传 .html 文件"
+msgstr "Upload .html file"
+
+#: compass/templates/themes/manage.html:121
+msgid "直接粘贴 HTML"
+msgstr "Paste HTML directly"
+
+#: compass/templates/themes/manage.html:135
+msgid "📤 上传"
+msgstr "📤 Upload"
+

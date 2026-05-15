@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}边界 · Compass{% endblock %}
+{% block content %}
+
+<h1>{{ _('Calibration · 边界') }}</h1>
+<p class="lede">
+  你的边界设定决定了 Compass 在哪个层级停。它从你的"接受/拒绝/编辑"决策里慢慢学，
+  但你随时可以直接编辑——你的编辑会覆盖学习结果直到下次 relearn。
+</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('Compass 学到的"你接受到哪种程度"——不是你的偏好，是你的') }}<strong>{{ _('伦理边界') }}</strong>：</p>
+    <ul>
+      <li><code>max_amplification_level</code>{{ _('：你接受 L0–L4 哪一档（L5 永远禁止——事实编造）') }}</li>
+      <li><code>preferred_verbs_avoid</code>{{ _('：你拒绝过的强势动词（如 "led" / "owned"）') }}</li>
+      <li><code>preferred_verbs_do</code>{{ _('：你接受过的合适动词') }}</li>
+      <li><code>sensitive_categories_locked</code>{{ _('：硬锁的类目（学历 / 语言级别等）') }}</li>
+    </ul>
+    <h4>{{ _('为什么需要它（学边界不学偏好）') }}</h4>
+    <p>{{ _('RLHF 标准做法学"用户喜欢什么"——会形成茧房。Compass 反过来：学"用户接受到什么程度"——这是伦理判断而非偏好倾向，不会让视野收窄。学习') }}<strong>{{ _('缓慢漂移') }}</strong>{{ _('（每次最多 ±1）+ 反向调节（adversarial voice 永远不学）防止失控。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('感觉简历改写"过分美化"或"过度保守"——直接编辑边界') }}</li>
+      <li>{{ _('每个月点"重新学习"——读最近 30 天决策更新') }}</li>
+      <li>{{ _('触发漂移警报时——可能要"价值观回归"清空学习') }}</li>
+    </ul>
+  </div>
+</details>
+
+{% if drift_alert %}
+  <div class="card" style="border-color: var(--warn)">
+    <h3 style="color: var(--warn)">{{ _('⚠ 检测到漂移') }}</h3>
+    <p>
+      max_amplification_level 从 L{{ drift_alert.from }} 跳到 L{{ drift_alert.to }} —— 这是异常快的边界变化。
+      点下方"价值观回归"重新审视，或确认这是你的本意。
+    </p>
+  </div>
+{% endif %}
+
+<div class="card">
+  <h3>{{ _('当前边界') }}</h3>
+  <ul style="margin: 6px 0; padding-left: 18px">
+    <li><strong>max_amplification_level:</strong> L{{ cal.max_amplification_level }}
+      <span class="muted" style="font-size: 12px">
+        （L0 照抄 / L1 同义 / L2 隐含显化 / L3 视角重构 / L4 推断量化 / L5 永远禁止）
+      </span>
+    </li>
+    <li><strong>do verbs:</strong> {{ cal.preferred_verbs_do | join(", ") if cal.preferred_verbs_do else "(无)" }}</li>
+    <li><strong>avoid verbs:</strong> {{ cal.preferred_verbs_avoid | join(", ") if cal.preferred_verbs_avoid else "(无)" }}</li>
+    <li><strong>{{ _('locked sensitive 类目:') }}</strong> {{ cal.sensitive_categories_locked | join(", ") if cal.sensitive_categories_locked else "(无)" }}</li>
+    <li class="muted" style="font-size: 12px">
+      上次 review: {{ cal.last_review_at | local_dt }}
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>{{ _('直接编辑') }}</h3>
+  <form method="post" action="{{ url_for('calibration.edit') }}">
+    <p>
+      <label>max_amplification_level (0-4):</label>
+      <input type="number" name="max_level" min="0" max="4" value="{{ cal.max_amplification_level }}" style="width: 60px; padding: 4px">
+    </p>
+    <p>
+      <label>{{ _('do verbs（逗号分隔）:') }}</label>
+      <input type="text" name="do" value="{{ cal.preferred_verbs_do | join(', ') }}" style="width: 100%; padding: 6px">
+    </p>
+    <p>
+      <label>{{ _('avoid verbs（逗号分隔）:') }}</label>
+      <input type="text" name="avoid" value="{{ cal.preferred_verbs_avoid | join(', ') }}" style="width: 100%; padding: 6px">
+    </p>
+    <p>
+      <label>{{ _('locked sensitive 类目（逗号分隔，例如: education_credential, language_level）:') }}</label>
+      <input type="text" name="locked" value="{{ cal.sensitive_categories_locked | join(', ') }}" style="width: 100%; padding: 6px">
+    </p>
+    <button type="submit">{{ _('💾 保存') }}</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>{{ _('学习 / 重置') }}</h3>
+  <p class="muted">
+    "重新学习"会读最近 30 天你的接受/拒绝决策，更新边界。
+    "价值观回归"会清空所有学到的偏好，回到中性默认。
+  </p>
+  <form method="post" action="{{ url_for('calibration.relearn') }}" style="display: inline">
+    <button type="submit" class="subtle">{{ _('🔄 重新学习（最近 30 天）') }}</button>
+  </form>
+  <form method="post" action="{{ url_for('calibration.reset') }}" style="display: inline; margin-left: 8px">
+    <button type="submit" class="subtle" style="color: var(--danger)" onclick="return confirm('确定重置所有学到的边界？');">
+      ⚠ 价值观回归（清空学习）
+    </button>
+  </form>
+</div>
+
+<p class="muted" style="font-size: 12px; margin-top: 24px">
+  Adversarial voice 永远不会被你的覆盖训练——它每次评审都从一个固定 prompt 出发，
+  作为反 sycophancy 的抗体。你可以在 .env 里通过 ADVERSARIAL_VOICE_ENABLED 关掉它，但默认开启。
+</p>
+
+{% endblock %}

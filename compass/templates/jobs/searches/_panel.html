@@ -1,0 +1,512 @@
+{# ─────────── 抓取配置（C1: 抽成 partial 可在 list.html / searches/overview.html 复用）
+   开关逻辑：
+     force_open_panel  caller 显式要求展开（standalone 求职意图页）
+     total_count == 0  jobs 列表空时自动展开
+     ?scrape=1         hash CTA 跳转
+─────────── #}
+{% set scrape_force_open = force_open_panel or (request.args.get('scrape') == '1') %}
+{% set _auto_open = (total_count is defined and total_count == 0) or scrape_force_open %}
+<details id="scrape" class="card" {% if _auto_open %}open{% endif %} style="padding: 0; overflow: hidden">
+  <summary style="cursor: pointer; padding: 14px 22px; list-style: none; user-select: none; display: flex; align-items: center; justify-content: space-between">
+    <div>
+      <strong style="font-size: 14px">{{ _('📥 抓取配置') }}</strong>
+      <span class="muted" style="font-size: 12.5px; margin-left: 8px">{{ _('点开配置多组（每组：地点 + 关键词），结果汇总') }}</span>
+    </div>
+    <span class="muted" style="font-size: 12px">▼</span>
+  </summary>
+  <div style="padding: 0 22px 20px">
+    <form method="post" action="{{ url_for('jobs.scrape_now') }}"
+          x-data="scrapeConfig()" x-init="init()" data-slow-action="true" data-progress-source="scrape">
+      <noscript>
+        <p class="muted" style="font-size: 12px; padding: 12px; background: #fae5e5; border-radius: 4px">
+          ⚠ 多组抓取配置需要 JavaScript（Alpine.js）。请启用后刷新页面。
+        </p>
+      </noscript>
+
+      <template x-for="(g, i) in groups" :key="g._id">
+        <div class="scrape-group" :class="!g.enabled && 'scrape-group-disabled'">
+          {# Hidden: carry the existing profile id through form submit so the
+             server-side merge in _form_groups_to_multi_profile preserves
+             stable URLs (Job.matched_profile_id, bookmarks). Empty for new
+             groups — server generates a slug only when this is missing. #}
+          <input type="hidden" :name="'id_' + (i + 1)" :value="g.id || ''">
+          <div class="scrape-group-row">
+          <label class="group-no" :class="g.enabled ? 'group-no-enabled' : 'group-no-disabled'"
+                 :title="{{ _('g.enabled ? \'点击禁用这一组（不会被一键抓取）\' : \'点击启用这一组\'') }}">
+            <input type="checkbox" x-model="g.enabled"
+                   :name="'enabled_' + (i + 1)">
+            <div class="group-no-num" x-text="'#' + (i + 1)"></div>
+            <div class="group-no-state">
+              <span x-show="g.enabled" style="color: var(--ok); font-weight: 600">{{ _('启用') }}</span>
+              <span x-show="!g.enabled" x-cloak style="color: var(--muted)">{{ _('已禁用') }}</span>
+            </div>
+            <span x-text="countryFlag(g)" x-show="countryFlag(g)" x-cloak
+                  style="font-size: 16px; margin-top: 2px"
+                  :title="{{ _('g.country || \'从地点推断国旗\'') }}"></span>
+          </label>
+          <div class="field">
+            <label>{{ _('地点（逗号分隔）') }}</label>
+            <input type="text" x-model="g.locations"
+                   :name="'locations_' + (i + 1)"
+                   placeholder="Milan, Italy">
+          </div>
+          <div class="field">
+            <label>
+              关键词（逗号分隔）
+              <button type="button" class="suggest-aliases-btn"
+                      @click="openAliasModal(i)"
+                      title="{{ _('LLM 提议多语言 + 同语言同义词，避免抓不到当地语言职位') }}">
+                💡 建议别名
+              </button>
+            </label>
+            <input type="text" x-model="g.keywords"
+                   :name="'keywords_' + (i + 1)"
+                   placeholder="data analyst, fintech PM">
+          </div>
+          <div class="field" style="max-width: 130px">
+            <label title="{{ _('只抓取最近 N 小时内发布的岗位 — 168=7天, 720=30天') }}">{{ _('最近多久') }}</label>
+            <select x-model.number="g.hours_old" :name="'hours_old_' + (i + 1)"
+                    style="width: 100%; padding: 6px; font: inherit; border: 1px solid var(--line); border-radius: 3px;">
+              <option value="24">{{ _('24 小时') }}</option>
+              <option value="72">{{ _('3 天') }}</option>
+              <option value="168">{{ _('7 天') }}</option>
+              <option value="720">{{ _('30 天') }}</option>
+              <option value="0">{{ _('不限') }}</option>
+            </select>
+          </div>
+          <button type="button" class="remove-group" title="{{ _('删除这一组') }}" @click="removeGroup(i)">✕</button>
+          </div>
+
+          {# 5-07 multi-profile 升级字段（高级折叠） — 在 row 1 wrapper 之外，块级独占整行 #}
+          <details class="advanced-fields">
+            <summary class="muted" style="cursor: pointer; font-size: 11.5px; user-select: none">
+              ⚙ 高级（multi-profile 字段：意图描述 / dealbreaker / 别名 / 黑名单）
+            </summary>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-top: 10px; font-size: 12px">
+              <div class="field" style="grid-column: 1 / -1">
+                <label>{{ _('组标签') }} <span class="muted" style="font-size: 10.5px">{{ _('(用户可读名)') }}</span></label>
+                <input type="text" x-model="g.label" :name="'label_' + (i + 1)"
+                       placeholder="{{ _('例：德国-法兰克福') }}">
+              </div>
+              <div class="field">
+                <label>City <span class="muted" style="font-size: 10.5px">{{ _('(空 = 从地点推断)') }}</span></label>
+                <input type="text" x-model="g.city" :name="'city_' + (i + 1)" placeholder="Frankfurt">
+              </div>
+              <div class="field">
+                <label>Country <span class="muted" style="font-size: 10.5px">{{ _('(空 = 从地点推断)') }}</span></label>
+                <input type="text" x-model="g.country" :name="'country_' + (i + 1)" placeholder="Germany">
+              </div>
+              <div class="field" style="grid-column: 1 / -1">
+                <label>{{ _('这条求职意图想找什么') }} <span class="muted" style="font-size: 10.5px">{{ _('(LLM tier 分类参考)') }}</span></label>
+                <textarea x-model="g.user_prompt" :name="'user_prompt_' + (i + 1)" rows="2"
+                          placeholder="{{ _('电气工程师 + 金融咨询 + 数据分析；排除餐饮/护理/驾驶') }}"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px"></textarea>
+              </div>
+              <div class="field">
+                <label>{{ _('必须包含国家') }} <span class="muted" style="font-size: 10.5px">{{ _('(每行一个，dealbreaker)') }}</span></label>
+                <textarea x-model="g.country_must_be" :name="'country_must_be_' + (i + 1)" rows="2"
+                          placeholder="Germany"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11.5px"></textarea>
+              </div>
+              <div class="field">
+                <label>{{ _('阻断语言') }} <span class="muted" style="font-size: 10.5px">{{ _('(每行一个 ISO 码)') }}</span></label>
+                <textarea x-model="g.language_blocked" :name="'language_blocked_' + (i + 1)" rows="2"
+                          placeholder="it&#10;es"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11.5px"></textarea>
+              </div>
+              <div class="field">
+                <label>{{ _('公司黑名单') }} <span class="muted" style="font-size: 10.5px">{{ _('(每行一个)') }}</span></label>
+                <textarea x-model="g.blacklist_companies" :name="'blacklist_companies_' + (i + 1)" rows="2"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px"></textarea>
+              </div>
+              <div class="field">
+                <label>{{ _('关键词黑名单') }} <span class="muted" style="font-size: 10.5px">{{ _('(每行一个)') }}</span></label>
+                <textarea x-model="g.blacklist_keywords" :name="'blacklist_keywords_' + (i + 1)" rows="2"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px"></textarea>
+              </div>
+              <div class="field" style="grid-column: 1 / -1">
+                <label>{{ _('关键词别名') }} <span class="muted" style="font-size: 10.5px">{{ _('(每行 "key=alias1,alias2,...")') }}</span></label>
+                <textarea x-model="g.keyword_aliases" :name="'keyword_aliases_' + (i + 1)" rows="2"
+                          placeholder="Data Analyst=Datenanalyst,Analista Dati&#10;Power Engineer=Elektroingenieur,Ingegnere Elettrico"
+                          style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px; font-family: ui-monospace, monospace; font-size: 11.5px"></textarea>
+              </div>
+            </div>
+          </details>
+        </div>
+      </template>
+
+      <div style="display: flex; gap: 8px; align-items: center; margin-top: 12px">
+        <button type="button" class="subtle" style="font-size: 13px" @click="addGroup()">
+          + 添加一组配置
+        </button>
+        <div style="flex: 1"></div>
+        <button type="submit" class="primary"
+                data-loading-text="⏳ 抓取中... (30-60 秒)">{{ _('📥 抓取（运行所有组）') }}</button>
+      </div>
+      <p class="muted" style="font-size: 11px; margin-top: 6px">
+        💾 点 <strong>{{ _('📥 抓取') }}</strong> {{ _('后，本组配置写入') }} <code>data/last_scrape.json</code>{{ _('（服务端持久）。未保存的草稿仅缓存在浏览器，刷新后以服务端为准。') }}
+      </p>
+
+      {# Alias suggestion modal — shown only when modal.open #}
+      <div class="alias-modal" x-show="modal.open" x-cloak style="display:none" x-transition.opacity>
+        <div class="alias-modal-backdrop" @click="closeAliasModal()"></div>
+        <div class="alias-modal-content">
+          <h3>{{ _('多语言别名建议 — "') }}<span x-text="modal.canonical"></span>"</h3>
+          <p class="muted" style="font-size: 12.5px; margin: 4px 0 12px">
+            LLM 提议跨语言翻译 + 同语言同义词。你勾选要加入的（adjacent 类默认不选——自己判断是否真适合）。
+          </p>
+          <div class="alias-list">
+            <template x-if="modal.loading">
+              <div style="padding:20px;text-align:center;color:var(--muted)">{{ _('LLM 思考中...') }}</div>
+            </template>
+            <template x-if="modal.error">
+              <div style="padding:20px;color:var(--danger)" x-text="modal.error"></div>
+            </template>
+            <template x-if="!modal.loading && !modal.error && modal.aliases.length === 0">
+              <div style="padding:20px;color:var(--muted)">{{ _('LLM 没返回有效别名（试试更具体的关键词）') }}</div>
+            </template>
+            <template x-for="(a, ai) in modal.aliases" :key="ai">
+              <label class="alias-item">
+                <input type="checkbox" x-model="a._selected">
+                <span class="alias-text" x-text="a.alias"></span>
+                <span class="alias-tag" :class="'alias-tag-' + a.kind" x-text="a.kind"></span>
+                <span class="alias-lang" x-text="a.language"></span>
+                <span class="alias-rationale" x-text="a.rationale"></span>
+              </label>
+            </template>
+          </div>
+          <div style="display:flex; gap:8px; margin-top: 14px">
+            <button type="button" class="cancel" @click="closeAliasModal()">{{ _('取消') }}</button>
+            <div style="flex:1"></div>
+            <button type="button" class="add-selected" @click="addSelectedAliases()"
+                    :disabled="modal.loading">{{ _('✓ 加入选中的') }}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</details>
+
+<script>
+  // Open the scrape config when arriving via #scrape hash (sidebar CTA).
+  // <details> doesn't auto-open on fragment link by spec, so we do it here.
+  (function(){
+    function openScrape() {
+      var el = document.getElementById('scrape');
+      if (!el) return;
+      el.open = true;
+      try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(_) {}
+    }
+    if (location.hash === '#scrape') openScrape();
+    window.addEventListener('hashchange', function() {
+      if (location.hash === '#scrape') openScrape();
+    });
+  })();
+</script>
+
+<style>
+  .scrape-group {
+    display: block;  /* 5-07: 块级容器，row 1 + details row 2 各自占整行 */
+    padding: 10px 10px 10px 6px; background: #fafaf6;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--ok);  /* enabled: green left bar */
+    border-radius: 4px; margin-bottom: 8px;
+    transition: opacity 100ms, background 100ms, border-color 100ms;
+  }
+  .scrape-group .scrape-group-row {
+    display: flex; gap: 8px; align-items: end;
+    flex-wrap: wrap;  /* 窄屏让 field 换行 */
+  }
+  .scrape-group.scrape-group-disabled {
+    opacity: 0.55;
+    background: #f1f1ed;
+    border-left-color: var(--muted);
+  }
+  .scrape-group.scrape-group-disabled .field input,
+  .scrape-group.scrape-group-disabled .field select {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+  .scrape-group .group-no {
+    font-size: 11px;
+    min-width: 56px; padding: 4px 0;
+    text-align: center; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    border-radius: 4px;
+    transition: background 80ms;
+    user-select: none;
+  }
+  .scrape-group .group-no:hover { background: rgba(0,0,0,0.04); }
+  .scrape-group .group-no input[type="checkbox"] {
+    margin: 0; cursor: pointer;
+    width: 16px; height: 16px;
+  }
+  .scrape-group .group-no-num {
+    font-weight: 600; color: var(--muted); font-size: 12px;
+  }
+  .scrape-group .group-no-state {
+    font-size: 10px; line-height: 1; letter-spacing: 0.04em;
+  }
+  .scrape-group .field { flex: 1; min-width: 180px; }
+  .scrape-group .field label { color: var(--muted); font-size: 12px; }
+  .scrape-group .field input,
+  .scrape-group .field select,
+  .scrape-group .field textarea {
+    width: 100%; padding: 6px; font: inherit; box-sizing: border-box;
+    border: 1px solid var(--line); border-radius: 3px;
+    background: white;
+  }
+  .scrape-group .field textarea {
+    font-family: ui-monospace, "Menlo", monospace; font-size: 12px;
+    resize: vertical; min-height: 32px; line-height: 1.5;
+  }
+  /* 5-07 高级折叠面板（multi-profile 字段）— 现在在 .scrape-group 块级容器里，
+     是 .scrape-group-row 之后的兄弟，自然块级展开占整行 */
+  .scrape-group .advanced-fields {
+    margin-top: 8px; padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .scrape-group .advanced-fields summary {
+    cursor: pointer; padding: 2px 0; user-select: none;
+    list-style: none;
+  }
+  .scrape-group .advanced-fields summary::-webkit-details-marker { display: none; }
+  .scrape-group .advanced-fields summary::before {
+    content: '▶'; display: inline-block; margin-right: 6px;
+    font-size: 10px; color: var(--muted);
+    transition: transform 120ms;
+  }
+  .scrape-group .advanced-fields[open] summary::before { transform: rotate(90deg); }
+  .scrape-group .advanced-fields .field { flex: none; min-width: 0; }  /* grid 里关 flex */
+  .scrape-group .remove-group {
+    background: none; border: none; color: var(--danger);
+    cursor: pointer; font-size: 18px; padding: 6px;
+  }
+  .scrape-group .remove-group:hover { background: #fae5e5; border-radius: 3px; }
+  .suggest-aliases-btn {
+    background: none; border: 1px solid var(--line); color: var(--accent);
+    cursor: pointer; font-size: 11px; padding: 1px 8px; margin-left: 6px;
+    border-radius: 3px;
+  }
+  .suggest-aliases-btn:hover { background: #eaf0f4; }
+
+  .alias-list { display: flex; flex-direction: column; gap: 4px; }
+  .alias-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; background: #fafaf6; border-radius: 4px;
+    cursor: pointer; user-select: none;
+  }
+  .alias-item:hover { background: #f4f4ee; }
+  .alias-item input[type="checkbox"] { margin: 0; }
+  .alias-item .alias-text { font-weight: 500; min-width: 140px; }
+  .alias-item .alias-tag {
+    font-size: 10px; padding: 1px 6px; border-radius: 9px;
+    background: var(--line); color: var(--muted);
+  }
+  .alias-tag-translation { background: #d8efd8; color: var(--ok); }
+  .alias-tag-variant     { background: #eaf0f4; color: var(--accent); }
+  .alias-tag-seniority   { background: #f6e0c5; color: var(--warn); }
+  .alias-tag-adjacent    { background: #fae5e5; color: var(--danger); }
+  .alias-item .alias-lang {
+    font-size: 10px; color: var(--muted); font-family: monospace;
+    min-width: 28px;
+  }
+  .alias-item .alias-rationale {
+    font-size: 12px; color: var(--muted); flex: 1; text-align: right;
+    font-style: italic;
+  }
+</style>
+
+{# 5-07: server-rendered 初始 groups (last_scrape.json multi-profile)
+   Alpine init() 在 localStorage 空时优先读这个 #}
+<script id="server-initial-groups" type="application/json">{{ initial_groups | tojson | safe if initial_groups else '[]' }}</script>
+
+<script>
+  window.SCRAPE_PANEL_I18N = {
+    fill_keyword_first: {{ _('请先填一个关键词，再点 "建议别名"')|tojson }},
+    failed:             {{ _('失败')|tojson }},
+    network_error:      {{ _('网络错误:')|tojson }},
+  };
+</script>
+<script>
+  // Scrape config: Alpine x-data factory.
+  function scrapeConfig() {
+    return {
+      STORAGE_KEY: 'compass_scrape_groups_v1',
+      _nextId: 1,
+      groups: [],
+      modal: {
+        open: false,
+        loading: false,
+        error: '',
+        canonical: '',
+        targetGroupIndex: -1,
+        aliases: [],
+      },
+
+      init() {
+        this.groups = this._load();
+        this.$watch('groups', () => this._save(), { deep: true });
+      },
+
+      addGroup() {
+        this.groups.push(this._newGroup());
+      },
+
+      countryFlag(g) {
+        // 国家 → flag emoji（5-07 user 5-06 12:31 原意：按国家分组识别）
+        const FLAGS = {
+          'germany': '🇩🇪', 'deutschland': '🇩🇪',
+          'switzerland': '🇨🇭', 'schweiz': '🇨🇭',
+          'italy': '🇮🇹', 'italia': '🇮🇹',
+          'france': '🇫🇷',
+          'spain': '🇪🇸', 'españa': '🇪🇸',
+          'netherlands': '🇳🇱', 'nederland': '🇳🇱', 'holland': '🇳🇱',
+          'austria': '🇦🇹', 'österreich': '🇦🇹',
+          'poland': '🇵🇱', 'polska': '🇵🇱',
+          'belgium': '🇧🇪', 'belgique': '🇧🇪',
+          'denmark': '🇩🇰', 'sweden': '🇸🇪', 'norway': '🇳🇴', 'finland': '🇫🇮',
+          'uk': '🇬🇧', 'united kingdom': '🇬🇧', 'england': '🇬🇧',
+          'usa': '🇺🇸', 'united states': '🇺🇸',
+          'canada': '🇨🇦', 'china': '🇨🇳', '中国': '🇨🇳',
+          'japan': '🇯🇵', 'australia': '🇦🇺', 'singapore': '🇸🇬',
+          'ireland': '🇮🇪', 'portugal': '🇵🇹', 'czech republic': '🇨🇿',
+          'luxembourg': '🇱🇺',
+        };
+        let c = (g.country || '').trim().toLowerCase();
+        if (!c && g.locations) {
+          // 从 locations 自动推断
+          const parts = g.locations.split(',').map(s => s.trim());
+          if (parts.length >= 2) c = parts[parts.length - 1].toLowerCase();
+        }
+        return FLAGS[c] || '';
+      },
+
+      removeGroup(i) {
+        this.groups.splice(i, 1);
+        if (this.groups.length === 0) this.groups.push(this._newGroup());
+      },
+
+      _newGroup(g) {
+        return {
+          _id: this._nextId++,
+          // Server-assigned profile id — preserved through form submit so the
+          // server-side merge keeps URLs/Job.matched_profile_id stable.
+          id: (g && g.id) || '',
+          locations: (g && g.locations) || '',
+          keywords:  (g && g.keywords)  || '',
+          hours_old: (g && g.hours_old != null) ? g.hours_old : 168,
+          enabled:   (g && g.enabled !== false),
+          // 5-07 multi-profile 升级字段
+          label:               (g && g.label)               || '',
+          city:                (g && g.city)                || '',
+          country:             (g && g.country)             || '',
+          user_prompt:         (g && g.user_prompt)         || '',
+          country_must_be:     (g && g.country_must_be)     || '',
+          language_blocked:    (g && g.language_blocked)    || '',
+          blacklist_companies: (g && g.blacklist_companies) || '',
+          blacklist_keywords:  (g && g.blacklist_keywords)  || '',
+          keyword_aliases:     (g && g.keyword_aliases)     || '',
+        };
+      },
+
+      _load() {
+        // Server data (last_scrape.json) is the canonical source of truth.
+        // localStorage is only a draft cache and used as a fallback when
+        // the server has nothing (fresh install / migration).
+        let serverGroups = null;
+        try {
+          const el = document.getElementById('server-initial-groups');
+          if (el && el.textContent) {
+            const arr = JSON.parse(el.textContent);
+            if (Array.isArray(arr) && arr.length > 0) serverGroups = arr;
+          }
+        } catch (e) { /* ignore */ }
+
+        if (serverGroups) {
+          // Drop any stale localStorage cache so it can't override server again.
+          try { localStorage.removeItem(this.STORAGE_KEY); } catch (e) { /* ignore */ }
+          return serverGroups.map(g => this._newGroup(g));
+        }
+
+        // Server empty → fall back to localStorage draft (offline / first run).
+        try {
+          const raw = localStorage.getItem(this.STORAGE_KEY);
+          if (raw) {
+            const arr = JSON.parse(raw);
+            if (Array.isArray(arr) && arr.length > 0) return arr.map(g => this._newGroup(g));
+          }
+        } catch (e) { /* ignore */ }
+
+        return [this._newGroup()];
+      },
+
+      _save() {
+        try {
+          const payload = this.groups.map(g => ({
+            id: g.id || '',
+            locations: g.locations, keywords: g.keywords,
+            hours_old: g.hours_old, enabled: g.enabled,
+            // 5-07 multi-profile 升级字段
+            label: g.label, city: g.city, country: g.country,
+            user_prompt: g.user_prompt,
+            country_must_be: g.country_must_be,
+            language_blocked: g.language_blocked,
+            blacklist_companies: g.blacklist_companies,
+            blacklist_keywords: g.blacklist_keywords,
+            keyword_aliases: g.keyword_aliases,
+          }));
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(payload));
+        } catch (e) { /* quota / privacy mode — silently skip */ }
+      },
+
+      async openAliasModal(groupIndex) {
+        const g = this.groups[groupIndex];
+        const existing = (g.keywords || '').split(',').map(s => s.trim()).filter(Boolean);
+        if (existing.length === 0) {
+          alert(window.SCRAPE_PANEL_I18N.fill_keyword_first);
+          return;
+        }
+        const canonical = existing[0];
+        const regions = (g.locations || '').split(',').map(s => s.trim()).filter(Boolean);
+        this.modal = {
+          open: true, loading: true, error: '',
+          canonical, targetGroupIndex: groupIndex, aliases: [],
+        };
+        try {
+          const r = await fetch('/jobs/suggest-aliases', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({keyword: canonical, regions}),
+          });
+          const j = await r.json();
+          this.modal.loading = false;
+          if (!j.ok) { this.modal.error = j.error || window.SCRAPE_PANEL_I18N.failed; return; }
+          this.modal.aliases = (j.aliases || []).map(a => ({
+            ...a,
+            _selected: a.kind !== 'adjacent',
+          }));
+        } catch (e) {
+          this.modal.loading = false;
+          this.modal.error = window.SCRAPE_PANEL_I18N.network_error + ' ' + (e.message || e);
+        }
+      },
+
+      addSelectedAliases() {
+        const i = this.modal.targetGroupIndex;
+        if (i < 0 || i >= this.groups.length) return;
+        const g = this.groups[i];
+        const existing = (g.keywords || '').split(',').map(s => s.trim()).filter(Boolean);
+        const picked = this.modal.aliases.filter(a => a._selected).map(a => a.alias);
+        const merged = Array.from(new Set([...existing, ...picked]));
+        g.keywords = merged.join(', ');
+        this.closeAliasModal();
+      },
+
+      closeAliasModal() {
+        this.modal.open = false;
+      },
+    };
+  }
+</script>
+

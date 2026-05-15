@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ r.basics.name or "Resume" }} · Compass Preview</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm; }
+    * { box-sizing: border-box; }
+    body {
+      font: 11pt/1.45 -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", sans-serif;
+      color: #222;
+      margin: 0;
+      padding: 24px;
+      background: #fafaf6;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+    }
+    .resume {
+      max-width: 760px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px 38px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    h1 { font-size: 22pt; margin: 0 0 4px; letter-spacing: -0.01em; }
+    h2 { font-size: 12pt; margin: 18px 0 6px; padding-bottom: 3px;
+         border-bottom: 1px solid #888; text-transform: uppercase;
+         letter-spacing: 0.06em; color: #333; }
+    h3 { font-size: 11.5pt; margin: 10px 0 1px; font-weight: 600; }
+    .contact { color: #555; font-size: 10pt; margin-bottom: 10px; }
+    .contact span { margin-right: 14px; }
+    .summary { font-style: italic; color: #444; margin: 8px 0 16px; }
+    .work-item, .edu-item { margin-bottom: 10px; }
+    .work-item .meta, .edu-item .meta { color: #666; font-size: 10pt; }
+    ul { margin: 4px 0 8px 0; padding-left: 18px; }
+    li { margin-bottom: 2px; }
+    .skill-group { margin: 4px 0; }
+    .skill-group strong { color: #333; }
+    .nav-bar {
+      max-width: 760px; margin: 0 auto 16px; padding: 0 38px;
+      display: flex; gap: 10px; align-items: center;
+    }
+    .nav-bar a, .nav-bar button {
+      padding: 6px 12px; background: #2b5876; color: white;
+      border: none; border-radius: 3px; text-decoration: none; font-size: 13px;
+      cursor: pointer;
+    }
+    .nav-bar .info { color: #666; font-size: 12px; flex: 1; }
+  </style>
+</head>
+<body>
+
+<div class="nav-bar no-print">
+  <a href="/">{{ _('← 返回 Compass') }}</a>
+  <button onclick="window.print()">{{ _('🖨 打印 / 保存为 PDF') }}</button>
+  <a href="{% if job_id %}/export/json/{{ job_id }}{% else %}/export/json{% endif %}">{{ _('📥 下载 JSON Resume') }}</a>
+  <span class="info">
+    {% if job_id %}定制版（job: {{ job_id }}）{% else %}主版（master resume）{% endif %} · Cmd+P 保存为 PDF
+  </span>
+</div>
+
+<div class="resume">
+  {% if r.basics.name %}
+    <h1>{{ r.basics.name }}</h1>
+    <div class="contact">
+      {% if r.basics.email %}<span>{{ r.basics.email }}</span>{% endif %}
+      {% if r.basics.phone %}<span>{{ r.basics.phone }}</span>{% endif %}
+      {% if r.basics.location and r.basics.location.address %}
+        <span>{{ r.basics.location.address }}</span>
+      {% endif %}
+    </div>
+    {% if r.basics.summary %}<p class="summary">{{ r.basics.summary }}</p>{% endif %}
+  {% endif %}
+
+  {% if r.work %}
+    <h2>Experience</h2>
+    {% for w in r.work %}
+      <div class="work-item">
+        <h3>{{ w.position }} · {{ w.name }}</h3>
+        <div class="meta">
+          {% if w.startDate or w.endDate %}{{ w.startDate }} – {{ w.endDate or "Present" }}{% endif %}
+          {% if w.location %} · {{ w.location }}{% endif %}
+        </div>
+        {% if w.highlights %}
+          <ul>
+            {% for h in w.highlights %}<li>{{ h }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.education %}
+    <h2>Education</h2>
+    {% for e in r.education %}
+      <div class="edu-item">
+        <h3>{{ e.studyType }} {{ e.area }} · {{ e.institution }}</h3>
+        <div class="meta">
+          {% if e.startDate or e.endDate %}{{ e.startDate }} – {{ e.endDate }}{% endif %}
+          {% if e.gpa %} · GPA {{ e.gpa }}{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.projects %}
+    <h2>Projects</h2>
+    {% for p in r.projects %}
+      <div class="work-item">
+        <h3>{{ p.name }}</h3>
+        {% if p.description %}<div>{{ p.description }}</div>{% endif %}
+        {% if p.keywords %}
+          <div class="meta">{{ p.keywords | join(", ") }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.skills %}
+    <h2>Skills</h2>
+    {% for s in r.skills %}
+      <div class="skill-group">
+        <strong>{{ s.name }}:</strong> {{ s.keywords | join(", ") }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.languages %}
+    <h2>Languages</h2>
+    {% for l in r.languages %}
+      <span style="margin-right: 14px">{{ l.language }}</span>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.certificates %}
+    <h2>Certifications</h2>
+    {% for c in r.certificates %}
+      <div class="edu-item">
+        <strong>{{ c.name }}</strong>
+        {% if c.issuer %} · {{ c.issuer }}{% endif %}
+        {% if c.date %} · {{ c.date }}{% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+</body>
+</html>

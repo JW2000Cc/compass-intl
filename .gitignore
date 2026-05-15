@@ -1,0 +1,58 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 敏感数据（绝对不能进 git）
+.env
+credentials/
+
+# 用户运行时数据
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite.pre_alembic_*.bak
+
+# 进程 / 锁文件 / 临时
+*.lock
+*.pid
+*.tmp
+*.bak
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# pytest
+.pytest_cache/
+.gstack/
+
+# Security: never commit these (added for GitHub publish)
+*.LEAKED_*
+.env.LEAKED
+credentials/
+*.pem
+*.key
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Catch all venv variants
+.venv*/
+venv*/
+
+# Catch all pycache / mypy etc.
+**/__pycache__/
+.mypy_cache/
+.ruff_cache/
+
+# Test residue
+.pytest_cache/
+data_backup_*/

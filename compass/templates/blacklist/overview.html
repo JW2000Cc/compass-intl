@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}黑名单 · Compass{% endblock %}
+{% block content %}
+
+<h1>{{ _('黑名单') }}</h1>
+<p class="lede">
+  抓取时过滤掉这些公司和关键词。匹配是大小写不敏感的子串匹配。
+</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('抓取阶段的过滤器。任何 job 如果：') }}</p>
+    <ul>
+      <li>{{ _('公司名包含黑名单的公司（子串匹配）') }}</li>
+      <li>{{ _('JD 描述里出现黑名单关键词（子串匹配）') }}</li>
+    </ul>
+    <p>{{ _('在写入数据库前**直接丢弃**——不浪费 LLM 调用做 tier 分类。') }}</p>
+
+    <h4>{{ _('痛点：substring 匹配的两个 bug') }}</h4>
+    <ul>
+      <li><strong>{{ _('跨语言失效') }}</strong>{{ _('：你写英文 "spam recruiter" 屏蔽不到意大利语 "agenzia spam"') }}</li>
+      <li><strong>{{ _('词不达意') }}</strong>{{ _('：你写"廉价职位"屏蔽——但实际 JD 用 "entry level" 或 "junior"') }}</li>
+    </ul>
+    <p>{{ _('底下"用自然语言描述"功能 + 反思层"效果分析"是 Compass 解决这两个 bug 的方式。') }}</p>
+  </div>
+</details>
+
+<!-- ── Method C: Natural-language description → LLM-generated blacklist ── -->
+<div class="card" style="border-color: var(--accent)">
+  <h3>{{ _('💬 用自然语言描述（推荐）') }}</h3>
+  <p class="muted" style="font-size: 13px; margin: 4px 0 12px">
+    不用想关键词——告诉 LLM 你不想要什么样的工作，它把"什么样的工作"翻译成具体的多语言关键词清单，你审核加入。
+  </p>
+
+  <textarea id="nl-description" rows="3"
+            style="width:100%; padding:10px; font: inherit; border: 1px solid var(--line); border-radius: 4px"
+            placeholder="{{ _('例：不要 unpaid 实习，不要 mlm，不要纯销售，不要外包公司，不要总要加班的。') }}"></textarea>
+
+  <div style="margin-top: 10px">
+    <button type="button" id="nl-suggest-btn">{{ _('✨ LLM 生成屏蔽建议') }}</button>
+    <span class="muted" style="font-size: 12px; margin-left: 8px">
+      建议会以候选清单展示，你勾选哪些要加入
+    </span>
+  </div>
+
+  <div id="nl-suggestions" style="margin-top: 14px; display: none">
+    <div id="nl-rationale" class="muted" style="font-size: 12px; margin-bottom: 6px"></div>
+    <div id="nl-companies-list" class="suggestion-list"></div>
+    <div id="nl-keywords-list" class="suggestion-list"></div>
+    <button type="button" id="nl-apply-btn" style="margin-top: 8px">{{ _('✓ 加入选中的到下方黑名单') }}</button>
+  </div>
+</div>
+
+<!-- ── The actual blacklist (for direct manual edit) ── -->
+<form method="post" action="{{ url_for('blacklist.update') }}">
+  <div class="card">
+    <h3>屏蔽的公司 ({{ bl.companies | length }})</h3>
+    <p class="muted" style="font-size: 12px; margin: 4px 0">
+      每行一个或逗号分隔。**子串匹配**——写 "Acme" 会匹配 "Acme Corp"、"Acme Solutions"。
+    </p>
+    <textarea id="companies-input" name="companies" rows="6"
+              style="width:100%; padding:8px; font-family: ui-monospace, monospace; font-size: 13px"
+              placeholder="Acme Corp&#10;Some Agency LLC">{{ bl.companies | join('\n') }}</textarea>
+  </div>
+
+  <div class="card">
+    <h3>屏蔽的关键词 ({{ bl.keywords | length }})</h3>
+    <p class="muted" style="font-size: 12px; margin: 4px 0">
+      在 JD 描述或公司名里出现就过滤。匹配大小写不敏感。
+    </p>
+    <textarea id="keywords-input" name="keywords" rows="6"
+              style="width:100%; padding:8px; font-family: ui-monospace, monospace; font-size: 13px"
+              placeholder="unpaid&#10;commission only&#10;mlm">{{ bl.keywords | join('\n') }}</textarea>
+  </div>
+
+  <div style="margin-top: 12px">
+    <button type="submit">{{ _('💾 保存') }}</button>
+    <span class="muted" style="font-size: 12px; margin-left: 12px">
+      下次抓取时生效。已抓回的 job 不会被追溯过滤。
+    </span>
+  </div>
+</form>
+
+<!-- ── Method E: Reflective effectiveness analysis ── -->
+<div class="card">
+  <h3>🪞 反思层 · 黑名单效果（最近 {{ audit.lookback_days }} 天）</h3>
+  <p>
+    抓取时被黑名单过滤掉的 job 数：<strong>{{ audit.blocked_total }}</strong>
+  </p>
+
+  {% if audit.repeat_tier5_companies %}
+    <h4 style="margin-top: 14px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">
+      建议加入黑名单（LLM 反复判 Tier 5 的公司）
+    </h4>
+    <p class="muted" style="font-size: 12.5px; margin: 4px 0">
+      下方公司在最近 {{ audit.lookback_days }} 天反复被 LLM 判为 Tier 5（客观不可达）——
+      把它们加入黑名单可以**节省后续 LLM 调用**（直接抓取时过滤，不再走分类）。
+    </p>
+    <ul style="margin: 8px 0; padding-left: 18px">
+      {% for r in audit.repeat_tier5_companies %}
+        <li>
+          <code>{{ r.company }}</code> {{ _('· 被判 Tier 5 共') }} <strong>{{ r.count }}</strong> {{ _('次') }}
+          <button type="button" class="add-to-blacklist-btn"
+                  data-company="{{ r.company }}"
+                  style="margin-left: 8px; font-size: 11px; padding: 1px 8px;
+                         border: 1px solid var(--line); background: white; cursor: pointer; border-radius: 3px">
+            + 加入屏蔽
+          </button>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted" style="font-size: 12.5px">
+      还没有公司被反复判为 Tier 5——用一段时间后这里会显示"建议屏蔽"清单。
+    </p>
+  {% endif %}
+</div>
+
+<style>
+  .suggestion-list {
+    display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0;
+  }
+  .suggestion-item {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 8px; background: #f4f4ee; border-radius: 12px;
+    font-size: 12.5px; cursor: pointer; user-select: none;
+    border: 1px solid var(--line);
+  }
+  .suggestion-item:hover { background: #eaf0f4; }
+  .suggestion-item input[type="checkbox"] { margin: 0; }
+  .suggestion-item.section-header {
+    width: 100%; background: none; border: none; cursor: default;
+    color: var(--muted); font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.04em; padding: 6px 0 2px;
+  }
+</style>
+
+<script>
+  window.BLACKLIST_I18N = {
+    describe_first:     {{ _('先描述一下你不想要什么样的工作')|tojson }},
+    thinking:           {{ _('思考中...')|tojson }},
+    llm_thinking:       {{ _('LLM 正在思考...')|tojson }},
+    failed:             {{ _('失败')|tojson }},
+    llm_verdict:        {{ _('LLM 判断:')|tojson }},
+    companies_header:   {{ _('公司')|tojson }},
+    keywords_header:    {{ _('关键词')|tojson }},
+    network_error:      {{ _('网络错误:')|tojson }},
+    generate_suggestions: {{ _('✨ LLM 生成屏蔽建议')|tojson }},
+    added_summary:      {{ _('已加入 {n_c} 个公司 + {n_k} 个关键词到下方编辑区。记得点 "💾 保存"。')|tojson }},
+    added_remember_save: {{ _('✓ 已加入（记得保存）')|tojson }},
+  };
+</script>
+<script>
+(function() {
+  const descBox = document.getElementById('nl-description');
+  const suggestBtn = document.getElementById('nl-suggest-btn');
+  const suggestionsBox = document.getElementById('nl-suggestions');
+  const companiesList = document.getElementById('nl-companies-list');
+  const keywordsList = document.getElementById('nl-keywords-list');
+  const rationaleDiv = document.getElementById('nl-rationale');
+  const applyBtn = document.getElementById('nl-apply-btn');
+  const companiesInput = document.getElementById('companies-input');
+  const keywordsInput = document.getElementById('keywords-input');
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+    ));
+  }
+
+  suggestBtn.addEventListener('click', async () => {
+    const description = (descBox.value || '').trim();
+    if (!description) {
+      alert(window.BLACKLIST_I18N.describe_first);
+      return;
+    }
+    suggestBtn.disabled = true;
+    suggestBtn.textContent = window.BLACKLIST_I18N.thinking;
+    suggestionsBox.style.display = 'block';
+    companiesList.innerHTML = `<div style="color:var(--muted)">${window.BLACKLIST_I18N.llm_thinking}</div>`;
+    keywordsList.innerHTML = '';
+    rationaleDiv.textContent = '';
+
+    try {
+      const r = await fetch('/blacklist/from-description', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({description}),
+      });
+      const j = await r.json();
+      if (!j.ok) {
+        companiesList.innerHTML = `<div style="color:var(--danger)">${escapeHtml(j.error || window.BLACKLIST_I18N.failed)}</div>`;
+        return;
+      }
+      rationaleDiv.textContent = j.rationale ? `${window.BLACKLIST_I18N.llm_verdict} ${j.rationale}` : '';
+      companiesList.innerHTML = (j.companies && j.companies.length > 0)
+        ? `<div class="suggestion-item section-header">${window.BLACKLIST_I18N.companies_header}</div>` + j.companies.map(c => `
+            <label class="suggestion-item">
+              <input type="checkbox" data-kind="company" data-value="${escapeHtml(c)}" checked>
+              <span>${escapeHtml(c)}</span>
+            </label>
+          `).join('')
+        : '';
+      keywordsList.innerHTML = (j.keywords && j.keywords.length > 0)
+        ? `<div class="suggestion-item section-header">${window.BLACKLIST_I18N.keywords_header}</div>` + j.keywords.map(k => `
+            <label class="suggestion-item">
+              <input type="checkbox" data-kind="keyword" data-value="${escapeHtml(k)}" checked>
+              <span>${escapeHtml(k)}</span>
+            </label>
+          `).join('')
+        : '';
+    } catch (e) {
+      companiesList.innerHTML = `<div style="color:var(--danger)">${window.BLACKLIST_I18N.network_error} ${escapeHtml(e.message)}</div>`;
+    } finally {
+      suggestBtn.disabled = false;
+      suggestBtn.textContent = window.BLACKLIST_I18N.generate_suggestions;
+    }
+  });
+
+  applyBtn.addEventListener('click', () => {
+    const newCompanies = Array.from(suggestionsBox.querySelectorAll('input[data-kind="company"]:checked')).map(cb => cb.dataset.value);
+    const newKeywords = Array.from(suggestionsBox.querySelectorAll('input[data-kind="keyword"]:checked')).map(cb => cb.dataset.value);
+    appendLines(companiesInput, newCompanies);
+    appendLines(keywordsInput, newKeywords);
+    suggestionsBox.style.display = 'none';
+    descBox.value = '';
+    alert(window.BLACKLIST_I18N.added_summary.replace('{n_c}', newCompanies.length).replace('{n_k}', newKeywords.length));
+  });
+
+  function appendLines(textarea, items) {
+    if (!items || items.length === 0) return;
+    const existing = (textarea.value || '').split('\n').map(s => s.trim()).filter(Boolean);
+    const merged = Array.from(new Set([...existing, ...items]));
+    textarea.value = merged.join('\n');
+  }
+
+  // E layer: "+ 加入屏蔽" buttons on repeat tier-5 companies
+  document.querySelectorAll('.add-to-blacklist-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      appendLines(companiesInput, [btn.dataset.company]);
+      btn.textContent = window.BLACKLIST_I18N.added_remember_save;
+      btn.disabled = true;
+      btn.style.color = 'var(--ok)';
+    });
+  });
+})();
+</script>
+
+{% endblock %}

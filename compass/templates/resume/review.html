@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}审核改写 · Compass{% endblock %}
+{% block content %}
+
+<p style="margin: 0 0 8px">
+  <a href="{{ url_for('jobs.detail', job_id=job.id) }}#step-resume_rewrite"
+     class="muted" style="font-size: 13px; text-decoration: none">{{ _('← 返回岗位流程') }}</a>
+  <span class="muted" style="font-size: 11.5px; margin-left: 12px">
+    或 <a href="{{ url_for('resume.workbench') }}">{{ _('回改写历史') }}</a>
+  </span>
+</p>
+
+{% include "resume/_review_panel.html" %}
+
+{% endblock %}

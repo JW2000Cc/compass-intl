@@ -1,0 +1,48 @@
+{# Single ResumeFact card. Rendered inline by overview.html and re-rendered
+   by HTMX after edit. Wrapped in a div with stable id for outerHTML swap. #}
+<div class="card" id="fact-card-{{ f.id }}" style="display: flex; gap: 12px">
+  <div style="flex: 1">
+    <p style="margin: 4px 0">{{ f.text }}</p>
+    {% if f.sensitive_category %}
+      <p class="muted" style="font-size: 11px; margin: 2px 0">
+        🔒 sensitive: {{ f.sensitive_category }} · 仅允许 L0/L1 变换
+      </p>
+    {% endif %}
+    {% if f.user_verified %}
+      <p class="muted" style="font-size: 11px; margin: 2px 0">{{ _('✓ 用户访谈验证') }}</p>
+    {% endif %}
+    {% if f.structured_json and f.structured_json.original_text %}
+      <p class="muted" style="font-size: 11px; margin: 2px 0; font-style: italic">
+        ✏ 已更正过；原文: {{ f.structured_json.original_text[:120] }}{% if f.structured_json.original_text | length > 120 %}…{% endif %}
+      </p>
+    {% endif %}
+  </div>
+  <div style="text-align: right; display: flex; flex-direction: column; gap: 6px">
+    <button type="button" class="subtle" style="font-size: 12px"
+            @click="openEditModal({{ {
+              'id': f.id,
+              'text': f.text,
+              'sensitive_category': f.sensitive_category or '',
+              'user_verified': f.user_verified,
+              'kind': f.kind,
+            } | tojson }})">
+      ✎ 编辑
+    </button>
+    <a href="{{ url_for('identity.fact_history', fact_id=f.id) }}"
+       class="subtle"
+       style="font-size: 12px; padding: 4px 8px; text-decoration: none; text-align: center; border-radius: 4px"
+       title="{{ _('演变 — 看这条改过几次、来自哪个 job、可以回滚到旧版') }}">
+      📜 演变
+    </a>
+    {% if f.kind in ["experience", "experience_bullet", "project"] and not f.user_verified %}
+      <form method="post" action="{{ url_for('identity.start_interview', fact_id=f.id) }}"
+            title="{{ _('LLM 针对这条 fact 主动问你 3-5 个深挖问题（量化 / 影响 / 角色），提炼出更精确的 sub-facts。改写时这些细节让 LLM 不用猜。') }}">
+        <button type="submit" class="subtle" style="font-size: 12px">{{ _('🎤 访谈深挖') }}</button>
+      </form>
+    {% endif %}
+    <form method="post" action="{{ url_for('identity.deactivate_fact', fact_id=f.id) }}"
+          title="{{ _('软删除（隐藏不显示）— 不影响历史改写，DB 里仍在，可恢复') }}">
+      <button type="submit" class="subtle" style="font-size: 12px; color: var(--danger)">🗑</button>
+    </form>
+  </div>
+</div>

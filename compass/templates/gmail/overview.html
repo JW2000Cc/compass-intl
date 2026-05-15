@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Gmail 集成 · Compass{% endblock %}
+{% block content %}
+
+<h1>{{ _('Gmail 集成') }}</h1>
+<p class="lede">
+  自动从邮件识别 application_received / interview_invite / rejection / offer，
+  匹配到 Compass 里的 job，<strong>{{ _('自动更新状态') }}</strong>——
+  这是 funnel 数据真正闭环的来源。
+</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('授权 Compass 读你的 Gmail（只读，scope: gmail.readonly）。点同步后：') }}</p>
+    <ol>
+      <li>{{ _('抓最近 14 天匹配求职关键词的邮件') }}</li>
+      <li>{{ _('LLM 分类每封：application_received / interview_invite / rejection / offer / scheduling / follow_up / not_job_related') }}</li>
+      <li>{{ _('按公司+岗位模糊匹配到 Compass 里的 Job') }}</li>
+      <li>{{ _('自动更新') }} <code>Job.status</code> {{ _('+ 写 ReflectionEvent') }}</li>
+    </ol>
+    <h4>{{ _('为什么需要它（funnel 闭环的关键缺失）') }}</h4>
+    <p>{{ _('Compass 的漏斗追踪 status (applied/interview/offer)——但') }}<strong>{{ _('几乎没人会手动改 status') }}</strong>{{ _('。结果 funnel 数据永远是片段，calibration learner 拿不到真投递结果。') }}</p>
+    <p>{{ _('Gmail 集成 = 让"投递结果"自动从邮件回流。这是 Reflective Flywheel 真正闭环的来源——calibration 第一次能看到"我 thumbs-up 的工作 vs 实际拿 offer 的工作"对照。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('第一次：配置 OAuth client_secret + 授权（一次性，5 分钟）') }}</li>
+      <li>{{ _('每周一次手动点"同步"——更新过去 14 天 status 变化') }}</li>
+      <li>{{ _('看到 funnel 数据怪（applied 数量明显少于实际投递）→ 跑同步') }}</li>
+    </ul>
+    <h4>{{ _('隐私（重要）') }}</h4>
+    <ul>
+      <li>{{ _('只读 Gmail（不能发 / 不能改）') }}</li>
+      <li>{{ _('邮件正文用完即弃——不持久化到 Compass DB') }}</li>
+      <li>{{ _('只存"分类结果 + subject 摘要"') }}</li>
+      <li>{{ _('OAuth token 在本机；可在 myaccount.google.com 撤销') }}</li>
+    </ul>
+  </div>
+</details>
+
+<div class="card">
+  <h3>{{ _('当前状态') }}</h3>
+  <ul style="margin: 6px 0; padding-left: 18px">
+    <li>Google OAuth client secret:
+      {% if secret_exists %}
+        ✓ <code>{{ secret_path }}</code>
+      {% else %}
+        ✗ 未配置
+      {% endif %}
+    </li>
+    <li>Gmail token (用户已授权):
+      {% if token_exists %}✓ 已授权{% else %}✗ 未授权{% endif %}
+    </li>
+    <li>LLM:
+      {% if has_llm %}✓ 已配置{% else %}✗ 未配置 — 无法分类邮件{% endif %}
+    </li>
+  </ul>
+</div>
+
+{% if not secret_exists %}
+  <div class="card" style="border-color: var(--warn)">
+    <h3>{{ _('第一次使用：配置 Google OAuth') }}</h3>
+    <ol style="margin: 8px 0; padding-left: 22px; line-height: 1.8">
+      <li>{{ _('访问') }} <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console → Credentials</a></li>
+      <li>{{ _('启用 Gmail API（如尚未启用）') }}</li>
+      <li>{{ _('创建一个 OAuth 2.0 Client ID，类型选') }} <strong>Desktop application</strong></li>
+      <li>{{ _('下载 client secret JSON，重命名为') }} <strong><code>{{ secret_filename }}</code></strong></li>
+      <li>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <span>{{ _('放到这个目录（自动跟随程序所在位置）：') }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap">
+          <code id="creds-path"
+                style="flex: 1; min-width: 200px; padding: 6px 10px; background: #fafaf6;
+                       border: 1px solid var(--line); border-radius: 3px;
+                       font-size: 11.5px; word-break: break-all">{{ creds_dir }}</code>
+          <button type="button" class="btn subtle" style="font-size: 11.5px; padding: 4px 10px"
+                  onclick="navigator.clipboard.writeText(document.getElementById('creds-path').innerText).then(() => this.textContent='✓ 已复制')">
+            📋 复制路径
+          </button>
+          <button type="button" class="btn primary" style="font-size: 11.5px; padding: 4px 10px"
+                  onclick="fetch('{{ url_for('gmail.open_folder') }}', {method: 'POST'}).then(r => r.json()).then(j => { this.textContent = j.ok ? '📂 已打开' : '⚠ 失败'; })">
+            📂 在文件浏览器打开
+          </button>
+        </div>
+        <p class="muted" style="font-size: 11.5px; margin: 4px 0 0">
+          路径自动跟随你 Compass 程序所在位置 — 把程序整个文件夹移动后路径会自动更新，不会失效。
+        </p>
+      </li>
+      <li>{{ _('回到这里点') }} <strong>{{ _('同步') }}</strong> {{ _('按钮 — Compass 会引导你完成 OAuth 浏览器授权流程') }}</li>
+    </ol>
+    <p class="muted" style="font-size: 12px">
+      详细教程：<a href="https://developers.google.com/gmail/api/quickstart/python" target="_blank">Gmail API Python Quickstart</a>
+    </p>
+  </div>
+{% endif %}
+
+<div class="card">
+  <h3>{{ _('同步') }}</h3>
+  <p>{{ _('扫描你 Gmail 里过去 14 天与求职相关的邮件，LLM 分类后**自动更新** Compass 中匹配 job 的状态。') }}</p>
+  <form method="post" action="{{ url_for('gmail.sync') }}">
+    <button type="submit" {% if not (secret_exists and has_llm) %}disabled{% endif %}>
+      📥 立即同步（最近 14 天）
+    </button>
+  </form>
+  {% if not (secret_exists and has_llm) %}
+    <p class="muted" style="font-size: 12px; margin-top: 6px">
+      （需先配置 OAuth + LLM）
+    </p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>{{ _('隐私说明') }}</h3>
+  <ul style="margin: 6px 0; padding-left: 18px; font-size: 13.5px; color: var(--muted)">
+    <li>{{ _('Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件') }}</li>
+    <li>{{ _('邮件正文用完即弃——不持久化邮件内容到 Compass DB') }}</li>
+    <li>{{ _('只存"分类结果 + subject 摘要"作为 ReflectionEvent') }}</li>
+    <li>{{ _('OAuth token 存在本机') }} <code>{{ token_path }}</code>{{ _('——可随时删除撤销') }}</li>
+    <li>{{ _('你也可以在') }} <a href="https://myaccount.google.com/permissions" target="_blank">{{ _('Google Account 权限页') }}</a> {{ _('撤销 Compass 访问') }}</li>
+  </ul>
+</div>
+
+{% endblock %}

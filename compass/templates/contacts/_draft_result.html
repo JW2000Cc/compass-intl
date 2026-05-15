@@ -1,0 +1,53 @@
+{# Draft result — shown inside the modal after LLM generates the message. #}
+<div class="card" style="background: #fafaf6; padding: 14px; border-left: 3px solid var(--accent)">
+  <h4 style="margin: 0 0 6px; font-size: 13px; color: var(--muted); text-transform: uppercase">
+    草稿（{{ medium }} · {{ purpose }}）
+  </h4>
+  {% if error %}
+    <div style="padding: 10px; background: #fae5e5; border: 1px solid #d99; border-radius: 3px; color: #a33; font-size: 13px">
+      ⚠ {{ error }}
+      <div class="muted" style="font-size: 11.5px; margin-top: 6px">
+        多半是 LLM 没配好。先去 <a href="{{ url_for('jobs.llm_overview') }}">{{ _('⚙️ LLM 配置') }}</a> {{ _('检查 key / 模型 / base_url，再点 测试连接 验证。') }}
+      </div>
+    </div>
+  {% else %}
+  <pre style="white-space: pre-wrap; font: inherit; font-size: 13.5px; margin: 0; padding: 10px; background: white; border: 1px solid var(--line); border-radius: 3px">{{ draft }}</pre>
+  {% endif %}
+
+  {% if not error %}
+  <div style="display: flex; gap: 8px; margin-top: 12px; align-items: center; flex-wrap: wrap">
+    <button type="button"
+            onclick="navigator.clipboard.writeText(this.parentElement.previousElementSibling.textContent).then(() => { this.textContent = '✓ 已复制'; setTimeout(() => this.textContent = '📋 复制', 2000); })"
+            class="subtle" style="font-size: 12px">
+      📋 复制
+    </button>
+
+    <form hx-post="{{ url_for('contacts.mark_sent', job_id=job.id) }}"
+          hx-target="closest .alias-modal-content" hx-swap="innerHTML"
+          style="display: inline">
+      <input type="hidden" name="path" value="{{ path }}">
+      <input type="hidden" name="connection_id" value="{{ connection_id }}">
+      <input type="hidden" name="contact_name" value="{{ contact_name }}">
+      <input type="hidden" name="contact_title" value="{{ contact_title }}">
+      <input type="hidden" name="contact_url" value="{{ contact_url }}">
+      <input type="hidden" name="purpose" value="{{ purpose }}">
+      <input type="hidden" name="draft_text" value="{{ draft }}">
+      <button type="submit" class="add-selected" style="font-size: 12px">
+        ✓ 我发出去了 — 记录
+      </button>
+    </form>
+
+    <span class="muted" style="font-size: 11.5px">
+      记录后会进 OutreachAttempt 表 → 之后回应时回来标 → 系统学习哪类 outreach 工作
+    </span>
+  </div>
+
+  <details style="margin-top: 10px">
+    <summary class="muted" style="font-size: 11.5px; cursor: pointer">{{ _('为什么不让系统替我发？') }}</summary>
+    <p class="muted" style="font-size: 12px; margin: 6px 0 0">
+      自动批量发 = spam，**回应率反而被拉低**——收件人识别得出。
+      Compass 只起草、用户审核、用户手动发，是 1:1 个性化 outreach 的正确工程姿势。
+    </p>
+  </details>
+  {% endif %}
+</div>

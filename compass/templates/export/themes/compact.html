@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ r.basics.name or "Resume" }} · Compass</title>
+  <style>
+    @page { size: A4; margin: 14mm 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      font: 9.8pt/1.35 "SF Mono", "JetBrains Mono", "Consolas", "PingFang SC", sans-serif;
+      color: #1a1a1a;
+      margin: 0; padding: 18px;
+      background: #f4f4f0;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+    }
+    .resume {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 22px 28px;
+    }
+    @media print { .resume { padding: 0; } }
+
+    .header {
+      display: flex; justify-content: space-between; gap: 16px;
+      align-items: baseline; flex-wrap: wrap;
+      border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px;
+    }
+    .header h1 {
+      font-size: 17pt; margin: 0; font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .header .contact {
+      font-size: 9pt; color: #444;
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .header .contact a { color: #444; text-decoration: none; }
+    .header .contact span::before { content: "·"; margin-right: 10px; color: #999; }
+    .header .contact span:first-child::before { display: none; }
+
+    .summary {
+      font-size: 9.5pt; color: #333; margin: 4px 0 12px;
+      padding: 6px 10px; border-left: 3px solid #444;
+      background: #f8f8f4;
+    }
+
+    h2 {
+      font-size: 9pt; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #111;
+      margin: 14px 0 4px; padding-bottom: 2px;
+      border-bottom: 1px solid #111;
+    }
+
+    .item { margin-bottom: 7px; }
+    .item .row {
+      display: flex; justify-content: space-between; gap: 8px;
+      align-items: baseline; flex-wrap: wrap;
+    }
+    .item .row strong { font-size: 9.8pt; font-weight: 700; }
+    .item .row .meta {
+      font-size: 8.8pt; color: #666; white-space: nowrap;
+      font-family: "SF Mono", monospace;
+    }
+    .item .sub {
+      font-size: 9pt; color: #333; font-style: italic;
+      margin-bottom: 1px;
+    }
+    .item ul { margin: 1px 0 0; padding-left: 16px; }
+    .item li {
+      font-size: 9.5pt; line-height: 1.4; margin-bottom: 0.5px;
+    }
+
+    .grid-2col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px 30px;
+    }
+    .grid-2col .item { margin-bottom: 4px; }
+
+    .skills-row {
+      display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px;
+      font-size: 9.5pt;
+    }
+    .skills-row .skill-name {
+      font-weight: 700; color: #111;
+      padding-right: 8px;
+    }
+    .skills-row .skill-kws { color: #333; }
+
+    .langs { font-size: 9.5pt; color: #333; }
+    .langs span { margin-right: 14px; }
+
+    /* Tag styling for keywords */
+    .tag {
+      display: inline-block; padding: 0 5px; margin-right: 4px;
+      background: #efefe8; border-radius: 2px;
+      font-size: 8.5pt; color: #444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="resume">
+  <header class="header">
+    {% if r.basics.name %}
+      <h1>{{ r.basics.name }}</h1>
+      <div class="contact">
+        {% if r.basics.email %}<span>{{ r.basics.email }}</span>{% endif %}
+        {% if r.basics.phone %}<span>{{ r.basics.phone }}</span>{% endif %}
+        {% if r.basics.location and r.basics.location.address %}
+          <span>{{ r.basics.location.address }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </header>
+
+  {% if r.basics.summary %}
+    <div class="summary">{{ r.basics.summary }}</div>
+  {% endif %}
+
+  {% if r.work %}
+    <h2>Experience</h2>
+    {% for w in r.work %}
+      <div class="item">
+        <div class="row">
+          <strong>{{ w.position }}</strong>
+          <span class="meta">
+            {% if w.startDate or w.endDate %}{{ w.startDate }} → {{ w.endDate or "now" }}{% endif %}
+          </span>
+        </div>
+        <div class="sub">
+          {{ w.name }}{% if w.location %} · {{ w.location }}{% endif %}
+        </div>
+        {% if w.highlights %}
+          <ul>{% for h in w.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if r.skills %}
+    <h2>Technical Skills</h2>
+    <div class="skills-row">
+      {% for s in r.skills %}
+        <div class="skill-name">{{ s.name }}</div>
+        <div class="skill-kws">{% for kw in s.keywords %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if r.projects %}
+    <h2>Projects</h2>
+    {% for p in r.projects %}
+      <div class="item">
+        <div class="row">
+          <strong>{{ p.name }}</strong>
+          {% if p.url %}<span class="meta">{{ p.url }}</span>{% endif %}
+        </div>
+        {% if p.description %}<div style="font-size:9.5pt;line-height:1.4">{{ p.description }}</div>{% endif %}
+        {% if p.keywords %}
+          <div style="margin-top:1px">
+            {% for kw in p.keywords %}<span class="tag">{{ kw }}</span>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="grid-2col">
+    <div>
+      {% if r.education %}
+        <h2 style="margin-top: 4px">Education</h2>
+        {% for e in r.education %}
+          <div class="item">
+            <div class="row">
+              <strong>{{ e.studyType }} {{ e.area }}</strong>
+              <span class="meta">{% if e.startDate or e.endDate %}{{ e.startDate }} – {{ e.endDate }}{% endif %}</span>
+            </div>
+            <div class="sub">{{ e.institution }}{% if e.gpa %} · GPA {{ e.gpa }}{% endif %}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div>
+      {% if r.languages or r.certificates %}
+        <h2 style="margin-top: 4px">Other</h2>
+        {% if r.languages %}
+          <div class="item">
+            <div class="sub" style="font-style: normal; font-weight: 600">Languages</div>
+            <div class="langs">{% for l in r.languages %}<span>{{ l.language }}</span>{% endfor %}</div>
+          </div>
+        {% endif %}
+        {% if r.certificates %}
+          <div class="item">
+            <div class="sub" style="font-style: normal; font-weight: 600">Certifications</div>
+            {% for c in r.certificates %}
+              <div style="font-size:9.5pt">
+                {{ c.name }}{% if c.issuer %} <span style="color:#777">— {{ c.issuer }}</span>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

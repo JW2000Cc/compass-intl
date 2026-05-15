@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}谈判模拟结果 · Compass{% endblock %}
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 12px 0">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px">
+    <h1 style="font-size: 22px; margin: 0">{{ _('💼 谈判模拟结果') }}</h1>
+    <a href="{{ url_for('negotiation.form') }}" class="btn" style="font-size: 12px">{{ _('← 重新模拟') }}</a>
+  </div>
+
+  <div class="card" style="padding: 12px 16px; margin-bottom: 16px; font-size: 13px">
+    <div class="muted" style="font-size: 11.5px; margin-bottom: 4px">{{ _('输入') }}</div>
+    <div>
+      <strong>{{ input.role }}</strong>（{{ input.seniority }}）@
+      {% if input.city %}{{ input.city }}, {% endif %}{{ input.country or '—' }} ·
+      offer = {{ '%g' | format(input.offer_amount) }} {{ input.currency }}/{{ input.period }}
+      {% if input.your_minimum %} · 你的底线 = {{ '%g' | format(input.your_minimum) }}{% endif %}
+    </div>
+  </div>
+
+  {# Market range gauge #}
+  {% set offer_in_range = input.offer_amount >= result.market_low and input.offer_amount <= result.market_high %}
+  <div class="card" style="padding: 14px 18px; margin-bottom: 16px">
+    <h3 style="font-size: 14px; margin: 0 0 12px">{{ _('📊 市场范围估计') }}</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; font-size: 12.5px">
+      <div style="text-align: center; padding: 8px; background: #fff8c5; border-radius: 4px">
+        <div class="muted">{{ _('下限 (P25)') }}</div>
+        <div style="font-weight: 600; font-size: 16px">{{ '%g' | format(result.market_low) }}</div>
+      </div>
+      <div style="text-align: center; padding: 8px; background: #dcffe4; border-radius: 4px">
+        <div class="muted">{{ _('中位') }}</div>
+        <div style="font-weight: 600; font-size: 16px">{{ '%g' | format(result.market_mid) }}</div>
+      </div>
+      <div style="text-align: center; padding: 8px; background: #ddf4ff; border-radius: 4px">
+        <div class="muted">{{ _('上限 (P75)') }}</div>
+        <div style="font-weight: 600; font-size: 16px">{{ '%g' | format(result.market_high) }}</div>
+      </div>
+    </div>
+    <div style="font-size: 13px">
+      你的 offer
+      <strong style="color: {% if result.offer_position in ('high', 'above_market') %}#055d20{% elif result.offer_position == 'fair' %}#9a6700{% else %}#82071e{% endif %}">
+        {{ {'below_market': '低于市场', 'low': '偏低', 'fair': '合理', 'high': '偏高', 'above_market': '高于市场'}[result.offer_position] or result.offer_position }}
+      </strong>
+      （{{ '%g' | format(input.offer_amount) }} {{ input.currency }}）
+    </div>
+  </div>
+
+  {# Askable range #}
+  <div class="card" style="padding: 14px 18px; margin-bottom: 16px; border-color: var(--accent)">
+    <h3 style="font-size: 14px; margin: 0 0 8px">{{ _('🎯 可争取范围') }}</h3>
+    <div style="font-size: 18px; font-weight: 600; color: var(--accent); margin-bottom: 10px">
+      {{ '%g' | format(result.askable_range_low) }} – {{ '%g' | format(result.askable_range_high) }} {{ input.currency }}
+    </div>
+    <div style="font-size: 12.5px; line-height: 1.6; color: var(--fg)">{{ result.rationale }}</div>
+  </div>
+
+  {# 4-message simulated thread #}
+  <div class="card" style="padding: 14px 18px; margin-bottom: 16px">
+    <h3 style="font-size: 14px; margin: 0 0 12px">{{ _('💬 模拟谈判脚本') }}</h3>
+
+    <div style="margin-bottom: 14px; padding: 10px 14px; background: #ddf4ff; border-radius: 6px;
+                border-left: 3px solid var(--accent)">
+      <div class="muted" style="font-size: 11px; margin-bottom: 4px">{{ _('你 · 提出') }}</div>
+      <div style="font-size: 13px; line-height: 1.6; white-space: pre-wrap">{{ result.user_script }}</div>
+    </div>
+
+    <div style="margin-bottom: 14px; padding: 10px 14px; background: #f6f8fa; border-radius: 6px;
+                border-left: 3px solid var(--muted)">
+      <div class="muted" style="font-size: 11px; margin-bottom: 4px">{{ _('HM · 大概率回应') }}</div>
+      <div style="font-size: 13px; line-height: 1.6; white-space: pre-wrap">{{ result.hm_anticipated_response }}</div>
+    </div>
+
+    <div style="padding: 10px 14px; background: #ddf4ff; border-radius: 6px;
+                border-left: 3px solid var(--accent)">
+      <div class="muted" style="font-size: 11px; margin-bottom: 4px">{{ _('你 · 后续') }}</div>
+      <div style="font-size: 13px; line-height: 1.6; white-space: pre-wrap">{{ result.user_followup }}</div>
+    </div>
+  </div>
+
+  {# Final advice #}
+  <div class="card" style="padding: 12px 16px; background: #fff8c5; border-color: #fbcc15">
+    <strong>{{ _('📌 总结建议') }}</strong>
+    <p style="margin: 6px 0 0; font-size: 13px; line-height: 1.6">{{ result.final_advice }}</p>
+  </div>
+
+  <details style="margin-top: 16px; font-size: 11.5px; color: var(--muted)">
+    <summary style="cursor: pointer">{{ _('原始 LLM 响应 (debug)') }}</summary>
+    <pre style="margin: 8px 0 0; padding: 10px; background: #fafbfc; border-radius: 4px;
+                font-size: 11px; max-height: 300px; overflow-y: auto">{{ result.raw_llm_response }}</pre>
+  </details>
+</div>
+{% endblock %}

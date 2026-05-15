@@ -1,0 +1,52 @@
+{# ADR-0015 改动 G — 五维度结构化建议菜单。
+
+   Inputs (loop var):
+     menu — UserFacingMenu (compass.services.user_facing_translator)
+            with `dimensions[]`, `has_warnings`, `has_blockers`
+
+   Default folded — user clicks <summary> to expand. Read-only MVP: shows
+   per-dimension labels, choices and severity. Action dispatch (use / snap /
+   interview / remove) lands in a follow-up — for now the menu lets the user
+   SEE the breakdown without bullying them into batch decisions.
+#}
+{% if menu %}
+<details class="decomp-panel" style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 6px">
+  <summary style="cursor: pointer; font-size: 12px; line-height: 1.6; user-select: none">
+    📊 建议分解 (5 维度)
+    {% if menu.has_blockers %}
+      <span style="color: var(--danger); font-size: 11px; margin-left: 4px">{{ _('需处理') }}</span>
+    {% elif menu.has_warnings %}
+      <span style="color: var(--warn); font-size: 11px; margin-left: 4px">{{ _('有提醒') }}</span>
+    {% else %}
+      <span style="color: var(--ok); font-size: 11px; margin-left: 4px">{{ _('全绿') }}</span>
+    {% endif %}
+  </summary>
+
+  <div class="decomp-body" style="margin-top: 6px; font-size: 11.5px; line-height: 1.55">
+    {% for dim in menu.dimensions %}
+    <section class="decomp-dim decomp-sev-{{ dim.severity }}"
+             style="margin-bottom: 8px; padding: 6px 8px; border-radius: 3px;
+                    background: {% if dim.severity == 'blocked' %}#fdecec{% elif dim.severity == 'warn' %}#fff5e0{% else %}#f3f7f3{% endif %}">
+      <div style="font-weight: 600; margin-bottom: 3px">
+        {{ dim.label }}
+        {% if dim.description %}
+          <span class="muted" style="font-weight: 400; font-size: 11px"> · {{ dim.description }}</span>
+        {% endif %}
+      </div>
+      <ul style="margin: 0; padding-left: 16px">
+        {% for choice in dim.choices %}
+        <li class="decomp-choice"
+            style="margin: 2px 0;
+                   {% if choice.severity == 'blocked' %}color: var(--danger);{% elif choice.severity == 'warn' %}color: var(--warn);{% endif %}">
+          <strong style="font-weight: 500">{{ choice.label }}</strong>
+          {% if choice.note %}
+            <span class="muted" style="font-size: 11px"> — {{ choice.note }}</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endfor %}
+  </div>
+</details>
+{% endif %}

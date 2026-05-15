@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}求职意图 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('🧭 求职意图') }}</h1>
+    <p class="lede">{{ _('配置多组（地点 + 关键词 + dealbreaker），同一意图复用到 LLM 分级 / 抓取 / 简历改写。') }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('jobs.list_view') }}" class="pill">{{ _('📋 看抓取结果 →') }}</a>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么要配 / 字段含义') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('每一组 = 一个') }} <strong>profile</strong>{{ _('（可启用 / 禁用），抓取按 profile 跑：') }}</p>
+    <ul>
+      <li><strong>{{ _('关键词') }}</strong> + <strong>{{ _('地点') }}</strong> {{ _('喂给 jobspy（LinkedIn / Indeed）') }}</li>
+      <li><strong>dealbreaker</strong>{{ _('（country_must_be / language_blocked / 黑名单）= 硬过滤，命中即 drop') }}</li>
+      <li><strong>{{ _('用户意图描述') }}</strong> {{ _('= LLM 分级时的 context（"这条意图想找的方向"）') }}</li>
+      <li><strong>{{ _('关键词别名') }}</strong> {{ _('= 自动多语言展开（例：Data Analyst → Datenanalyst, Analista Dati）') }}</li>
+    </ul>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('新地区 / 新方向 → 加一组') }}</li>
+      <li>{{ _('抓取后看到"没找到工作" → 来这里松一下 dealbreaker（可能 country_must_be 太严）') }}</li>
+      <li>{{ _('本地语言职位漏抓 → 加 keyword_aliases') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# Use the same shared panel as list.html. Force-open since this IS the
+   editing page (not a collapsed accordion). total_count is undefined here
+   so the auto-open fallback also fires; setting force_open_panel makes
+   intent explicit. #}
+{% set force_open_panel = True %}
+{% include "jobs/searches/_panel.html" %}
+
+{% endblock %}

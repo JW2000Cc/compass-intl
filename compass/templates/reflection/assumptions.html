@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}系统假设 · Compass{% endblock %}
+{% block content %}
+
+<h1>{{ _('系统对你的假设') }}</h1>
+<p class="lede">{{ _('这是 Compass 当前关于你的 6 个核心信念。每一条你都可以质疑、覆盖、或要求重新生成。') }}</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('LLM 看你的 facts + 最近的反思事件流，写出 6 条"系统对你的当前信念"——比如"你似乎更看重技术深度而非广度"、"你倾向于中型公司而非 startup"。') }}</p>
+    <h4>{{ _('为什么需要它') }}</h4>
+    <p>{{ _('所有"个性化"系统都有黑盒画像——它怎么理解你、你看不到。这正是信息茧房失控的根源。Compass 反过来：') }}<strong>{{ _('把画像可见化、可推翻') }}</strong>{{ _('。每条假设你能写"不同意"覆盖，下次重生成时尊重你的修正。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('用了一段时间后（产生足够 reflection events）—— 第一次最好等积累 10+ 个动作') }}</li>
+      <li>{{ _('每月手动点"重新生成"—— 看 6 条假设有没有真的反映你') }}</li>
+      <li>{{ _('觉得 Compass 推送越来越不准时—— 大概率是某条假设错了，你来推翻') }}</li>
+    </ul>
+  </div>
+</details>
+
+{% if not llm_configured %}
+  <div class="card" style="border-color: var(--warn)">
+    <p>{{ _('⚠ 没有配置 LLM_API_KEY，无法生成假设。请在') }} <code>.env</code> {{ _('中填入后重启。') }}</p>
+  </div>
+{% endif %}
+
+<form method="post" action="{{ url_for('reflection.regen_assumptions') }}" style="margin: 8px 0">
+  <button type="submit" {% if not llm_configured %}disabled{% endif %}>
+    🔄 重新生成（LLM 调用）
+  </button>
+  {% if assumptions %}
+    <span class="muted" style="margin-left:8px">
+      最近一次生成: {{ assumptions[0].generated_at | local_dt }}
+    </span>
+  {% endif %}
+</form>
+
+{% if not assumptions %}
+  <div class="card">
+    <p class="muted">{{ _('还没有任何系统假设——点上面的按钮触发第一次生成。') }}</p>
+  </div>
+{% endif %}
+
+{% for a in assumptions %}
+  <div class="card">
+    <h3>{{ a.category | replace("_", " ") }}</h3>
+    <p style="margin: 6px 0">{{ a.text }}</p>
+    {% if a.evidence %}
+      <p class="muted" style="margin: 4px 0">证据: {{ a.evidence }}</p>
+    {% endif %}
+    <p style="margin: 6px 0">
+      <span class="muted">{{ _('系统的信心:') }} </span>
+      <span class="confidence-bar"><span style="width: {{ (a.confidence * 100) | round(0) }}%"></span></span>
+      <span class="muted" style="margin-left:6px">{{ (a.confidence * 100) | round(0) }}%</span>
+    </p>
+
+    <details {% if a.user_override %}open{% endif %} style="margin-top: 10px">
+      <summary class="muted" style="cursor: pointer">
+        {% if a.user_override %}你已修正这条假设 ↓{% else %}不同意？写下你的修正 →{% endif %}
+      </summary>
+      <form method="post" action="{{ url_for('reflection.override', assumption_id=a.id) }}" style="margin-top:8px">
+        <textarea name="override" rows="3" placeholder="{{ _('写下你认为更准确的表述...') }}">{{ a.user_override or "" }}</textarea>
+        <div style="margin-top:6px; display: flex; gap: 6px">
+          <button type="submit">{{ _('保存修正') }}</button>
+          {% if a.user_override %}
+            <button type="submit" name="override" value="" class="subtle">{{ _('清除修正') }}</button>
+          {% endif %}
+        </div>
+      </form>
+    </details>
+  </div>
+{% endfor %}
+
+{% if assumptions %}
+  <p class="muted" style="margin-top: 24px; font-size: 12px">
+    Compass 把每次"覆盖"记录到 reflection 事件流里——后续生成会逐渐学到你的视角。
+    但这个学习是有反向调节的——adversarial voice 永远不会被你的覆盖训练。
+  </p>
+{% endif %}
+
+{% endblock %}

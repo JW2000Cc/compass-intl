@@ -1,0 +1,70 @@
+{# Effort 包 checklist — auto-derived completion + manual overrides.
+   Wrapped in stable id for HTMX outerHTML swap. #}
+<div id="effort-pack-{{ job.id }}" class="card" style="border-color: var(--accent)">
+  <h3 style="margin: 0 0 6px">{{ _('📋 投递准备包') }}</h3>
+  <p class="muted" style="font-size: 12px; margin: 0 0 10px">
+    每步「☐ todo / ✓ done / – 跳过」三态。Done 多数自动检测（改简历 / 找内推 /
+    发 outreach / 标 applied 都触发）。剩余预估 <strong>{{ view.estimated_total_minutes }}</strong> {{ _('分钟。') }}
+  </p>
+
+  <ol style="list-style: none; padding: 0; margin: 0">
+    {% for s in view.steps %}
+      <li style="padding: 8px 0; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: start">
+        <span style="font-size: 18px; min-width: 24px; line-height: 1">
+          {% if s.state == "done" %}<span style="color: var(--ok)">✓</span>
+          {% elif s.state == "skipped" %}<span class="muted">–</span>
+          {% else %}☐
+          {% endif %}
+        </span>
+        <div style="flex: 1; min-width: 0">
+          <p style="margin: 0; font-weight: 500; font-size: 13.5px">
+            {% if s.state == "done" %}<s style="color: var(--muted); text-decoration-color: var(--muted)">{{ s.label }}</s>
+            {% else %}{{ s.label }}{% endif %}
+            <span class="muted" style="font-size: 11px; margin-left: 6px">≈ {{ s.estimated_minutes }} min</span>
+          </p>
+          <p class="muted" style="font-size: 11.5px; margin: 2px 0 0">{{ s.why }}</p>
+        </div>
+        <div style="flex-shrink: 0; display: flex; gap: 4px; align-items: center">
+          {% if s.href and s.state != "done" %}
+            <a href="{{ s.href }}" class="subtle" style="font-size: 11px; padding: 3px 8px; text-decoration: none; border: 1px solid var(--line); border-radius: 3px">→</a>
+          {% endif %}
+          <form hx-post="{{ url_for('jobs.effort_override', job_id=job.id, step_id=s.id) }}"
+                hx-target="#effort-pack-{{ job.id }}" hx-swap="outerHTML"
+                style="display: inline">
+            {% if s.state == "done" and s.user_override == "done" %}
+              <input type="hidden" name="override" value="">
+              <button type="submit" class="subtle" title="{{ _('撤销手动 done') }}"
+                      style="font-size: 11px; padding: 3px 8px">↺</button>
+            {% elif s.state == "todo" %}
+              <input type="hidden" name="override" value="done">
+              <button type="submit" class="subtle" title="{{ _('手动标 done') }}"
+                      style="font-size: 11px; padding: 3px 8px">✓</button>
+            {% elif s.state == "skipped" %}
+              <input type="hidden" name="override" value="">
+              <button type="submit" class="subtle" title="{{ _('撤销跳过') }}"
+                      style="font-size: 11px; padding: 3px 8px">↺</button>
+            {% endif %}
+          </form>
+          {% if s.state == "todo" %}
+            <form hx-post="{{ url_for('jobs.effort_override', job_id=job.id, step_id=s.id) }}"
+                  hx-target="#effort-pack-{{ job.id }}" hx-swap="outerHTML"
+                  style="display: inline">
+              <input type="hidden" name="override" value="skipped">
+              <button type="submit" class="subtle" title="{{ _('跳过这步（不适用此 job）') }}"
+                      style="font-size: 11px; padding: 3px 8px; color: var(--muted)">–</button>
+            </form>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ol>
+
+  <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--line); display: flex; gap: 8px; font-size: 11.5px; color: var(--muted)">
+    <span>✓ 完成 {{ view.completed_count }}</span>
+    <span>· ☐ 待办 {{ view.todo_count }}</span>
+    {% if view.skipped_count %}<span>· – 跳过 {{ view.skipped_count }}</span>{% endif %}
+    {% if view.todo_count == 0 %}
+      <span style="color: var(--ok); margin-left: auto">{{ _('🎉 全部完成') }}</span>
+    {% endif %}
+  </div>
+</div>

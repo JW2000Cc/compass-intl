@@ -1,0 +1,3238 @@
+# Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-05-15 09:05+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid "黑名单已保存。下次抓取时生效。"
+msgstr ""
+
+msgid "已更新 calibration。"
+msgstr ""
+
+msgid "已重置 calibration 到中性默认值。"
+msgstr ""
+
+msgid "没选文件。"
+msgstr ""
+
+msgid "只接受 .csv 文件（LinkedIn 导出）。"
+msgstr ""
+
+msgid "文件过大（>10MB）— 这不像是 LinkedIn Connections 导出。"
+msgstr ""
+
+msgid "无法识别 CSV 编码。"
+msgstr ""
+
+#, python-format
+msgid "导入失败: %(result_error)s"
+msgstr ""
+
+msgid "找不到该联系人。"
+msgstr ""
+
+msgid "已停用。"
+msgstr ""
+
+#, python-format
+msgid "已记录 outreach 给 %(contact_name)s。回应时回来标记结果。"
+msgstr ""
+
+msgid "已标记发出。回应时回来 ✓ 记结果。"
+msgstr ""
+
+msgid "已记录回应。"
+msgstr ""
+
+msgid "DOCX 导出需要选用户上传的 DOCX 模板。先到 /templates/inspire 上传一份。"
+msgstr ""
+
+#, python-format
+msgid "找不到模板: %(theme_id)s"
+msgstr ""
+
+#, python-format
+msgid "DOCX 渲染失败: %(exc)s"
+msgstr ""
+
+msgid "PDF 直出需要选用户上传的 DOCX 模板。先到 /templates/inspire 上传一份。"
+msgstr ""
+
+msgid "PDF 直出只支持 DOCX 用户模板。HTML 模板请用 /preview + Cmd+P。"
+msgstr ""
+
+#, python-format
+msgid "PDF 渲染失败: %(exc)s"
+msgstr ""
+
+#, python-format
+msgid "已保存 %(n)s 条偏好。"
+msgstr ""
+
+msgid "已更新偏好。"
+msgstr ""
+
+msgid "已删除偏好。"
+msgstr ""
+
+msgid "已续期 30 天。"
+msgstr ""
+
+msgid "已重新激活该偏好。"
+msgstr ""
+
+#, python-format
+msgid "已设置 %(region)s 工资底线。"
+msgstr ""
+
+#, python-format
+msgid "已移除 %(region)s 工资底线。"
+msgstr ""
+
+#, python-format
+msgid "已记录解决方式: %(resolution)s"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY — 无法分类邮件。"
+msgstr ""
+
+#, python-format
+msgid "Gmail sync 失败: %(exc)s"
+msgstr ""
+
+#, python-format
+msgid "Gmail sync 出错: %(exc)s"
+msgstr ""
+
+msgid "请选择简历文件。"
+msgstr ""
+
+msgid "(无扩展名)"
+msgstr ""
+
+#, python-format
+msgid "不支持的文件类型: %(suffix)s。请用 PDF / DOCX / TXT。"
+msgstr ""
+
+msgid "无法解析简历。请尝试 PDF 或 DOCX。"
+msgstr ""
+
+#, python-format
+msgid "已建立新身份版本 %(iv_id)s (%(iv_language)s)。"
+msgstr ""
+
+msgid "已停用该 fact（不会出现在新生成的简历里）。"
+msgstr ""
+
+msgid "文本不能为空。"
+msgstr ""
+
+#, python-format
+msgid "未知 sensitive_category: %(new_sensitive)s"
+msgstr ""
+
+msgid "已更新 fact（原文保留在审计记录）。"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY。"
+msgstr ""
+
+#, python-format
+msgid "无法生成问题: %(exc)s"
+msgstr ""
+
+msgid "LLM 未返回有效问题，重试或更换 fact。"
+msgstr ""
+
+#, python-format
+msgid "采访合成完成，新增 %(n)s 条 fact。"
+msgstr ""
+
+#, python-format
+msgid "合成失败: %(exc)s"
+msgstr ""
+
+msgid "已保存当前回答。点击 '完成访谈' 触发合成。"
+msgstr ""
+
+#, python-format
+msgid "回滚失败：%(exc)s"
+msgstr ""
+
+msgid "当前文本已等于该版本，无需回滚。"
+msgstr ""
+
+msgid "↺ 已回滚到该版本（新建了一条 rolled_back 修订）。"
+msgstr ""
+
+#, python-format
+msgid "状态: %(new_status)s"
+msgstr ""
+
+msgid "✓ 已记录"
+msgstr ""
+
+msgid "↻ 已切换"
+msgstr ""
+
+msgid "✗ 已取消"
+msgstr ""
+
+msgid "已记录"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY，无法分类。"
+msgstr ""
+
+#, python-format
+msgid "分类完成: Tier %(match_tier)s (score %(match_score)s)"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY，无法翻译。"
+msgstr ""
+
+#, python-format
+msgid "翻译失败：%(exc)s"
+msgstr ""
+
+msgid "全局配置已保存"
+msgstr ""
+
+#, python-format
+msgid "Profile '%(p_label)s' 已保存"
+msgstr ""
+
+#, python-format
+msgid "已创建 '%(label)s'，请填写详情"
+msgstr ""
+
+msgid "Profile 不存在"
+msgstr ""
+
+msgid "启用"
+msgstr ""
+
+msgid "禁用"
+msgstr ""
+
+#, python-format
+msgid "Profile '%(p_label)s' 已%(status)s"
+msgstr ""
+
+msgid "删除已取消（缺少二次确认）"
+msgstr ""
+
+msgid "没有启用的 profile — 先去求职意图配置一个"
+msgstr ""
+
+#, python-format
+msgid "抓取失败: %(exc)s"
+msgstr ""
+
+msgid "先填关键词，再让 AI 预测同义词"
+msgstr ""
+
+#, python-format
+msgid "AI 预测失败: %(exc)s"
+msgstr ""
+
+#, python-format
+msgid "AI 添加 %(n_added)s 个同义词候选 — 请审阅，不需要的删掉"
+msgstr ""
+
+msgid "AI 没找到新的同义词（或没配 LLM key）"
+msgstr ""
+
+msgid "Profile 不存在或已禁用"
+msgstr ""
+
+msgid "LLM 配置已保存"
+msgstr ""
+
+#, python-format
+msgid "未知预设: %(preset_id)s"
+msgstr ""
+
+#, python-format
+msgid "已应用预设: %(label)s"
+msgstr ""
+
+msgid "请至少填一组（启用的）关键词和地点。"
+msgstr ""
+
+msgid "还没配置抓取意图。下面是抓取面板，填一组就能跑。"
+msgstr ""
+
+msgid "已记录当前 calibration 快照。"
+msgstr ""
+
+#, python-format
+msgid "已重新生成 %(n)s 条系统假设。"
+msgstr ""
+
+#, python-format
+msgid "无法重生成假设: %(exc)s"
+msgstr ""
+
+#, python-format
+msgid "出错: %(exc)s"
+msgstr ""
+
+msgid "已记录你的修正。"
+msgstr ""
+
+msgid "请粘贴拒信文本"
+msgstr ""
+
+#, python-format
+msgid "LLM 调用失败：%(exc)s"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY，无法运行简历改写。"
+msgstr ""
+
+#, python-format
+msgid "LLM 错误: %(exc)s"
+msgstr ""
+
+msgid "无效决定。"
+msgstr ""
+
+#, python-format
+msgid "已一键接受 %(n)s 条变换。"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY，无法重生成变换。"
+msgstr ""
+
+msgid "这条已批准/编辑过，重生会丢掉你的决定。先撤销再重生。"
+msgstr ""
+
+msgid "↻ 已重新生成 — 这条建议变成新版本。"
+msgstr ""
+
+#, python-format
+msgid "重生失败: %(exc)s"
+msgstr ""
+
+msgid "没有新的变更可沉淀（所有 ✓/✎ 与当前 fact 文本一致）。"
+msgstr ""
+
+msgid "请填模板名称。"
+msgstr ""
+
+msgid ""
+"这是二进制文件（DOCX/PDF）。HTML 上传只接受 .html。如果想从 DOCX 学样式，去 → 模板灵感 "
+"(/templates/inspire)。"
+msgstr ""
+
+#, python-format
+msgid "读不出文件: %(err)s"
+msgstr ""
+
+msgid "请上传 .html 文件或粘贴 HTML 内容。"
+msgstr ""
+
+msgid "模板太大（>1 MB）。请精简后再上传。"
+msgstr ""
+
+#, python-format
+msgid "HTML 模板语法错误，无法保存: %(err)s"
+msgstr ""
+
+#, python-format
+msgid "保存失败: %(err)s"
+msgstr ""
+
+#, python-format
+msgid "已上传模板 '%(name)s' (id=%(id)s)。"
+msgstr ""
+
+#, python-format
+msgid "已删除模板 %(id)s。"
+msgstr ""
+
+#, python-format
+msgid "未找到模板 %(id)s。"
+msgstr ""
+
+#, python-format
+msgid "模板渲染失败: %(err)s"
+msgstr ""
+
+#, python-format
+msgid "模板语法错误（行 %(line)s）: %(err)s"
+msgstr ""
+
+#, python-format
+msgid "模板渲染异常: %(err)s"
+msgstr ""
+
+msgid "没有配置 LLM_API_KEY，借鉴功能不可用"
+msgstr ""
+
+msgid "请选择文件"
+msgstr ""
+
+msgid "文件过大（>15MB）— 请压缩"
+msgstr ""
+
+msgid "Inspire 结果已过期 — 请重新上传"
+msgstr ""
+
+msgid "请填模板名称"
+msgstr ""
+
+#, python-format
+msgid "✓ 已保存为模板「%(name)s」(id=%(id)s)"
+msgstr ""
+
+msgid "指南"
+msgstr ""
+
+msgid "网络已断开 · 本地浏览/编辑可用；LLM 改写、一键抓取、Gmail 同步、JD 翻译等需要外网的功能将失败"
+msgstr ""
+
+msgid "抓取进度"
+msgstr ""
+
+msgid "⚡ 一键抓取"
+msgstr ""
+
+msgid "已用时 0:00"
+msgstr ""
+
+msgid "当前 profile"
+msgstr ""
+
+msgid "准备中…"
+msgstr ""
+
+msgid "当前 keyword"
+msgstr ""
+
+msgid "累计"
+msgstr ""
+
+msgid "📥 抓取"
+msgstr ""
+
+msgid "✓ 新增"
+msgstr ""
+
+msgid "↻ 已存在"
+msgstr ""
+
+msgid "⛔ 规则挡"
+msgstr ""
+
+msgid "⚠ 失败"
+msgstr ""
+
+msgid "已用时"
+msgstr ""
+
+msgid "— 抓取完成，正在分类入库 …"
+msgstr ""
+
+msgid "⚡ 一键抓取（当前 keyword 较慢，最长 90s）"
+msgstr ""
+
+msgid "抓取请求失败:"
+msgstr ""
+
+msgid "查看终端日志"
+msgstr ""
+
+msgid "请稍候，LLM 处理中…（可能需要 30 秒+）"
+msgstr ""
+
+msgid "· 指南"
+msgstr ""
+
+msgid "收起/展开侧栏 (按 [ 切换)"
+msgstr ""
+
+msgid "收起侧栏"
+msgstr ""
+
+msgid "用保存的求职意图配置一键抓取（演化老接口）"
+msgstr ""
+
+msgid "一键抓取"
+msgstr ""
+
+msgid "主面板"
+msgstr ""
+
+msgid "岗位"
+msgstr ""
+
+msgid "求职意图 multi-profile 配置 — 关键词/地点/dealbreaker"
+msgstr ""
+
+msgid "求职意图"
+msgstr ""
+
+msgid "漏斗"
+msgstr ""
+
+msgid "人脉"
+msgstr ""
+
+msgid "反馈历史 — preference_brief 偏好提取的累积"
+msgstr ""
+
+msgid "反馈历史"
+msgstr ""
+
+msgid "反思系统"
+msgstr ""
+
+msgid "漂移仪表盘"
+msgstr ""
+
+msgid "系统假设"
+msgstr ""
+
+msgid "身份"
+msgstr ""
+
+msgid "所有沉淀事件 + 每条 fact 的修订历史"
+msgstr ""
+
+msgid "沉淀历史"
+msgstr ""
+
+msgid "边界"
+msgstr ""
+
+msgid "改写历史"
+msgstr ""
+
+msgid "工具"
+msgstr ""
+
+msgid "简历模板"
+msgstr ""
+
+msgid "LLM provider / key / model 配置"
+msgstr ""
+
+msgid "LLM 配置"
+msgstr ""
+
+msgid "面试谈判工具"
+msgstr ""
+
+msgid "薪资谈判模拟 — LLM 估市场范围 + 给可 paste 话术"
+msgstr ""
+
+msgid "薪资谈判"
+msgstr ""
+
+msgid "被拒原因追踪 — 粘贴拒信 LLM 提取 → 反喂 calibration"
+msgstr ""
+
+msgid "被拒分析"
+msgstr ""
+
+msgid "Gmail 同步"
+msgstr ""
+
+msgid "黑名单"
+msgstr ""
+
+msgid "💡 升级到 Claude"
+msgstr ""
+
+msgid "。Skill 生态需 Claude API。"
+msgstr ""
+
+msgid "里设"
+msgstr ""
+
+msgid "本次会话隐藏"
+msgstr ""
+
+msgid "📋 看岗位"
+msgstr ""
+
+msgid "📊 漂移仪表盘"
+msgstr ""
+
+msgid "滤掉"
+msgstr ""
+
+msgid "入库"
+msgstr ""
+
+msgid "还没跑过抓取。"
+msgstr ""
+
+msgid "🧭 调整意图"
+msgstr ""
+
+msgid "🎯 漏斗"
+msgstr ""
+
+msgid "详细 →"
+msgstr ""
+
+msgid "抓回"
+msgstr ""
+
+msgid "可推"
+msgstr ""
+
+msgid "已投"
+msgstr ""
+
+msgid "面试"
+msgstr ""
+
+msgid "📌 待办"
+msgstr ""
+
+msgid "暂无待办。"
+msgstr ""
+
+msgid "🪞 反思"
+msgstr ""
+
+msgid "🪞 系统假设"
+msgstr ""
+
+msgid "👤 身份"
+msgstr ""
+
+msgid "⚖️ 边界"
+msgstr ""
+
+msgid "Compass · 首次配置"
+msgstr ""
+
+msgid "首次配置"
+msgstr ""
+
+msgid "Compass 需要一个 LLM API key 才能跑 AI 功能（简历改写、岗位匹配等）。"
+msgstr ""
+
+msgid "填完保存后"
+msgstr ""
+
+msgid "key 会写入"
+msgstr ""
+
+msgid "文件，只存在你本地。"
+msgstr ""
+
+msgid "Claude (Anthropic) — 推荐"
+msgstr ""
+
+msgid "sk-ant-... 或 sk-..."
+msgstr ""
+
+msgid "保存并启动"
+msgstr ""
+
+msgid "Compass · 配置已保存"
+msgstr ""
+
+msgid "配置已保存"
+msgstr ""
+
+msgid "LLM key 已写入"
+msgstr ""
+
+msgid "文件。"
+msgstr ""
+
+msgid "可以开始用了："
+msgstr ""
+
+msgid "点这里进 dashboard →"
+msgstr ""
+
+msgid "不熟？看这是什么 / 为什么用 / 什么时候来"
+msgstr ""
+
+msgid "这是什么"
+msgstr ""
+
+msgid "抓取阶段的过滤器。任何 job 如果："
+msgstr ""
+
+msgid "公司名包含黑名单的公司（子串匹配）"
+msgstr ""
+
+msgid "JD 描述里出现黑名单关键词（子串匹配）"
+msgstr ""
+
+msgid "在写入数据库前**直接丢弃**——不浪费 LLM 调用做 tier 分类。"
+msgstr ""
+
+msgid "痛点：substring 匹配的两个 bug"
+msgstr ""
+
+msgid "跨语言失效"
+msgstr ""
+
+msgid "：你写英文 \"spam recruiter\" 屏蔽不到意大利语 \"agenzia spam\""
+msgstr ""
+
+msgid "词不达意"
+msgstr ""
+
+msgid "：你写\"廉价职位\"屏蔽——但实际 JD 用 \"entry level\" 或 \"junior\""
+msgstr ""
+
+msgid "底下\"用自然语言描述\"功能 + 反思层\"效果分析\"是 Compass 解决这两个 bug 的方式。"
+msgstr ""
+
+msgid "💬 用自然语言描述（推荐）"
+msgstr ""
+
+msgid "例：不要 unpaid 实习，不要 mlm，不要纯销售，不要外包公司，不要总要加班的。"
+msgstr ""
+
+msgid "✨ LLM 生成屏蔽建议"
+msgstr ""
+
+msgid "✓ 加入选中的到下方黑名单"
+msgstr ""
+
+msgid "💾 保存"
+msgstr ""
+
+msgid "· 被判 Tier 5 共"
+msgstr ""
+
+msgid "次"
+msgstr ""
+
+msgid "先描述一下你不想要什么样的工作"
+msgstr ""
+
+msgid "思考中..."
+msgstr ""
+
+msgid "LLM 正在思考..."
+msgstr ""
+
+msgid "失败"
+msgstr ""
+
+msgid "LLM 判断:"
+msgstr ""
+
+msgid "公司"
+msgstr ""
+
+msgid "关键词"
+msgstr ""
+
+msgid "网络错误:"
+msgstr ""
+
+#, python-format
+msgid "已加入 %(n_c)s 个公司 + %(n_k)s 个关键词到下方编辑区。记得点 \"💾 保存\"。"
+msgstr ""
+
+msgid "✓ 已加入（记得保存）"
+msgstr ""
+
+msgid "Calibration · 边界"
+msgstr ""
+
+msgid "Compass 学到的\"你接受到哪种程度\"——不是你的偏好，是你的"
+msgstr ""
+
+msgid "伦理边界"
+msgstr ""
+
+msgid "：你接受 L0–L4 哪一档（L5 永远禁止——事实编造）"
+msgstr ""
+
+msgid "：你拒绝过的强势动词（如 \"led\" / \"owned\"）"
+msgstr ""
+
+msgid "：你接受过的合适动词"
+msgstr ""
+
+msgid "：硬锁的类目（学历 / 语言级别等）"
+msgstr ""
+
+msgid "为什么需要它（学边界不学偏好）"
+msgstr ""
+
+msgid ""
+"RLHF 标准做法学\"用户喜欢什么\"——会形成茧房。Compass "
+"反过来：学\"用户接受到什么程度\"——这是伦理判断而非偏好倾向，不会让视野收窄。学习"
+msgstr ""
+
+msgid "缓慢漂移"
+msgstr ""
+
+msgid "（每次最多 ±1）+ 反向调节（adversarial voice 永远不学）防止失控。"
+msgstr ""
+
+msgid "什么时候来这里"
+msgstr ""
+
+msgid "感觉简历改写\"过分美化\"或\"过度保守\"——直接编辑边界"
+msgstr ""
+
+msgid "每个月点\"重新学习\"——读最近 30 天决策更新"
+msgstr ""
+
+msgid "触发漂移警报时——可能要\"价值观回归\"清空学习"
+msgstr ""
+
+msgid "⚠ 检测到漂移"
+msgstr ""
+
+msgid "当前边界"
+msgstr ""
+
+msgid "locked sensitive 类目:"
+msgstr ""
+
+msgid "直接编辑"
+msgstr ""
+
+msgid "do verbs（逗号分隔）:"
+msgstr ""
+
+msgid "avoid verbs（逗号分隔）:"
+msgstr ""
+
+msgid "locked sensitive 类目（逗号分隔，例如: education_credential, language_level）:"
+msgstr ""
+
+msgid "学习 / 重置"
+msgstr ""
+
+msgid "🔄 重新学习（最近 30 天）"
+msgstr ""
+
+msgid "人脉网络"
+msgstr ""
+
+msgid "导入 LinkedIn 连接 — jobs 详情页显示「该公司有谁是你认识的」。内推回应率比冷投高 15-30 倍。"
+msgstr ""
+
+msgid "活跃连接"
+msgstr ""
+
+msgid "覆盖公司"
+msgstr ""
+
+msgid "≥1 人脉的公司"
+msgstr ""
+
+msgid ""
+"从你 LinkedIn 导出的 connections.csv 建本地索引。jobs 详情页查\"该公司是否有你认识的人\"瞬间出结果，**不爬 "
+"LinkedIn**——是合法的「你自己的数据」。"
+msgstr ""
+
+msgid "为什么需要它"
+msgstr ""
+
+msgid ""
+"冷投 ATS 简历 1-3% 回应；走人脉内推 30-50% 回应——15 倍差。你已经在 LinkedIn 上有的连接是最高 ROI "
+"的资产，但现在没工具把它和正在投的 job 做 join。这页就是这个 join。"
+msgstr ""
+
+msgid "第一次"
+msgstr ""
+
+msgid ""
+"：去 LinkedIn Settings → Data Privacy → \"Get a copy of your data\" → 下载 → "
+"解压拿 Connections.csv → 上传"
+msgstr ""
+
+msgid "每 6 个月"
+msgstr ""
+
+msgid "：重新导出 + 上传，刷新过期信息"
+msgstr ""
+
+msgid "jobs detail 页看到「你认识的人在 X (3)」时——那条信息就是这里查出来的"
+msgstr ""
+
+msgid "导入 LinkedIn 连接"
+msgstr ""
+
+msgid "→ 上传到这里。"
+msgstr ""
+
+msgid "📥 导入"
+msgstr ""
+
+msgid "top 公司（≥1 人脉）"
+msgstr ""
+
+msgid "自动驱动 scrape 优先级"
+msgstr ""
+
+msgid "——查这些公司的招聘比关键词搜更高 ROI。"
+msgstr ""
+
+msgid "📝 PKM markdown 导出（可选）"
+msgstr ""
+
+msgid "↻ 同步全部到 markdown"
+msgstr ""
+
+msgid "当前关闭"
+msgstr ""
+
+msgid "。打开：在"
+msgstr ""
+
+msgid "加"
+msgstr ""
+
+msgid "然后重启。"
+msgstr ""
+
+msgid "最近导入"
+msgstr ""
+
+msgid "最新 30 条（用于检查导入是否成功）"
+msgstr ""
+
+msgid ""
+"的公开联系人。\n"
+"      可能是公司太小 / 太冷门 / 搜索引擎临时挂了。"
+msgstr ""
+
+msgid "⚙️ LLM 配置"
+msgstr ""
+
+msgid "检查 key / 模型 / base_url，再点 测试连接 验证。"
+msgstr ""
+
+msgid "为什么不让系统替我发？"
+msgstr ""
+
+msgid "导入更多 LinkedIn 连接"
+msgstr ""
+
+msgid "🔍 cold 搜索 —"
+msgstr ""
+
+msgid "阶段未启用"
+msgstr ""
+
+msgid "路径——你认识的人。"
+msgstr ""
+
+msgid "📜 已发送给该 job 的 outreach"
+msgstr ""
+
+msgid "无回应"
+msgstr ""
+
+msgid "有回应 → 详细"
+msgstr ""
+
+msgid "起草 outreach"
+msgstr ""
+
+msgid "目的"
+msgstr ""
+
+msgid "referral_request — 直接请求内推"
+msgstr ""
+
+msgid "informational — 15 分钟交流，不直接要内推"
+msgstr ""
+
+msgid "direct_question — 一个具体问题"
+msgstr ""
+
+msgid "载体"
+msgstr ""
+
+msgid "LinkedIn DM (≤280 字符)"
+msgstr ""
+
+msgid "LinkedIn 连接请求 (≤300 字符)"
+msgstr ""
+
+msgid "邮件 (≤150 字)"
+msgstr ""
+
+msgid "→ 起草"
+msgstr ""
+
+msgid "取消"
+msgstr ""
+
+msgid "⏳ LLM 起草中…"
+msgstr ""
+
+msgid "已写入 OutreachAttempt 表（id:"
+msgstr ""
+
+msgid "关闭"
+msgstr ""
+
+msgid "这条路径不存在或已经迁移。"
+msgstr ""
+
+msgid "📋 岗位列表"
+msgstr ""
+
+msgid "🧭 求职意图"
+msgstr ""
+
+msgid "技术细节"
+msgstr ""
+
+msgid "如果你**期望**这个 URL 存在（比如老书签），可能是 5-06/5-07 in-place 重做后路由改名了——查"
+msgstr ""
+
+msgid "找 5-07 entry。"
+msgstr ""
+
+msgid "⚠️ Compass 遇到内部错误"
+msgstr ""
+
+msgid "完整 traceback 见下方 +"
+msgstr ""
+
+msgid "真正的错误"
+msgstr ""
+
+msgid "💡 可能的原因 + 修复"
+msgstr ""
+
+msgid "📋 回 岗位列表"
+msgstr ""
+
+msgid "← 返回上一页"
+msgstr ""
+
+msgid "🔄 重试"
+msgstr ""
+
+msgid "完整 Traceback（点击折叠）"
+msgstr ""
+
+msgid "← 返回 Compass"
+msgstr ""
+
+msgid "🖨 打印 / 保存为 PDF"
+msgstr ""
+
+msgid "📥 下载 JSON Resume"
+msgstr ""
+
+msgid "哪个是真的你？"
+msgstr ""
+
+msgid "每条都需要你处理或确认。"
+msgstr ""
+
+msgid "反馈说"
+msgstr ""
+
+msgid "但 stated 说"
+msgstr ""
+
+msgid "改成更具体的版本（保留主张但加 scope）："
+msgstr ""
+
+msgid "例：避开 fintech junior（仍要 fintech 但避免初级）"
+msgstr ""
+
+msgid "可选 scope：例 'for junior roles' / 'in Germany'"
+msgstr ""
+
+msgid "应用"
+msgstr ""
+
+msgid "提取预览"
+msgstr ""
+
+msgid "⚠ 不够具体:"
+msgstr ""
+
+msgid "建议你重新写一条更明确的反馈。"
+msgstr ""
+
+msgid "没有提取到有效偏好。换种说法再试。"
+msgstr ""
+
+msgid "保留"
+msgstr ""
+
+msgid "+ 新增"
+msgstr ""
+
+msgid "✓ 倾向"
+msgstr ""
+
+msgid "✗ 避开"
+msgstr ""
+
+msgid "scope（可选）"
+msgstr ""
+
+msgid "✓ 保存到 brief"
+msgstr ""
+
+msgid "你在反馈"
+msgstr ""
+
+msgid "哪里好/哪里不好"
+msgstr ""
+
+msgid "— 下次推送和改写会读到"
+msgstr ""
+
+msgid "⏳ 提取中…"
+msgstr ""
+
+msgid "→ 提取"
+msgstr ""
+
+msgid "— 看下能不能合并。"
+msgstr ""
+
+msgid "当前生效偏好"
+msgstr ""
+
+msgid "还没有偏好。在 jobs 详情页 thumbs 后点\"💬 想多说一点\"开始反馈。"
+msgstr ""
+
+msgid "地区工资底线"
+msgstr ""
+
+msgid "按地区设置 yearly 阈值，低于的岗位自动降一档 Tier（确定性规则，不依赖 LLM 判断）。"
+msgstr ""
+
+msgid "地区"
+msgstr ""
+
+msgid "月底线"
+msgstr ""
+
+msgid "年底线"
+msgstr ""
+
+msgid "货币"
+msgstr ""
+
+msgid "还没有工资底线。"
+msgstr ""
+
+msgid "地区（国家或城市）"
+msgstr ""
+
+msgid "+ 添加 / 更新"
+msgstr ""
+
+msgid "历史 / Archive"
+msgstr ""
+
+msgid "已过期或被清理的偏好（最近 30 条）。点 ↻ 重新激活。"
+msgstr ""
+
+msgid "↻ 激活"
+msgstr ""
+
+msgid "✎ 编辑"
+msgstr ""
+
+msgid "↻ 续 30 天"
+msgstr ""
+
+msgid "可选 scope（"
+msgstr ""
+
+msgid "保存"
+msgstr ""
+
+msgid "还没有简历偏好。在简历改写预览页针对某条 bullet 反馈即可累积。"
+msgstr ""
+
+msgid "✓ 已保存"
+msgstr ""
+
+msgid "→ 看反馈历史"
+msgstr ""
+
+msgid "没有保存任何偏好（全部被你取消勾选了）。"
+msgstr ""
+
+msgid "你给系统的偏好信号——你说要什么、要避开什么。下次推送和简历改写都会读这些。"
+msgstr ""
+
+msgid "所有 thumbs / status / 简历反馈累积出的偏好简报，分两层："
+msgstr ""
+
+msgid "找工作偏好"
+msgstr ""
+
+msgid "— 影响 tier_classifier 给新岗位打分"
+msgstr ""
+
+msgid "简历偏好"
+msgstr ""
+
+msgid "— 影响 resume_writer 改写风格"
+msgstr ""
+
+msgid "（仅 jobs）— 按地区设置 yearly 阈值，低于自动降 Tier"
+msgstr ""
+
+msgid "thumbs 不应该是礼仪动作。你反馈过的偏好系统真的会读——这页是让你"
+msgstr ""
+
+msgid "看见这件事"
+msgstr ""
+
+msgid "顶部红色 banner 报\"stated vs revealed 分歧\"时——必须来处理"
+msgstr ""
+
+msgid "觉得推送跑偏 → 看下当前生效偏好是不是合你预期"
+msgstr ""
+
+msgid "每周一次扫一眼，过期偏好考虑续期或放手"
+msgstr ""
+
+msgid "时间窗口"
+msgstr ""
+
+msgid "7 阶段转化漏斗："
+msgstr ""
+
+msgid "。每阶段的转化率显式可见，加上 by-Tier 分布。"
+msgstr ""
+
+msgid "很多人投了几十个简历没回响——但不知道是哪一步坏了：JD 不准 / 简历过不了 ATS / 面试表现差 / 定位偏了。漏斗让你"
+msgstr ""
+
+msgid "看见瓶颈"
+msgstr ""
+
+msgid "——比如 applied → interview 转化只有 5%，那是简历问题不是定位问题。"
+msgstr ""
+
+msgid "配合"
+msgstr ""
+
+msgid "Gmail 集成"
+msgstr ""
+
+msgid "，applied/interview/offer/rejected 状态可"
+msgstr ""
+
+msgid "自动"
+msgstr ""
+
+msgid "从邮件检测——不用手动改。"
+msgstr ""
+
+msgid "每周一次扫一眼整体转化率"
+msgstr ""
+
+msgid "感觉\"投了很多没回音\"时——找瓶颈环节"
+msgstr ""
+
+msgid "看 by-Tier 分布——Tier 1/2/3 哪一档实际转化最高（验证 5-tier 是否合理）"
+msgstr ""
+
+msgid "按 Tier 分布"
+msgstr ""
+
+msgid "转化率"
+msgstr ""
+
+msgid "→应聘率"
+msgstr ""
+
+msgid "→面试率"
+msgstr ""
+
+msgid "暂无数据。"
+msgstr ""
+
+msgid "🪞 怎么看这些切片"
+msgstr ""
+
+msgid "scraped 数量大但 applied 少"
+msgstr ""
+
+msgid "— 说明那个来源/地区/角色你不感兴趣，但抓了——考虑加黑名单或调整 keywords"
+msgstr ""
+
+msgid "applied 多但 interview 率低"
+msgstr ""
+
+msgid "— 简历对那类岗位可能不准——简历改写时调整针对性"
+msgstr ""
+
+msgid "interview 率高的来源/角色"
+msgstr ""
+
+msgid "— 把它当 signal——下次抓取多投资源/精力到这些方向"
+msgstr ""
+
+msgid "某个 key 出现 offer"
+msgstr ""
+
+msgid "— 那是你真正成功的渠道——记下来，下个月继续走这条路"
+msgstr ""
+
+msgid "自动更新状态"
+msgstr ""
+
+msgid "授权 Compass 读你的 Gmail（只读，scope: gmail.readonly）。点同步后："
+msgstr ""
+
+msgid "抓最近 14 天匹配求职关键词的邮件"
+msgstr ""
+
+msgid ""
+"LLM 分类每封：application_received / interview_invite / rejection / offer / "
+"scheduling / follow_up / not_job_related"
+msgstr ""
+
+msgid "按公司+岗位模糊匹配到 Compass 里的 Job"
+msgstr ""
+
+msgid "自动更新"
+msgstr ""
+
+msgid "+ 写 ReflectionEvent"
+msgstr ""
+
+msgid "为什么需要它（funnel 闭环的关键缺失）"
+msgstr ""
+
+msgid "Compass 的漏斗追踪 status (applied/interview/offer)——但"
+msgstr ""
+
+msgid "几乎没人会手动改 status"
+msgstr ""
+
+msgid "。结果 funnel 数据永远是片段，calibration learner 拿不到真投递结果。"
+msgstr ""
+
+msgid ""
+"Gmail 集成 = 让\"投递结果\"自动从邮件回流。这是 Reflective Flywheel 真正闭环的来源——calibration "
+"第一次能看到\"我 thumbs-up 的工作 vs 实际拿 offer 的工作\"对照。"
+msgstr ""
+
+msgid "第一次：配置 OAuth client_secret + 授权（一次性，5 分钟）"
+msgstr ""
+
+msgid "每周一次手动点\"同步\"——更新过去 14 天 status 变化"
+msgstr ""
+
+msgid "看到 funnel 数据怪（applied 数量明显少于实际投递）→ 跑同步"
+msgstr ""
+
+msgid "隐私（重要）"
+msgstr ""
+
+msgid "只读 Gmail（不能发 / 不能改）"
+msgstr ""
+
+msgid "邮件正文用完即弃——不持久化到 Compass DB"
+msgstr ""
+
+msgid "只存\"分类结果 + subject 摘要\""
+msgstr ""
+
+msgid "OAuth token 在本机；可在 myaccount.google.com 撤销"
+msgstr ""
+
+msgid "当前状态"
+msgstr ""
+
+msgid "第一次使用：配置 Google OAuth"
+msgstr ""
+
+msgid "访问"
+msgstr ""
+
+msgid "启用 Gmail API（如尚未启用）"
+msgstr ""
+
+msgid "创建一个 OAuth 2.0 Client ID，类型选"
+msgstr ""
+
+msgid "下载 client secret JSON，重命名为"
+msgstr ""
+
+msgid "放到这个目录（自动跟随程序所在位置）："
+msgstr ""
+
+msgid "回到这里点"
+msgstr ""
+
+msgid "同步"
+msgstr ""
+
+msgid "按钮 — Compass 会引导你完成 OAuth 浏览器授权流程"
+msgstr ""
+
+msgid "扫描你 Gmail 里过去 14 天与求职相关的邮件，LLM 分类后**自动更新** Compass 中匹配 job 的状态。"
+msgstr ""
+
+msgid "隐私说明"
+msgstr ""
+
+msgid "Compass 只用 Gmail readonly scope——不能发邮件，不能改邮件"
+msgstr ""
+
+msgid "邮件正文用完即弃——不持久化邮件内容到 Compass DB"
+msgstr ""
+
+msgid "只存\"分类结果 + subject 摘要\"作为 ReflectionEvent"
+msgstr ""
+
+msgid "OAuth token 存在本机"
+msgstr ""
+
+msgid "——可随时删除撤销"
+msgstr ""
+
+msgid "你也可以在"
+msgstr ""
+
+msgid "Google Account 权限页"
+msgstr ""
+
+msgid "撤销 Compass 访问"
+msgstr ""
+
+msgid "← 返回 Gmail"
+msgstr ""
+
+msgid "Gmail 同步结果"
+msgstr ""
+
+msgid "统计"
+msgstr ""
+
+msgid "扫描邮件:"
+msgstr ""
+
+msgid "识别为求职邮件:"
+msgstr ""
+
+msgid "匹配到 Compass job:"
+msgstr ""
+
+msgid "自动更新状态:"
+msgstr ""
+
+msgid "分类分布:"
+msgstr ""
+
+msgid "详细记录"
+msgstr ""
+
+msgid "邮件主题"
+msgstr ""
+
+msgid "分类"
+msgstr ""
+
+msgid "匹配?"
+msgstr ""
+
+msgid "状态变了?"
+msgstr ""
+
+msgid "✓ 用户访谈验证"
+msgstr ""
+
+msgid "演变 — 看这条改过几次、来自哪个 job、可以回滚到旧版"
+msgstr ""
+
+msgid ""
+"LLM 针对这条 fact 主动问你 3-5 个深挖问题（量化 / 影响 / 角色），提炼出更精确的 sub-facts。改写时这些细节让 LLM"
+" 不用猜。"
+msgstr ""
+
+msgid "🎤 访谈深挖"
+msgstr ""
+
+msgid "软删除（隐藏不显示）— 不影响历史改写，DB 里仍在，可恢复"
+msgstr ""
+
+msgid "📜 这一条的演变"
+msgstr ""
+
+msgid "修订，旧记录永远在。"
+msgstr ""
+
+msgid "← 返回 fact 列表"
+msgstr ""
+
+msgid "当前"
+msgstr ""
+
+msgid "✎ 直接编辑当前文本"
+msgstr ""
+
+msgid "修订。想基于某个旧版微调？先在下面点 ↺ 把它设为当前，再回来编辑。"
+msgstr ""
+
+msgid "为什么改？(可选，会写进修订 note)"
+msgstr ""
+
+msgid "💾 保存为新修订"
+msgstr ""
+
+msgid "设为当前 — 会新建一条 rolled_back 修订"
+msgstr ""
+
+msgid "没有历史记录。"
+msgstr ""
+
+msgid "为什么不能删除某次修订"
+msgstr ""
+
+msgid ""
+"：删一条中间修订会让后面的修订失去\"基于的版本\"，语义崩塌（Git 也是这样设计的）。想\"撤销\"某次改动？点更早一版的「↺ 设为当前」就行"
+" — 不删历史，append 一条新版即可。"
+msgstr ""
+
+msgid "← 返回身份"
+msgstr ""
+
+msgid "访谈式发现"
+msgstr ""
+
+msgid "原始 fact"
+msgstr ""
+
+msgid "如实回答 — 不知道就空着"
+msgstr ""
+
+msgid "💾 保存（继续编辑）"
+msgstr ""
+
+msgid "✓ 完成访谈 + 合成 facts"
+msgstr ""
+
+msgid ""
+"事实层 — 你简历的\"main 分支\"。改写流水线产生的 variants 只在沙盒里生效；点「📌 沉淀」才会更新这里。每条 fact "
+"都有完整修订历史，可单独回滚。"
+msgstr ""
+
+msgid "你的 resume facts —— 原子事实（比如\"Built X in coursework\"）。每个 fact 有"
+msgstr ""
+
+msgid "（experience / education / skill / project / language / certification）+ 可选"
+msgstr ""
+
+msgid "（学历 / 语言级别 / 工作日期等会触发 L5 硬拦截的）。"
+msgstr ""
+
+msgid "为什么需要它（Git 模型搬到简历）"
+msgstr ""
+
+msgid ""
+"事实是 main 分支。每份针对某 job 改写的简历是 PR（RewriteAttempt + Variants）。直到你点「📌 "
+"沉淀」之前，main 不会动；沉淀 = merge to main，会写进 fact 的修订历史，永远可回滚。这样防止\"在简历 A 写 5 "
+"years，简历 B 写 6 years\"的渐进漂移——不同 variants 共享同一 source of truth。"
+msgstr ""
+
+msgid "第一次使用"
+msgstr ""
+
+msgid "：上传简历 → LLM 抽 facts"
+msgstr ""
+
+msgid "新经历（升职 / 新项目）→ 上传新简历建新 IdentityVersion"
+msgstr ""
+
+msgid "觉得某个 fact 不再代表你 → 点 🗑 停用（不删，archive）"
+msgstr ""
+
+msgid "对某个 fact 的 explanation 不够清晰 → 🎤 跑访谈深挖"
+msgstr ""
+
+msgid "还没有上传简历。"
+msgstr ""
+
+msgid "📤 上传简历"
+msgstr ""
+
+msgid "当前身份版本"
+msgstr ""
+
+msgid "↻ 上传新版本"
+msgstr ""
+
+msgid "编辑 fact"
+msgstr ""
+
+msgid "文本"
+msgstr ""
+
+msgid "敏感类别（触发 L5 硬拦截 — 无关变换的禁止）"
+msgstr ""
+
+msgid "（不敏感）"
+msgstr ""
+
+msgid "education_credential — 学历/学位"
+msgstr ""
+
+msgid "language_level — 语言等级"
+msgstr ""
+
+msgid "employment_dates — 任职日期"
+msgstr ""
+
+msgid "health_status — 健康/出勤"
+msgstr ""
+
+msgid "legal_status — 签证/工作许可"
+msgstr ""
+
+msgid "改动原因（可选 — 留 audit log）"
+msgstr ""
+
+msgid "例：LLM 把 EE 写成了 ME"
+msgstr ""
+
+msgid "✓ 保存"
+msgstr ""
+
+msgid "📌 沉淀历史"
+msgstr ""
+
+msgid "还没有任何沉淀。"
+msgstr ""
+
+msgid "查看这条的演变 →"
+msgstr ""
+
+msgid "没有\"删除某次沉淀\"按钮是有意的"
+msgstr ""
+
+msgid ""
+"：删除中间的沉淀会让后续 fact 修订失去\"基于的版本\"。\n"
+"  想撤销某次沉淀的影响？进对应的 fact 历史，把更早的版本设为当前即可（append-only）。"
+msgstr ""
+
+msgid "上传简历"
+msgstr ""
+
+msgid "支持 PDF / DOCX / TXT / MD。Compass 会用 LLM 抽取结构化 profile，然后拆解成不可变 facts。"
+msgstr ""
+
+msgid "📤 上传 + 抽取"
+msgstr ""
+
+msgid "📋 投递准备包"
+msgstr ""
+
+msgid "分钟。"
+msgstr ""
+
+msgid "撤销手动 done"
+msgstr ""
+
+msgid "手动标 done"
+msgstr ""
+
+msgid "撤销跳过"
+msgstr ""
+
+msgid "跳过这步（不适用此 job）"
+msgstr ""
+
+msgid "🎉 全部完成"
+msgstr ""
+
+msgid "抓取时间"
+msgstr ""
+
+msgid "发布时间"
+msgstr ""
+
+msgid "详情 →"
+msgstr ""
+
+msgid "清除全部过滤"
+msgstr ""
+
+msgid "未分类"
+msgstr ""
+
+msgid "没匹配的岗位。换个过滤 / 搜索词试试？"
+msgstr ""
+
+msgid "清除全部"
+msgstr ""
+
+msgid "建议"
+msgstr ""
+
+msgid "📥 用现有意图重新抓取"
+msgstr ""
+
+msgid "🧭 调整求职意图"
+msgstr ""
+
+msgid "还没跑过抓取 — 上方面板填一组关键词 + 地点，点📥 抓取。"
+msgstr ""
+
+msgid "或从 v1 数据迁移："
+msgstr ""
+
+msgid "分类失败:"
+msgstr ""
+
+msgid "尚未分类。点击下方\"重新分类\"运行 LLM。"
+msgstr ""
+
+msgid "动作"
+msgstr ""
+
+msgid "🔄 重新分类"
+msgstr ""
+
+msgid "🔗 打开原 JD"
+msgstr ""
+
+msgid "是什么"
+msgstr ""
+
+msgid "：手动让 LLM 再看一遍这条 JD，重新打 Tier 1-5、score、reason。"
+msgstr ""
+
+msgid "什么时候用"
+msgstr ""
+
+msgid "（4 个典型场景）："
+msgstr ""
+
+msgid "觉得 LLM 之前判错了 — 让它再看一次（可能拿到不同结果，因为 brief 变了）"
+msgstr ""
+
+msgid "你刚改了"
+msgstr ""
+
+msgid "偏好 brief"
+msgstr ""
+
+msgid "— 想看 LLM 现在怎么判"
+msgstr ""
+
+msgid "这条之前"
+msgstr ""
+
+msgid "（抓取时没配 LLM API key）— 现在补分类"
+msgstr ""
+
+msgid "想刷新 score / 看新数据下还合不合适"
+msgstr ""
+
+msgid "待发草稿"
+msgstr ""
+
+msgid "已发"
+msgstr ""
+
+msgid "已回应"
+msgstr ""
+
+msgid "带来面试"
+msgstr ""
+
+msgid "草稿不发出去 = 0 价值"
+msgstr ""
+
+msgid "— 现在花 30 秒发掉。"
+msgstr ""
+
+msgid "看 / 隐藏 草稿原文（点开回忆当初写了啥）"
+msgstr ""
+
+msgid "去 LinkedIn / 联系人页面，复制草稿粘贴发送"
+msgstr ""
+
+msgid "标记为已发出 — 草稿移到「已发送」区，effort pack 自动 ✓"
+msgstr ""
+
+msgid "看草稿原文（回忆当初写的啥）"
+msgstr ""
+
+msgid "✓ 已回应"
+msgstr ""
+
+msgid "🎯 带来面试"
+msgstr ""
+
+msgid "标记收到正向回应"
+msgstr ""
+
+msgid "📥 有回应"
+msgstr ""
+
+msgid "标记被拒 / 没回"
+msgstr ""
+
+msgid "✗ 没结果"
+msgstr ""
+
+msgid "👍/👎 快速判断 · 选「为什么」"
+msgstr ""
+
+msgid "同 axis 同 sentiment 再点 = 取消；点反方向 = 翻转。"
+msgstr ""
+
+msgid "想说更多 → 用页面最底「💬 详细反馈」。"
+msgstr ""
+
+msgid "这个 job 你已标:"
+msgstr ""
+
+msgid "喜欢"
+msgstr ""
+
+msgid "不喜欢"
+msgstr ""
+
+msgid "这条吸引你的是…（点亮已选；再点取消）"
+msgstr ""
+
+msgid "这条让你不想要的是…（点亮已选；再点取消）"
+msgstr ""
+
+msgid "跨 jobs 累计：去重 distinct job 数（30 天内）"
+msgstr ""
+
+msgid "或继续 click"
+msgstr ""
+
+msgid "为"
+msgstr ""
+
+msgid "状态"
+msgstr ""
+
+msgid "当前:"
+msgstr ""
+
+msgid "↺ 撤销 done"
+msgstr ""
+
+msgid "手动标完成"
+msgstr ""
+
+msgid "✓ 标完成"
+msgstr ""
+
+msgid "跳过这步"
+msgstr ""
+
+msgid "– 跳过"
+msgstr ""
+
+msgid "↺ 撤销 skip"
+msgstr ""
+
+msgid "✓ 已自动检测完成"
+msgstr ""
+
+msgid "👍/👎 快速判断"
+msgstr ""
+
+msgid "想说更多 → 用页面最底的「💬 详细反馈」框（LLM 会提炼成 preference brief）"
+msgstr ""
+
+msgid "为什么喜欢？（可选）"
+msgstr ""
+
+msgid "👍 喜欢"
+msgstr ""
+
+msgid "为什么不合适？（可选）"
+msgstr ""
+
+msgid "👎 不合适"
+msgstr ""
+
+msgid "← 返回列表"
+msgstr ""
+
+msgid "键盘 ← 跳上一个"
+msgstr ""
+
+msgid "← 上一个"
+msgstr ""
+
+msgid "键盘 → 跳下一个"
+msgstr ""
+
+msgid "下一个 →"
+msgstr ""
+
+msgid "🌐 远程"
+msgstr ""
+
+msgid "📖 第一步：读 JD"
+msgstr ""
+
+msgid "2 分钟读完决定后续 30 分钟值不值得花。先看 JD，再看 LLM 给出的 Tier 判断。"
+msgstr ""
+
+msgid "JD 原文"
+msgstr ""
+
+msgid "⏳ 翻译中…"
+msgstr ""
+
+msgid "JD 关键词覆盖"
+msgstr ""
+
+msgid "绿 = 已在简历"
+msgstr ""
+
+msgid "橙 = JD 要但缺"
+msgstr ""
+
+msgid "系统判断"
+msgstr ""
+
+msgid "📝 第二步：针对此 job 改写简历"
+msgstr ""
+
+msgid "▶ 跑改写流水线"
+msgstr ""
+
+msgid "📚 查看历史版本"
+msgstr ""
+
+msgid "↻ 再跑一次会做什么"
+msgstr ""
+
+msgid "· 你的 ✓ 决定不会动"
+msgstr ""
+
+msgid "· 你改写过的版本不会丢"
+msgstr ""
+
+msgid "· 旧建议会消失，"
+msgstr ""
+
+msgid "无法恢复"
+msgstr ""
+
+msgid "· 拒绝原因作为反向提示，避免生成相似版本"
+msgstr ""
+
+msgid "↻ 确认再跑"
+msgstr ""
+
+msgid "这次改写没有生成 variants — 可能是 fact-keyword 没匹配上，或简历 facts 太少。换个 job 或先补充 facts。"
+msgstr ""
+
+msgid "还没跑过改写流水线"
+msgstr ""
+
+msgid "抽 JD 关键词"
+msgstr ""
+
+msgid "把简历 facts 跟关键词配对"
+msgstr ""
+
+msgid "逐 bullet 改写（多 amplification level）"
+msgstr ""
+
+msgid "每条做 claim grounding（防编造）"
+msgstr ""
+
+msgid "Adversarial voice 给反对意见"
+msgstr ""
+
+msgid "三角色 judge（ATS / HR 6s scan / 招聘经理）打分"
+msgstr ""
+
+msgid "同一个页面"
+msgstr ""
+
+msgid "逐条 ✓ 接受 / ✎ 编辑 / ✗ 拒绝。"
+msgstr ""
+
+msgid "🤝 第三步：联系人 + outreach"
+msgstr ""
+
+msgid "outreach 任务已自动完成"
+msgstr ""
+
+msgid "✓ outreach 已发"
+msgstr ""
+
+msgid "⏳ 加载联系人中…"
+msgstr ""
+
+msgid "📤 第五步：投递 + 标记 applied"
+msgstr ""
+
+msgid "完整准备但没投出去 = 0。投递后切换状态到 applied，自动激活 cold contacts follow-up + 进入 sent 阶段。"
+msgstr ""
+
+msgid "🎯 第六步：面试准备"
+msgstr ""
+
+msgid "到了面试这步——别裸面。两件 Claude Code Skill 推荐跑："
+msgstr ""
+
+msgid "— 公司近况 / 团队 / 文化研究"
+msgstr ""
+
+msgid "— 简历 vs JD 关键词覆盖"
+msgstr ""
+
+msgid "按状态分列，每个 job 一张卡。横向是 pipeline 进度。"
+msgstr ""
+
+msgid "📋 列表"
+msgstr ""
+
+msgid ""
+"所有 jobs 按 status 列：未读 → 已看 → 已投 → 面试中 → Offer / 被拒。一眼看到自己求职 pipeline "
+"的「形状」。"
+msgstr ""
+
+msgid "为什么需要它（vs 列表视图）"
+msgstr ""
+
+msgid "列表视图回答「我有哪些 jobs」，Kanban 回答「我每个阶段堆了多少东西」。看到「面试中」列只有 1 个 —"
+msgstr ""
+
+msgid "瓶颈在 applied → interview 那一步"
+msgstr ""
+
+msgid "，不是源头不够。"
+msgstr ""
+
+msgid "注意"
+msgstr ""
+
+msgid "Tier 5（客观不可达）和 status=passed 不显示——pipeline 板上的噪音"
+msgstr ""
+
+msgid "点卡跳详情页；状态切换在详情页改完会自动反映这里"
+msgstr ""
+
+msgid "每列上方的数字 = 该列卡数"
+msgstr ""
+
+msgid "空"
+msgstr ""
+
+msgid "按 Tier 分组——核心 / 邻近 / 学习 / 远距 / 不可达。Tier 5 静默存档。"
+msgstr ""
+
+msgid "jobspy 多站抓回来的 jobs，按 5 个 Tier 分组："
+msgstr ""
+
+msgid "Tier 1 核心专业圈"
+msgstr ""
+
+msgid "— 你背景直接对口的（推送主力，70% 配额）"
+msgstr ""
+
+msgid "Tier 2 邻近迁移圈"
+msgstr ""
+
+msgid "— 你能转的相邻方向（"
+msgstr ""
+
+msgid "反茧房甜点"
+msgstr ""
+
+msgid "Tier 3 可学习扩展"
+msgstr ""
+
+msgid "— 补 1-2 个 skill 即可进入（带 learning_gap，10%）"
+msgstr ""
+
+msgid "Tier 4 远距迁移"
+msgstr ""
+
+msgid "— 完全转方向（默认不推，仅强信号触发）"
+msgstr ""
+
+msgid "Tier 5 不可达"
+msgstr ""
+
+msgid "— 学历/签证/语言硬不够（永远静默存档）"
+msgstr ""
+
+msgid "为什么需要它（vs Job Mate 的 push/skip 二元）"
+msgstr ""
+
+msgid "二元判断丢弃 90% 信息，且消灭反茧房可能。5-tier 让\"邻近迁移\"成为显式甜点——你不用刻意找跨方向工作，系统自动给你 20% 配额。"
+msgstr ""
+
+msgid "配置好抓取关键词 + 地区，跑\"📥 抓取\"（多组配置支持不同地区不同关键词）"
+msgstr ""
+
+msgid "抓完进单条 job 详情页跑\"重新分类\"——LLM 给出 tier 判断"
+msgstr ""
+
+msgid "每天看 Tier 1（核心）+ 偶尔看 Tier 2（反茧房）—— Tier 5 永远不点"
+msgstr ""
+
+msgid "全部"
+msgstr ""
+
+msgid "状态:"
+msgstr ""
+
+msgid "⏳ 加载中…"
+msgstr ""
+
+msgid "📍 地区:"
+msgstr ""
+
+msgid "🔍 搜索 标题 / 公司 / 地点…（实时筛选当前结果）"
+msgstr ""
+
+msgid "📡 全库搜："
+msgstr ""
+
+msgid "服务端过滤关键词"
+msgstr ""
+
+msgid "排序："
+msgstr ""
+
+msgid "按 Tier 分组"
+msgstr ""
+
+msgid "抓取时间 ↓"
+msgstr ""
+
+msgid "抓取时间 ↑"
+msgstr ""
+
+msgid "📅 按日期分组"
+msgstr ""
+
+msgid "（已 .gitignore，不上传）。"
+msgstr ""
+
+msgid "近 30 天用量参考"
+msgstr ""
+
+msgid "估算 LLM 调用次数"
+msgstr ""
+
+msgid "按 model 估算 30 天成本："
+msgstr ""
+
+msgid "⚡ 一键应用预设"
+msgstr ""
+
+msgid "应用后立即生效，不动 API Key。"
+msgstr ""
+
+msgid "claude — Anthropic 官方"
+msgstr ""
+
+msgid "openai — OpenAI 官方"
+msgstr ""
+
+msgid "custom — OpenAI-compatible 自定义 endpoint"
+msgstr ""
+
+msgid "本地部署"
+msgstr ""
+
+msgid "（Ollama / LMStudio）的 API Key 可以填任意非空字符串。"
+msgstr ""
+
+msgid "sk-ant-... 或 sk-proj-... 或本地任意字符串"
+msgstr ""
+
+msgid "测试连接"
+msgstr ""
+
+msgid "自由输入 model id，如 deepseek-chat / llama3.3"
+msgstr ""
+
+msgid "可选功能（ADR-0015）"
+msgstr ""
+
+msgid "五维度建议菜单（B 改动）"
+msgstr ""
+
+msgid "每条 variant 多 1 次 LLM 调用生成 verb/tone 候选，UI 展开\"📊 建议分解\"panel。"
+msgstr ""
+
+msgid "多语言简历渲染（E 改动）"
+msgstr ""
+
+msgid "按 search_config.global.user_languages 给每个 variant 翻译。每语言 +1 次 LLM。"
+msgstr ""
+
+msgid "原语言 ATS 字面扫描（C 改动）"
+msgstr ""
+
+msgid "judge 阶段附加 deterministic 字面命中扫描。"
+msgstr ""
+
+msgid "不调 LLM，免费。"
+msgstr ""
+
+msgid "默认全关——开了之后下次 rewrite 就触发。"
+msgstr ""
+
+msgid "Per-step model override（高级）"
+msgstr ""
+
+msgid "用 sonnet (创造/推理)"
+msgstr ""
+
+msgid ""
+"自由输入 model id。本地 Ollama 可输入 <code>llama3.3</code> / "
+"<code>qwen2.5-coder:32b</code> / <code>deepseek-r1</code> 等。"
+msgstr ""
+
+msgid "所有 LLM 调用默认用这个。每个 model 后面的描述写明适合哪些 step。"
+msgstr ""
+
+msgid "⏳ 调用中..."
+msgstr ""
+
+msgid "响应正常"
+msgstr ""
+
+msgid "✗ 网络错误:"
+msgstr ""
+
+msgid "← 返回职位详情"
+msgstr ""
+
+msgid "🪞 投递前一秒"
+msgstr ""
+
+msgid "标记为"
+msgstr ""
+
+msgid "这是什么？为什么要打断我？"
+msgstr ""
+
+msgid "这是 Compass 的反向通道"
+msgstr ""
+
+msgid "它不阻止你"
+msgstr ""
+
+msgid "。看完确认即可继续。但你看了，就被记录了——这就够了。"
+msgstr ""
+
+msgid "⚠ 最近 21 天 Adversarial Voice 提出的反对"
+msgstr ""
+
+msgid "边界漂移轨迹"
+msgstr ""
+
+msgid "🎯 这个岗位的 Tier 比你平均更高（更\"够一够\"）"
+msgstr ""
+
+msgid "这个岗位的 Tier 比你平均更低"
+msgstr ""
+
+msgid "价值观回归到期"
+msgstr ""
+
+msgid ""
+"天。\n"
+"      建议"
+msgstr ""
+
+msgid "扫一眼系统假设"
+msgstr ""
+
+msgid "——但不强求。"
+msgstr ""
+
+msgid "💬 六个月前的你说"
+msgstr ""
+
+msgid "📥 抓取配置"
+msgstr ""
+
+msgid "点开配置多组（每组：地点 + 关键词），结果汇总"
+msgstr ""
+
+msgid "g.enabled ? '点击禁用这一组（不会被一键抓取）' : '点击启用这一组'"
+msgstr ""
+
+msgid "已禁用"
+msgstr ""
+
+msgid "g.country || '从地点推断国旗'"
+msgstr ""
+
+msgid "地点（逗号分隔）"
+msgstr ""
+
+msgid "LLM 提议多语言 + 同语言同义词，避免抓不到当地语言职位"
+msgstr ""
+
+msgid "只抓取最近 N 小时内发布的岗位 — 168=7天, 720=30天"
+msgstr ""
+
+msgid "最近多久"
+msgstr ""
+
+msgid "24 小时"
+msgstr ""
+
+msgid "3 天"
+msgstr ""
+
+msgid "7 天"
+msgstr ""
+
+msgid "30 天"
+msgstr ""
+
+msgid "不限"
+msgstr ""
+
+msgid "删除这一组"
+msgstr ""
+
+msgid "组标签"
+msgstr ""
+
+msgid "(用户可读名)"
+msgstr ""
+
+msgid "例：德国-法兰克福"
+msgstr ""
+
+msgid "(空 = 从地点推断)"
+msgstr ""
+
+msgid "这条求职意图想找什么"
+msgstr ""
+
+msgid "(LLM tier 分类参考)"
+msgstr ""
+
+msgid "电气工程师 + 金融咨询 + 数据分析；排除餐饮/护理/驾驶"
+msgstr ""
+
+msgid "必须包含国家"
+msgstr ""
+
+msgid "(每行一个，dealbreaker)"
+msgstr ""
+
+msgid "阻断语言"
+msgstr ""
+
+msgid "(每行一个 ISO 码)"
+msgstr ""
+
+msgid "公司黑名单"
+msgstr ""
+
+msgid "(每行一个)"
+msgstr ""
+
+msgid "关键词黑名单"
+msgstr ""
+
+msgid "关键词别名"
+msgstr ""
+
+msgid "(每行 \"key=alias1,alias2,...\")"
+msgstr ""
+
+msgid "📥 抓取（运行所有组）"
+msgstr ""
+
+msgid "后，本组配置写入"
+msgstr ""
+
+msgid "（服务端持久）。未保存的草稿仅缓存在浏览器，刷新后以服务端为准。"
+msgstr ""
+
+msgid "多语言别名建议 — \""
+msgstr ""
+
+msgid "LLM 思考中..."
+msgstr ""
+
+msgid "LLM 没返回有效别名（试试更具体的关键词）"
+msgstr ""
+
+msgid "✓ 加入选中的"
+msgstr ""
+
+msgid "请先填一个关键词，再点 \"建议别名\""
+msgstr ""
+
+msgid "配置多组（地点 + 关键词 + dealbreaker），同一意图复用到 LLM 分级 / 抓取 / 简历改写。"
+msgstr ""
+
+msgid "📋 看抓取结果 →"
+msgstr ""
+
+msgid "不熟？看这是什么 / 为什么要配 / 字段含义"
+msgstr ""
+
+msgid "每一组 = 一个"
+msgstr ""
+
+msgid "（可启用 / 禁用），抓取按 profile 跑："
+msgstr ""
+
+msgid "地点"
+msgstr ""
+
+msgid "喂给 jobspy（LinkedIn / Indeed）"
+msgstr ""
+
+msgid "（country_must_be / language_blocked / 黑名单）= 硬过滤，命中即 drop"
+msgstr ""
+
+msgid "用户意图描述"
+msgstr ""
+
+msgid "= LLM 分级时的 context（\"这条意图想找的方向\"）"
+msgstr ""
+
+msgid "= 自动多语言展开（例：Data Analyst → Datenanalyst, Analista Dati）"
+msgstr ""
+
+msgid "新地区 / 新方向 → 加一组"
+msgstr ""
+
+msgid "抓取后看到\"没找到工作\" → 来这里松一下 dealbreaker（可能 country_must_be 太严）"
+msgstr ""
+
+msgid "本地语言职位漏抓 → 加 keyword_aliases"
+msgstr ""
+
+msgid "💼 薪资谈判模拟"
+msgstr ""
+
+msgid "Offer 金额 *"
+msgstr ""
+
+msgid "币种"
+msgstr ""
+
+msgid "计薪"
+msgstr ""
+
+msgid "每月"
+msgstr ""
+
+msgid "每年"
+msgstr ""
+
+msgid "城市"
+msgstr ""
+
+msgid "国家"
+msgstr ""
+
+msgid "角色 *"
+msgstr ""
+
+msgid "资深级别"
+msgstr ""
+
+msgid "你的心理底线（可选）"
+msgstr ""
+
+msgid "补充信息（可选）"
+msgstr ""
+
+msgid "例：我已 offer 另一份 3500；公司缺该岗位等了 6 个月；我有 ML 经验对这个角色加分..."
+msgstr ""
+
+msgid "🎯 模拟谈判"
+msgstr ""
+
+msgid "用 LLM 估市场范围 + 给一段直接能用的话术"
+msgstr ""
+
+msgid "为什么不是聊天机器人？"
+msgstr ""
+
+msgid "可见。"
+msgstr ""
+
+msgid "💼 谈判模拟结果"
+msgstr ""
+
+msgid "← 重新模拟"
+msgstr ""
+
+msgid "输入"
+msgstr ""
+
+msgid "📊 市场范围估计"
+msgstr ""
+
+msgid "下限 (P25)"
+msgstr ""
+
+msgid "中位"
+msgstr ""
+
+msgid "上限 (P75)"
+msgstr ""
+
+msgid "🎯 可争取范围"
+msgstr ""
+
+msgid "💬 模拟谈判脚本"
+msgstr ""
+
+msgid "你 · 提出"
+msgstr ""
+
+msgid "HM · 大概率回应"
+msgstr ""
+
+msgid "你 · 后续"
+msgstr ""
+
+msgid "📌 总结建议"
+msgstr ""
+
+msgid "原始 LLM 响应 (debug)"
+msgstr ""
+
+msgid "系统对你的假设"
+msgstr ""
+
+msgid "这是 Compass 当前关于你的 6 个核心信念。每一条你都可以质疑、覆盖、或要求重新生成。"
+msgstr ""
+
+msgid ""
+"LLM 看你的 facts + 最近的反思事件流，写出 6 "
+"条\"系统对你的当前信念\"——比如\"你似乎更看重技术深度而非广度\"、\"你倾向于中型公司而非 startup\"。"
+msgstr ""
+
+msgid "所有\"个性化\"系统都有黑盒画像——它怎么理解你、你看不到。这正是信息茧房失控的根源。Compass 反过来："
+msgstr ""
+
+msgid "把画像可见化、可推翻"
+msgstr ""
+
+msgid "。每条假设你能写\"不同意\"覆盖，下次重生成时尊重你的修正。"
+msgstr ""
+
+msgid "用了一段时间后（产生足够 reflection events）—— 第一次最好等积累 10+ 个动作"
+msgstr ""
+
+msgid "每月手动点\"重新生成\"—— 看 6 条假设有没有真的反映你"
+msgstr ""
+
+msgid "觉得 Compass 推送越来越不准时—— 大概率是某条假设错了，你来推翻"
+msgstr ""
+
+msgid "⚠ 没有配置 LLM_API_KEY，无法生成假设。请在"
+msgstr ""
+
+msgid "中填入后重启。"
+msgstr ""
+
+msgid "还没有任何系统假设——点上面的按钮触发第一次生成。"
+msgstr ""
+
+msgid "系统的信心:"
+msgstr ""
+
+msgid "写下你认为更准确的表述..."
+msgstr ""
+
+msgid "保存修正"
+msgstr ""
+
+msgid "清除修正"
+msgstr ""
+
+msgid "看见你的边界是怎么变的——反向调节飞轮失控的核心。"
+msgstr ""
+
+msgid "📌 现在抓快照"
+msgstr ""
+
+msgid "🔄 反思飞轮闭环健康分"
+msgstr ""
+
+msgid "thumbs ↔ tier 闭环"
+msgstr ""
+
+msgid "brief 渗透率"
+msgstr ""
+
+msgid "undo 率"
+msgstr ""
+
+msgid "条 nudge calibration"
+msgstr ""
+
+msgid "→ 看完整 + 粘新拒信"
+msgstr ""
+
+msgid "显示你的"
+msgstr ""
+
+msgid "（边界设定）随时间的变化轨迹 + Tier 分布健康度（"
+msgstr ""
+
+msgid "）+ 你声称的偏好和实际行为的对照。"
+msgstr ""
+
+msgid "Compass 学你的边界（学边界不学偏好）。但学习有失控风险——边界会"
+msgstr ""
+
+msgid "单向漂移"
+msgstr ""
+
+msgid "变成 sycophancy。这个仪表盘是反向调节四件套之一："
+msgstr ""
+
+msgid "让漂移可见"
+msgstr ""
+
+msgid "。看见 = 阻止漂移最有效的方法。"
+msgstr ""
+
+msgid "每 1–2 周来一次，看趋势"
+msgstr ""
+
+msgid "看到顶部 ⚠ 警报（漂移过快 / Tier 2 反茧房甜点 starvation）时立刻来"
+msgstr ""
+
+msgid "觉得简历改写\"开始让我不舒服\"时——可能边界悄悄漂了"
+msgstr ""
+
+msgid "当前漂移"
+msgstr ""
+
+msgid "稳定"
+msgstr ""
+
+msgid "漂移中"
+msgstr ""
+
+msgid "尚无数据"
+msgstr ""
+
+msgid "硬锁类目"
+msgstr ""
+
+msgid "累计风格规则"
+msgstr ""
+
+msgid "偏离指数（0=完美）"
+msgstr ""
+
+msgid "漂移轨迹"
+msgstr ""
+
+msgid "点上方「现在抓快照」记一个起点；过一段时间再抓第二个，就能看到漂移线。"
+msgstr ""
+
+msgid "ε-exploration 配额"
+msgstr ""
+
+msgid "实际"
+msgstr ""
+
+msgid "目标"
+msgstr ""
+
+msgid "声称 vs 行为"
+msgstr ""
+
+msgid "尚无足够行为数据做对照。"
+msgstr ""
+
+msgid "🪞 tier_quota: 你说想要的 vs 你实际点开的"
+msgstr ""
+
+msgid "声称（quota 总和归一化）"
+msgstr ""
+
+msgid "实际（点开 / 改写 / 👍）"
+msgstr ""
+
+msgid "差"
+msgstr ""
+
+msgid "系统 push"
+msgstr ""
+
+msgid "分布；这里对的是"
+msgstr ""
+
+msgid "你的实际行为"
+msgstr ""
+
+msgid "⚠ 价值观回归 checkpoint 到期"
+msgstr ""
+
+msgid ""
+"距离上次回归审视已超过 14 天。\n"
+"       建议跑一次"
+msgstr ""
+
+msgid "重新审视。"
+msgstr ""
+
+msgid "📉 被拒原因追踪"
+msgstr ""
+
+msgid "还没有分析过的拒信。粘一封进来开始。"
+msgstr ""
+
+msgid "📋 粘贴拒信 → 分析"
+msgstr ""
+
+msgid "关联 job (可选)"
+msgstr ""
+
+msgid "（不关联具体 job）"
+msgstr ""
+
+msgid "job id (可选)"
+msgstr ""
+
+msgid "拒信文本 *"
+msgstr ""
+
+msgid "🔍 分析"
+msgstr ""
+
+msgid "为什么不自动从 Gmail 抓？"
+msgstr ""
+
+msgid "📉 拒信分析结果"
+msgstr ""
+
+msgid "📌 提到缺失的技能"
+msgstr ""
+
+msgid "原文引用"
+msgstr ""
+
+msgid "✅ 已 nudge calibration"
+msgstr ""
+
+msgid "← 再分析一封"
+msgstr ""
+
+msgid "📊 看 Reflection Dashboard"
+msgstr ""
+
+msgid "需处理"
+msgstr ""
+
+msgid "有提醒"
+msgstr ""
+
+msgid "全绿"
+msgstr ""
+
+msgid "原语言"
+msgstr ""
+
+msgid "📝 改写审核"
+msgstr ""
+
+msgid "📄 经典"
+msgstr ""
+
+msgid "📋 现代双栏"
+msgstr ""
+
+msgid "🧱 紧凑"
+msgstr ""
+
+msgid "选择导出的语言版本（变体翻译跟简历语言对齐 — ADR-0015 第 5 条）"
+msgstr ""
+
+msgid "🌐 预览"
+msgstr ""
+
+msgid "按你上传的 DOCX 模板渲染，保留字体/间距/section/bullet 样式（ADR-0018）"
+msgstr ""
+
+msgid "⏳ 生成中…"
+msgstr ""
+
+msgid "DOCX → LibreOffice → PDF（首次 5-10 秒）。需要装 LibreOffice，点击后会提示"
+msgstr ""
+
+msgid "Markdown — LinkedIn / Notion / Bear 复制粘贴"
+msgstr ""
+
+msgid "纯文本 — 最朴素 ATS 友好"
+msgstr ""
+
+msgid "JSON Resume schema — 跨工具用"
+msgstr ""
+
+msgid "一次产出 .docx + .pdf + .md + .txt + .json 的 zip（ADR-0018 P3）"
+msgstr ""
+
+msgid "📦 全部"
+msgstr ""
+
+msgid "⏳ 打包中…"
+msgstr ""
+
+msgid "— 跳到列表 →"
+msgstr ""
+
+msgid "（导出前建议先决定完）"
+msgstr ""
+
+msgid "— 全部决定完，可以导出"
+msgstr ""
+
+msgid "查看详情"
+msgstr ""
+
+msgid "📋 ATS 字面覆盖"
+msgstr ""
+
+msgid "把 ✓/✎ 沉淀到 ResumeFact，影响以后所有再跑"
+msgstr ""
+
+msgid "📌 沉淀到我的简历事实"
+msgstr ""
+
+msgid "），永久可查"
+msgstr ""
+
+msgid "📌 确认沉淀"
+msgstr ""
+
+msgid "应用了已 ✓ / ✎ 的变换；待决 = 原文"
+msgstr ""
+
+msgid "简历预览"
+msgstr ""
+
+msgid "拖动调整左右占比"
+msgstr ""
+
+msgid "📝 Claude 建议"
+msgstr ""
+
+msgid "风险概览"
+msgstr ""
+
+msgid "(原文丢失)"
+msgstr ""
+
+msgid "接受这条改写"
+msgstr ""
+
+msgid "改后接受"
+msgstr ""
+
+msgid "只重生成这条"
+msgstr ""
+
+msgid "拒绝这条"
+msgstr ""
+
+msgid "保存编辑"
+msgstr ""
+
+msgid "撤销"
+msgstr ""
+
+msgid "↺ 撤销"
+msgstr ""
+
+msgid "← 返回岗位流程"
+msgstr ""
+
+msgid "回改写历史"
+msgstr ""
+
+msgid "简历改写历史"
+msgstr ""
+
+msgid "不熟？看这是什么 / 为什么这样组织"
+msgstr ""
+
+msgid "这页是什么"
+msgstr ""
+
+msgid "每次给某个 job 跑改写流水线都会留一条 attempt。这页 = 所有 attempts，"
+msgstr ""
+
+msgid "按 job 分组"
+msgstr ""
+
+msgid "，每组里 v1/v2/v3 倒序（最新在最上）。"
+msgstr ""
+
+msgid "为什么按 job 分组 + 折叠"
+msgstr ""
+
+msgid "同一 job 的多次改写是"
+msgstr ""
+
+msgid "同一目标"
+msgstr ""
+
+msgid "的迭代，应该并排比较。组数多时默认折叠，避免页面过长。"
+msgstr ""
+
+msgid "为什么不在这里发起新改写"
+msgstr ""
+
+msgid "改写是针对某 job 的动作 — 没 job 就没目标。正确路径："
+msgstr ""
+
+msgid "到"
+msgstr ""
+
+msgid "找想投的 job"
+msgstr ""
+
+msgid "详情页第 2 步「跑改写流水线」"
+msgstr ""
+
+msgid "结果原地展示 — 同页 Claude-in-Word 风审核"
+msgstr ""
+
+msgid "→ 上传简历 facts"
+msgstr ""
+
+msgid "还没有改写记录。"
+msgstr ""
+
+msgid "选一个发起。"
+msgstr ""
+
+msgid "→ 去看岗位"
+msgstr ""
+
+msgid "搜索 job 标题 / 公司 / 状态…"
+msgstr ""
+
+msgid "↧ 全展开"
+msgstr ""
+
+msgid "↥ 全折叠"
+msgstr ""
+
+msgid "未评"
+msgstr ""
+
+msgid "审核 →"
+msgstr ""
+
+msgid "📎 借鉴模板"
+msgstr ""
+
+msgid "上传别人的简历模板（任意格式），Compass 自动识别 sample 数据 → 替换为占位符 → 生成你能直接用的 Jinja 模板。"
+msgstr ""
+
+msgid "← 返回模板"
+msgstr ""
+
+msgid "⚠ LLM 未配置"
+msgstr ""
+
+msgid "借鉴功能依赖 LLM 识别 sample 数据。请先在"
+msgstr ""
+
+msgid "设"
+msgstr ""
+
+msgid "后重启。"
+msgstr ""
+
+msgid "当前 LLM"
+msgstr ""
+
+msgid "· 模型"
+msgstr ""
+
+msgid "（图片路推荐用 Claude，对视觉任务更稳）"
+msgstr ""
+
+msgid "4 条路 — 上传什么 → 走哪条 → 保真多少"
+msgstr ""
+
+msgid "方法对比"
+msgstr ""
+
+msgid "输入格式"
+msgstr ""
+
+msgid "走的路"
+msgstr ""
+
+msgid "保真度"
+msgstr ""
+
+msgid "原理"
+msgstr ""
+
+msgid "DOCX 路（docxtpl）"
+msgstr ""
+
+msgid "XML 结构原样保留，只替换 text run，颜色/字体/表格/图片全部不动"
+msgstr ""
+
+msgid "HTML 路（lxml）"
+msgstr ""
+
+msgid "DOM 不动，只替换 text node；CSS / class / 嵌入图全部保留"
+msgstr ""
+
+msgid "PDF 路 → DOCX 路"
+msgstr ""
+
+msgid "先 pdf2docx 转 .docx，再走 DOCX 路。复杂多列布局可能位置略偏"
+msgstr ""
+
+msgid "/ 扫描 PDF"
+msgstr ""
+
+msgid "图片路（vision LLM）"
+msgstr ""
+
+msgid "vision LLM「看图」重画 HTML+CSS，字体细节/特殊背景会丢"
+msgstr ""
+
+msgid "有 .docx 就上传 .docx"
+msgstr ""
+
+msgid "— 保真度最高、成本最低"
+msgstr ""
+
+msgid "找到的是 PDF？看里面文字能不能选中复制："
+msgstr ""
+
+msgid "能选 → PDF 路"
+msgstr ""
+
+msgid "不能选（扫描件）→ 自动切到图片路"
+msgstr ""
+
+msgid "图片路最贵（vision LLM token 多）+ 保真度最低，"
+msgstr ""
+
+msgid "能避免就避免"
+msgstr ""
+
+msgid "所有路都用同一份 sample 数据预览（hard-coded 假人 Alex Chen，不会泄漏真实数据）"
+msgstr ""
+
+msgid "关于版权"
+msgstr ""
+
+msgid "朋友给的 / 你自己的旧版 / 免费 template / Creative Commons 作品"
+msgstr ""
+
+msgid "Compass 知道哪些数据字段（LLM 会用到这些）"
+msgstr ""
+
+msgid "📎 上传模板"
+msgstr ""
+
+msgid "。最大 15MB。"
+msgstr ""
+
+msgid "拖拽文件到这里 / 点击选择"
+msgstr ""
+
+msgid "▶ 开始借鉴"
+msgstr ""
+
+msgid "↺ 换一份"
+msgstr ""
+
+msgid "⚠ 注意"
+msgstr ""
+
+msgid "预览"
+msgstr ""
+
+msgid "⬇ 模板源"
+msgstr ""
+
+msgid "用 SAMPLE_RESUME 渲染过的 .docx — 在 Word/Pages 打开看真实效果"
+msgstr ""
+
+msgid "⬇ 样品 .docx"
+msgstr ""
+
+msgid "给模板起个名字"
+msgstr ""
+
+msgid "（可选）一句描述"
+msgstr ""
+
+msgid "DOCX 路 (99% 保真)"
+msgstr ""
+
+msgid "HTML 路 (97%)"
+msgstr ""
+
+msgid "PDF 路 (85-95%)"
+msgstr ""
+
+msgid "图片路 (70-80%)"
+msgstr ""
+
+msgid "未知格式"
+msgstr ""
+
+msgid "上传中…"
+msgstr ""
+
+msgid "分析中…"
+msgstr ""
+
+msgid "LLM 思考中…"
+msgstr ""
+
+msgid "LLM 识别中…"
+msgstr ""
+
+msgid "仍在处理…（图片/PDF 路较慢）"
+msgstr ""
+
+msgid "未知错误"
+msgstr ""
+
+msgid "网络错误："
+msgstr ""
+
+msgid "选择内建模板，或上传你自己的（HTML + Jinja 占位符）。改写后的简历用所选模板渲染。"
+msgstr ""
+
+msgid "📎 借鉴别人的模板"
+msgstr ""
+
+msgid "怎么用 / 怎么写自己的模板"
+msgstr ""
+
+msgid "选模板"
+msgstr ""
+
+msgid "每个 job 详情页 prepare 阶段跑改写流水线后，进 review 页可以选模板预览 → Cmd+P 保存 PDF。"
+msgstr ""
+
+msgid "用我自己的模板"
+msgstr ""
+
+msgid "写一份带 Jinja 占位符的 HTML，上传即可。Compass 会传"
+msgstr ""
+
+msgid "（JSON Resume 对象）给你的模板。"
+msgstr ""
+
+msgid "可用变量"
+msgstr ""
+
+msgid "渲染后的简历会自动用 approved 的 variants"
+msgstr ""
+
+msgid "当你已经在 review 页 ✓ 接受/✎ 编辑了某些 bullets，"
+msgstr ""
+
+msgid "里就是改写后的版本，不是原文。这一层在"
+msgstr ""
+
+msgid "完成，你模板不用管。"
+msgstr ""
+
+msgid "调试技巧"
+msgstr ""
+
+msgid "每个模板 ID 都有 sample 预览：点列表中的「预览样本」按钮"
+msgstr ""
+
+msgid "样本数据是 hard-coded 的虚拟简历——不会泄漏你真实数据"
+msgstr ""
+
+msgid "Jinja 报错会在 Compass 错误页里显示完整 traceback"
+msgstr ""
+
+msgid "内建"
+msgstr ""
+
+msgid "用户上传"
+msgstr ""
+
+msgid "🗑 删除"
+msgstr ""
+
+msgid "不可删"
+msgstr ""
+
+msgid "📤 上传你的模板"
+msgstr ""
+
+msgid "名称 *"
+msgstr ""
+
+msgid "比如：我的咨询模板 / Europass 中文版"
+msgstr ""
+
+msgid "描述（可选）"
+msgstr ""
+
+msgid "一句话说明：双栏 / 单栏 / 适用场景"
+msgstr ""
+
+msgid "来源"
+msgstr ""
+
+msgid "上传 .html 文件"
+msgstr ""
+
+msgid "直接粘贴 HTML"
+msgstr ""
+
+msgid "📤 上传"
+msgstr ""
+

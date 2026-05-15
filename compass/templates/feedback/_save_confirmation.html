@@ -1,0 +1,26 @@
+{# Confirmation snippet shown after save_lines. Replaces the extract preview. #}
+<div id="extract-preview" class="card" style="border-color: var(--ok); background: #e6f4e6">
+  <h3 style="color: var(--ok); margin-top: 0">{{ _('✓ 已保存') }}</h3>
+  {% if applied %}
+    <ul style="margin: 6px 0 0; padding-left: 20px; font-size: 13.5px">
+      {% for line, action in applied %}
+        <li>
+          {% if action == "merged" %}
+            ↻ 合并到 "{{ line.text }}" — 确认次数 +1（现 {{ line.confirmed_count }} 次）
+          {% elif action == "evicted_other" %}
+            + 新增 "{{ line.text }}"（cap 满，挤出最弱的旧条目）
+          {% else %}
+            + 新增 "{{ line.text }}"
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <p class="muted" style="font-size: 12px; margin-top: 10px">
+      下次推送 / 简历改写会读到这些。
+      <a href="{{ url_for('feedback.dashboard', tab='jobs' if applied[0][0].text else 'jobs') }}">{{ _('→ 看反馈历史') }}</a>
+    </p>
+  {% else %}
+    <p class="muted" style="font-size: 13px; margin: 4px 0">{{ _('没有保存任何偏好（全部被你取消勾选了）。') }}</p>
+  {% endif %}
+  <button type="button" class="subtle" @click="open = false" style="margin-top: 10px; font-size: 12px">{{ _('关闭') }}</button>
+</div>

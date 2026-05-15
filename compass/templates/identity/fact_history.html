@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}演变 · {{ fact.kind }} · Compass{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h2 style="margin: 0">{{ _('📜 这一条的演变') }}</h2>
+    <p class="muted" style="font-size: 12.5px; margin: 2px 0 0">
+      Append-only 历史。「↺ 设为当前」会新建一条 <code>rolled_back</code> {{ _('修订，旧记录永远在。') }}
+    </p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('identity.overview') }}" class="btn subtle">{{ _('← 返回 fact 列表') }}</a>
+  </div>
+</div>
+
+{# 当前 fact 状态 #}
+<div class="card" style="background: #f8faf6; border-color: var(--ok); padding: 12px 16px; margin-bottom: 14px">
+  <div style="display: flex; gap: 10px; align-items: flex-start">
+    <span class="badge" style="background: var(--ok); color: white; flex-shrink: 0">{{ _('当前') }}</span>
+    <div style="flex: 1">
+      <div class="muted" style="font-size: 11px">
+        kind: <code>{{ fact.kind }}</code> · id: <code>{{ fact.id }}</code>
+        {% if fact.user_verified %} · ✓ verified{% endif %}
+        {% if fact.sensitive_category %} · 🔒 {{ fact.sensitive_category }}{% endif %}
+      </div>
+      <div style="font-size: 14px; margin-top: 4px; line-height: 1.55">{{ fact.text }}</div>
+    </div>
+  </div>
+</div>
+
+{# 自由编辑入口 — 想基于任意旧版调整？先点旁边「↺ 设为当前」让它当前，再来这里改。 #}
+<details class="card" style="padding: 12px 16px; margin-bottom: 14px">
+  <summary style="cursor: pointer; font-weight: 600; font-size: 13px">{{ _('✎ 直接编辑当前文本') }}</summary>
+  <p class="muted" style="font-size: 11.5px; margin: 8px 0">
+    直接改写。保存后会新建一条 <code>manual_edit</code> {{ _('修订。想基于某个旧版微调？先在下面点 ↺ 把它设为当前，再回来编辑。') }}
+  </p>
+  <form method="post" action="{{ url_for('identity.edit_fact', fact_id=fact.id) }}">
+    <textarea name="text" rows="4" required
+              style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 13px">{{ fact.text }}</textarea>
+    <input type="hidden" name="sensitive_category" value="{{ fact.sensitive_category or '' }}">
+    {% if fact.user_verified %}<input type="hidden" name="user_verified" value="1">{% endif %}
+    <input type="hidden" name="next" value="{{ url_for('identity.fact_history', fact_id=fact.id) }}">
+    <input type="text" name="reason" placeholder="{{ _('为什么改？(可选，会写进修订 note)') }}"
+           style="width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 12px; margin-top: 6px">
+    <button type="submit" class="btn primary" style="margin-top: 8px; font-size: 12.5px">{{ _('💾 保存为新修订') }}</button>
+  </form>
+</details>
+
+{# 历史时间线 #}
+<h3 style="font-size: 14px; margin: 18px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em">
+  历史 ({{ revisions | length }})
+</h3>
+
+{% set kind_meta = {
+    'origin':                 {'label': '原始',           'color': '#888',         'icon': '🌱'},
+    'promoted_from_attempt':  {'label': '沉淀自改写',     'color': 'var(--accent)','icon': '📌'},
+    'rolled_back':            {'label': '回滚',           'color': 'var(--warn)',  'icon': '↺'},
+    'manual_edit':            {'label': '手工编辑',       'color': '#5a9',         'icon': '✎'},
+} %}
+
+<div style="position: relative">
+  {# 垂直线 #}
+  <div style="position: absolute; left: 11px; top: 4px; bottom: 4px; width: 2px; background: var(--line)"></div>
+
+  {% for r in revisions %}
+    {% set km = kind_meta.get(r.kind, {'label': r.kind, 'color': '#aaa', 'icon': '·'}) %}
+    {% set is_current = loop.first %}
+    <div style="position: relative; padding: 10px 0 10px 32px; margin-bottom: 4px">
+      {# 时间点 #}
+      <div style="position: absolute; left: 0; top: 14px;
+                  width: 24px; height: 24px; border-radius: 50%;
+                  background: white; border: 2px solid {{ km.color }};
+                  display: flex; align-items: center; justify-content: center;
+                  font-size: 11px; z-index: 1">
+        {{ km.icon }}
+      </div>
+
+      <div class="card" style="padding: 10px 14px; {% if is_current %}border-color: var(--ok); background: #fafef8{% endif %}">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px">
+          <span class="badge" style="background: {{ km.color }}; color: white; font-size: 11px">
+            {{ km.label }}
+          </span>
+          {% if is_current %}
+            <span class="badge" style="background: var(--ok); color: white; font-size: 11px">{{ _('当前') }}</span>
+          {% endif %}
+          <span class="muted" style="font-size: 11.5px">{{ r.created_at | local_dt('%Y-%m-%d %H:%M') }}</span>
+          {% if r.source_job_id and job_titles.get(r.source_job_id) %}
+            <span class="muted" style="font-size: 11.5px">·
+              来自 Job: <a href="{{ url_for('jobs.detail', job_id=r.source_job_id) }}#step-resume_rewrite">
+                {{ job_titles[r.source_job_id] }}
+              </a>
+            </span>
+          {% endif %}
+          {% if r.source_attempt_id %}
+            <span class="muted" style="font-size: 11.5px">·
+              attempt <code>{{ r.source_attempt_id[:8] }}</code>
+            </span>
+          {% endif %}
+          <span style="flex: 1"></span>
+          {% if not is_current %}
+            <form method="post" action="{{ url_for('identity.restore_revision', fact_id=fact.id, rev_id=r.id) }}"
+                  onsubmit="return confirm('设这条为当前？\n\n会新建一条 rolled_back 修订（旧记录依然保留）。')"
+                  style="margin: 0">
+              <button type="submit" class="btn subtle" style="font-size: 11.5px; padding: 3px 10px"
+                      title="{{ _('设为当前 — 会新建一条 rolled_back 修订') }}">
+                ↺ 设为当前
+              </button>
+            </form>
+          {% endif %}
+        </div>
+        <div style="font-size: 13px; line-height: 1.55; padding: 6px 8px; background: #fafaf6; border-radius: 4px">
+          {{ r.text }}
+        </div>
+        {% if r.note %}
+          <div class="muted" style="font-size: 11.5px; margin-top: 6px; padding-left: 4px; border-left: 2px solid var(--line)">
+            📝 {{ r.note }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <p class="muted" style="padding: 20px">{{ _('没有历史记录。') }}</p>
+  {% endfor %}
+</div>
+
+<p class="muted" style="font-size: 11.5px; margin-top: 24px; padding: 10px 12px; background: #f8faf6; border-radius: 4px">
+  ℹ️ <strong>{{ _('为什么不能删除某次修订') }}</strong>{{ _('：删一条中间修订会让后面的修订失去"基于的版本"，语义崩塌（Git 也是这样设计的）。想"撤销"某次改动？点更早一版的「↺ 设为当前」就行 — 不删历史，append 一条新版即可。') }}
+</p>
+
+{% endblock %}

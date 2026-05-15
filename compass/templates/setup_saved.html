@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="{{ current_locale }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ _('Compass · 配置已保存') }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      margin: 0;
+      padding: 80px 20px;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 48px 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .check {
+      width: 64px; height: 64px;
+      background: #d4edda;
+      color: #155724;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    .subtitle { color: #6e6e73; font-size: 15px; line-height: 1.6; }
+    .action {
+      margin-top: 32px;
+      padding: 16px;
+      background: #e7f5e7;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #2d5a2d;
+      text-align: left;
+    }
+    .action a {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .action a:hover { text-decoration: underline; }
+    code {
+      background: rgba(0,0,0,0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div style="max-width:580px;margin:0 auto 12px;text-align:right;color:#1d1d1f;">{% include '_language_switcher.html' %}</div>
+  <div class="container">
+    <div class="check">✓</div>
+    <h1>{{ _('配置已保存') }}</h1>
+    <p class="subtitle">{{ _('LLM key 已写入') }} <code>.env</code> {{ _('文件。') }}</p>
+
+    <div class="action">
+      <strong>{{ _('可以开始用了：') }}</strong><br>
+      Compass 已经吃到新 key，<a href="/">{{ _('点这里进 dashboard →') }}</a>
+    </div>
+  </div>
+</body>
+</html>

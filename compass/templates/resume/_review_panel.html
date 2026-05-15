@@ -1,0 +1,809 @@
+{# Claude-in-Word style review panel:
+   - LEFT (main column): live-rendered resume document (iframe of /export/preview)
+   - DRAGGABLE SPLITTER between left and right (drag to resize)
+   - RIGHT (sticky narrow rail): suggestion cards with inline diff + accept/reject
+   - Feedback widget moved to page bottom (single, not per-variant)
+
+   Required vars:
+     attempt        — RewriteAttempt (judge_score, judge_report, keywords_extracted)
+     job            — Job
+     rows           — list of (FactVariant, src_ResumeFact|None, UserFacingMenu|None)
+     user_themes    — for theme selector
+     show_header    — (optional) whether to render the action header
+
+   NOTE on form submission: we deliberately use NATIVE form POST (no HTMX swap)
+   because the server returns a 302 redirect, which HTMX would follow and stuff
+   the entire next page into a small target div ("界面套界面" bug). Native POST
+   redirects browser to referrer (this page) → clean reload, iframe re-renders
+   the resume with new approval state.
+#}
+
+{# Export action bar — visible on BOTH standalone /resume/review and embedded
+   /jobs/<id>. Even when show_header=false (embedded), the user still needs to
+   reach the export functions. The bigger H2/sub block is gated by show_header
+   below (line ~46) to avoid duplicating it inside the job detail page. #}
+{# ADR-0018 alignment-layer dispatch: HTML themes preview in iframe,
+   DOCX themes (kind="docx") trigger downloads. Multi-format export options
+   appear on the right; spinner shows during long renders (LibreOffice ~5s). #}
+{% set _docx_user_themes = user_themes | selectattr('engine', 'equalto', 'docx') | list if user_themes else [] %}
+{# Languages available for export (ADR-0015 variant_translator output) #}
+{% set _export_languages = [
+    {'code': '',   'name': _('原语言'),  'flag': '📄'},
+    {'code': 'en', 'name': 'English',   'flag': '🇬🇧'},
+    {'code': 'zh', 'name': '中文',      'flag': '🇨🇳'},
+    {'code': 'it', 'name': 'Italiano',  'flag': '🇮🇹'},
+    {'code': 'fr', 'name': 'Français',  'flag': '🇫🇷'},
+    {'code': 'de', 'name': 'Deutsch',   'flag': '🇩🇪'},
+    {'code': 'es', 'name': 'Español',   'flag': '🇪🇸'},
+    {'code': 'pt', 'name': 'Português', 'flag': '🇵🇹'},
+    {'code': 'tr', 'name': 'Türkçe',    'flag': '🇹🇷'},
+    {'code': 'ja', 'name': '日本語',    'flag': '🇯🇵'},
+    {'code': 'ko', 'name': '한국어',    'flag': '🇰🇷'},
+    {'code': 'ru', 'name': 'Русский',   'flag': '🇷🇺'},
+] %}
+<div class="page-head"
+     x-data="{ theme: 'classic', engine: 'html', lang: '', exporting: '',
+               startExport(fmt) { this.exporting = fmt; setTimeout(() => { this.exporting = ''; }, 4500); },
+               langQ() { return this.lang ? '&lang=' + this.lang : ''; } }">
+  {% if show_header | default(true) %}
+  <div>
+    <h2 style="margin: 0">{{ _('📝 改写审核') }} <span class="muted" style="font-size:13px;font-weight:400">— {{ job.title if job else "?" }}</span></h2>
+    <p class="muted" style="font-size: 12.5px; margin: 2px 0 0">
+      左：整体简历预览（当前 approved 状态 + 原文 fallback）。右：每条建议改写。中间分隔条可拖动。
+    </p>
+  </div>
+  {% endif %}
+  <div class="page-actions" style="flex-wrap: wrap; align-items: center; gap: 6px">
+    <select x-model="theme"
+            @change="
+              const sel = $event.target.options[$event.target.selectedIndex];
+              engine = sel.dataset.engine || 'html';
+              if (engine === 'html') {
+                const f = document.getElementById('resume-frame-{{ attempt.id }}');
+                if (f) f.src='{{ url_for('exports.html_preview', job_id=job.id) }}?theme='+theme+'&_t='+Date.now();
+              }
+            "
+            style="padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 13px">
+      <option value="classic" data-engine="html">{{ _('📄 经典') }}</option>
+      <option value="modern"  data-engine="html">{{ _('📋 现代双栏') }}</option>
+      <option value="compact" data-engine="html">{{ _('🧱 紧凑') }}</option>
+      {% if user_themes %}
+        {% set _html_user = user_themes | selectattr('engine', 'equalto', 'html') | list %}
+        {% if _html_user %}
+          <optgroup label="── HTML 个人模板 ──">
+            {% for t in _html_user %}
+              <option value="{{ t.id }}" data-engine="html">⭐ {{ t.name }}</option>
+            {% endfor %}
+          </optgroup>
+        {% endif %}
+        {% if _docx_user_themes %}
+          <optgroup label="── DOCX 个人模板（保留原格式）──">
+            {% for t in _docx_user_themes %}
+              <option value="{{ t.id }}" data-engine="docx">📘 {{ t.name }}</option>
+            {% endfor %}
+          </optgroup>
+        {% endif %}
+      {% endif %}
+    </select>
+
+    {# 语言下拉 — 从 FactVariant.translated_json 取目标语言；缺则 fall back 原语言 #}
+    <select x-model="lang"
+            title="{{ _('选择导出的语言版本（变体翻译跟简历语言对齐 — ADR-0015 第 5 条）') }}"
+            style="padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 13px">
+      {% for opt in _export_languages %}
+        <option value="{{ opt.code }}">{{ opt.flag }} {{ opt.name }}{% if opt.code %} ({{ opt.code }}){% endif %}</option>
+      {% endfor %}
+    </select>
+
+    {# HTML theme: 全屏预览（用 Cmd+P 转 PDF） #}
+    <a x-show="engine === 'html'"
+       :href="`{{ url_for('exports.html_preview', job_id=job.id) }}?theme=${theme}${langQ()}`"
+       target="_blank" class="btn primary">{{ _('🌐 预览') }}</a>
+
+    {# DOCX theme: 多格式导出。spinner 通过 x-data 状态控制 #}
+    <template x-if="engine === 'docx'">
+      <span style="display: inline-flex; gap: 6px; align-items: center">
+        <a :href="`{{ url_for('exports.docx_export', job_id=job.id) }}?theme=user:${theme}${langQ()}`"
+           @click="startExport('docx')"
+           class="btn primary"
+           title="{{ _('按你上传的 DOCX 模板渲染，保留字体/间距/section/bullet 样式（ADR-0018）') }}">
+          <span x-show="exporting !== 'docx'">📘 .docx</span>
+          <span x-show="exporting === 'docx'" style="opacity: .8">{{ _('⏳ 生成中…') }}</span>
+        </a>
+        <a :href="`{{ url_for('exports.pdf_export', job_id=job.id) }}?theme=user:${theme}${langQ()}`"
+           @click="startExport('pdf')"
+           class="btn"
+           title="{{ _('DOCX → LibreOffice → PDF（首次 5-10 秒）。需要装 LibreOffice，点击后会提示') }}">
+          <span x-show="exporting !== 'pdf'">📕 .pdf</span>
+          <span x-show="exporting === 'pdf'" style="opacity: .8">{{ _('⏳ 生成中…') }}</span>
+        </a>
+      </span>
+    </template>
+
+    {# 通用文本格式（任何 theme 都可用，不依赖 DOCX 模板） #}
+    <a :href="`{{ url_for('exports.markdown_export', job_id=job.id) }}?_${langQ().slice(1)}`.replace('?_', lang ? '?' : '')"
+       class="btn subtle" title="{{ _('Markdown — LinkedIn / Notion / Bear 复制粘贴') }}">📝 .md</a>
+    <a :href="`{{ url_for('exports.txt_export', job_id=job.id) }}?_${langQ().slice(1)}`.replace('?_', lang ? '?' : '')"
+       class="btn subtle" title="{{ _('纯文本 — 最朴素 ATS 友好') }}">📄 .txt</a>
+    <a href="{{ url_for('exports.json_export', job_id=job.id) }}"
+       class="btn subtle" title="{{ _('JSON Resume schema — 跨工具用') }}">📥 .json</a>
+    <a :href="`{{ url_for('exports.bundle_export', job_id=job.id) }}?theme=${engine === 'docx' ? 'user:'+theme : 'classic'}${langQ()}`"
+       @click="startExport('bundle')"
+       class="btn subtle"
+       title="{{ _('一次产出 .docx + .pdf + .md + .txt + .json 的 zip（ADR-0018 P3）') }}">
+      <span x-show="exporting !== 'bundle'">{{ _('📦 全部') }}</span>
+      <span x-show="exporting === 'bundle'" style="opacity: .8">{{ _('⏳ 打包中…') }}</span>
+    </a>
+  </div>
+</div>
+
+{# Quick diff summary — shown right under export bar so the user sees what
+   they're about to ship before clicking download. ADR-0018 P3.
+   Counts are pre-computed below at line ~210; we copy them upfront here
+   for visibility. The label links to the suggestion list anchor. #}
+{% set _pending_n = rows | selectattr('0.user_decision', 'equalto', 'pending') | list | length %}
+{% set _approved_n = rows | selectattr('0.user_decision', 'equalto', 'approved') | list | length %}
+{% set _edited_n = rows | selectattr('0.user_decision', 'equalto', 'edited_by_user') | list | length %}
+{% set _rejected_n = rows | selectattr('0.user_decision', 'equalto', 'rejected') | list | length %}
+<p class="muted" style="margin: 0 0 12px; font-size: 12.5px; padding: 6px 10px;
+                        background: {% if _pending_n %}#fff8e8{% else %}#fbfbf7{% endif %};
+                        border: 1px solid var(--line); border-radius: 4px">
+  📊 决策状态:
+  <strong style="color: var(--ok)">✓ {{ _approved_n }} 采纳</strong>
+  · <strong style="color: var(--accent)">✎ {{ _edited_n }} 改后采纳</strong>
+  · <strong style="color: var(--danger)">✗ {{ _rejected_n }} 拒绝</strong>
+  {% if _pending_n %}
+    · <strong style="color: var(--warn, #b86b00)">⏳ {{ _pending_n }} 待定</strong>
+    <a href="#suggestion-list" style="margin-left: 8px; font-size: 12px">{{ _('— 跳到列表 →') }}</a>
+    <span style="margin-left: 8px; font-size: 11.5px">{{ _('（导出前建议先决定完）') }}</span>
+  {% else %}
+    <span style="margin-left: 8px; color: var(--ok)">{{ _('— 全部决定完，可以导出') }}</span>
+  {% endif %}
+</p>
+
+{# Inline DOCX template uploader — drag-and-drop without leaving the review page.
+   ADR-0018 P2: removes the friction of going to /templates/inspire and back. #}
+<details style="margin: 0 0 14px"
+         x-data="{
+           drag: false, busy: false, status: '', err: '',
+           async handleFile(file) {
+             if (!file) return;
+             if (!file.name.toLowerCase().endsWith('.docx')) {
+               this.err = '只支持 .docx — HTML/PDF 请到 /templates/inspire 走完整流程';
+               return;
+             }
+             this.busy = true; this.err = ''; this.status = '抽取 placeholder…';
+             const fd = new FormData(); fd.append('file', file);
+             fd.append('force_route', 'docx');
+             try {
+               const r1 = await fetch('{{ url_for('themes.inspire_run') }}', { method: 'POST', body: fd });
+               const j1 = await r1.json();
+               if (!j1.ok) throw new Error(j1.error || 'inspire 失败');
+               this.status = '保存模板…';
+               const fd2 = new FormData();
+               fd2.append('name', file.name.replace(/\.docx$/i, ''));
+               fd2.append('description', '从 review 页直接拖拽上传');
+               const r2 = await fetch(`/templates/inspire/${j1.token}/save`, { method: 'POST', body: fd2, redirect: 'manual' });
+               this.status = '✓ 已上传 — 刷新中';
+               setTimeout(() => location.reload(), 800);
+             } catch (e) {
+               this.err = String(e.message || e);
+               this.busy = false;
+             }
+           }
+         }">
+  <summary style="cursor: pointer; padding: 6px 10px; background: #fafaf6; border: 1px solid var(--line); border-radius: 4px; font-size: 13px; color: var(--side-fg)">
+    📤 上传新 DOCX 模板（保留你的格式 — ADR-0018）
+  </summary>
+  <div style="margin-top: 8px; padding: 14px; border: 2px dashed var(--line); border-radius: 4px; text-align: center"
+       :style="drag && 'border-color: var(--accent); background: #fbfbf7'"
+       @dragover.prevent="drag = true"
+       @dragleave.prevent="drag = false"
+       @drop.prevent="drag = false; handleFile($event.dataTransfer.files[0])"
+       @click="$refs.fileInput.click()">
+    <input type="file" x-ref="fileInput" accept=".docx" style="display: none"
+           @change="handleFile($event.target.files[0])">
+    <p x-show="!busy && !err" style="margin: 0; font-size: 13px; color: var(--side-fg)">
+      📎 拖入 .docx 或点击选择 — 上传后自动进入下拉模板列表
+    </p>
+    <p x-show="busy" style="margin: 0; color: var(--accent); font-size: 13px" x-text="status"></p>
+    <p x-show="err" style="margin: 0; color: var(--danger); font-size: 12.5px" x-text="err"></p>
+  </div>
+</details>
+
+{# 三角色 judge KPI — compact horizontal #}
+{% set rep = attempt.judge_report or {} %}
+
+{# 5-10: 流水线静默回退 banner. pipeline_warnings 由 llm_diagnostics.record
+   累积; 没空 list 说明某些步骤在 LLM 401 / 429 / timeout 时静默返回了空结果.
+   用户能看到具体哪些步骤失败 + 一键重跑整个 attempt (现 attempt 保留为历史). #}
+{% set _pipeline_warnings = rep.get("pipeline_warnings") or [] %}
+{% if _pipeline_warnings and attempt.job_id %}
+<div style="background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px;
+            padding: 12px 14px; margin: 0 0 14px; display: flex;
+            align-items: flex-start; gap: 12px;">
+  <span style="font-size: 18px; line-height: 1.3">⚠</span>
+  <div style="flex: 1; min-width: 0">
+    <div style="font-weight: 600; color: #92400e; margin-bottom: 4px">
+      流水线有 {{ _pipeline_warnings | length }} 步静默回退
+    </div>
+    <details style="margin-top: 4px">
+      <summary style="cursor: pointer; font-size: 12.5px; color: #92400e">{{ _('查看详情') }}</summary>
+      <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 12px;
+                 color: #78350f; line-height: 1.5">
+        {% for w in _pipeline_warnings %}<li>{{ w }}</li>{% endfor %}
+      </ul>
+    </details>
+    <p style="margin: 6px 0 0 0; font-size: 12px; color: #78350f">
+      可能原因: API 限流 / 临时网络抖动 / 单步超时. 单 LLM 调用已自带 3 次 retry,
+      重跑相当于再来一遍完整流水线 (耗时 30-90s, 会消耗 token).
+    </p>
+  </div>
+  <form method="post" action="{{ url_for('resume.run', job_id=attempt.job_id) }}"
+        data-slow-action="true" style="margin: 0; flex-shrink: 0">
+    <button type="submit"
+            data-loading-text="⏳ 重试中... (30-90 秒)"
+            style="background: #d97706; color: white; border: 0; border-radius: 6px;
+                   padding: 8px 14px; font-size: 13px; font-weight: 500;
+                   cursor: pointer; white-space: nowrap">
+      ↻ 重跑失败步
+    </button>
+  </form>
+</div>
+{% endif %}
+
+<div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin: 0 0 14px">
+  <div class="kpi" style="padding: 10px 12px">
+    <div class="kpi-label" style="font-size: 10.5px"><span class="kpi-icon">🤖</span>ATS</div>
+    <div class="kpi-value" style="font-size: 22px">{{ rep.get("ats", {}).get("score", "—") }}<span style="font-size:12px;color:var(--muted)">/10</span></div>
+  </div>
+  <div class="kpi" style="padding: 10px 12px">
+    <div class="kpi-label" style="font-size: 10.5px"><span class="kpi-icon">👀</span>HR (6s)</div>
+    <div class="kpi-value" style="font-size: 22px">{{ rep.get("hr", {}).get("score", "—") }}<span style="font-size:12px;color:var(--muted)">/10</span></div>
+  </div>
+  <div class="kpi" style="padding: 10px 12px">
+    <div class="kpi-label" style="font-size: 10.5px"><span class="kpi-icon">🎯</span>HM</div>
+    <div class="kpi-value" style="font-size: 22px">{{ rep.get("hiring_manager", {}).get("score", "—") }}<span style="font-size:12px;color:var(--muted)">/10</span></div>
+  </div>
+  <div class="kpi" style="border-color: var(--accent); padding: 10px 12px">
+    <div class="kpi-label" style="font-size: 10.5px"><span class="kpi-icon">⭐</span>Composite</div>
+    <div class="kpi-value" style="color: var(--accent); font-size: 22px">{{ attempt.judge_score or "—" }}<span style="font-size:12px;color:var(--muted)">/10</span></div>
+  </div>
+</div>
+
+{# Where do we send users back to after a decide POST?
+   - Embedded in /jobs/<id>: must use #step-resume_rewrite (Alpine x-data
+     activeStep only honors hashes of that form; other hashes fall back to
+     the server-computed active_step_id and jump to "apply").
+   - Standalone /resume/review/<id>: no stepper — keep the sug-anchor.
+#}
+{% set _is_embedded = "/jobs/" in request.path %}
+{% set _path_no_q = request.full_path | trim('?') %}
+{% set _back_anchor_step = _path_no_q ~ "#step-resume_rewrite" %}
+
+{# ── ADR-0015 改动 F · Native ATS Coverage（借鉴 Resume-Matcher UI 模式）──
+   显示 deterministic 字面 keyword 命中详情：matched 绿底 / missing 红底，
+   让用户看清楚 JD 哪些词被覆盖、哪些缺失。
+   数据源：resume_writer 调 native_ats_check，存到 judge_report.native_ats。
+   feature flag native_ats_check 关闭时此 block 自动隐藏。 #}
+{% set _native_ats = rep.get("native_ats") if rep else None %}
+{% if _native_ats and _native_ats.get("total", 0) > 0 %}
+  {% set _cov = (_native_ats.coverage_ratio * 100) | round(0, 'floor') | int %}
+  {% set _matched = _native_ats.get("matched", []) %}
+  {% set _missing = _native_ats.get("missing", []) %}
+  <details class="card" style="padding: 10px 14px; margin: 0 0 14px"
+           {% if _missing | length > 0 %}open{% endif %}>
+    <summary style="cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px">
+      <span><strong>{{ _('📋 ATS 字面覆盖') }}</strong></span>
+      <span class="muted" style="font-size: 12px">
+        {{ _matched | length }} / {{ _native_ats.total }} 命中
+      </span>
+      <div style="flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; max-width: 220px">
+        <div style="height: 100%; width: {{ _cov }}%;
+                    background: {% if _cov >= 70 %}#2ea043{% elif _cov >= 40 %}#d4a72c{% else %}#cf222e{% endif %};
+                    transition: width 200ms"></div>
+      </div>
+      <span style="font-size: 12px; font-weight: 600;
+                   color: {% if _cov >= 70 %}#2ea043{% elif _cov >= 40 %}#d4a72c{% else %}#cf222e{% endif %}">
+        {{ _cov }}%
+      </span>
+    </summary>
+    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line)">
+      {% if _matched %}
+        <div style="margin-bottom: 8px">
+          <div class="muted" style="font-size: 11px; margin-bottom: 4px">✓ 命中 ({{ _matched | length }})</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px">
+            {% for kw in _matched %}
+              <span style="font-size: 11px; padding: 2px 8px; border-radius: 10px;
+                           background: #dcffe4; color: #055d20; border: 1px solid #a4f0b7">{{ kw }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if _missing %}
+        <div>
+          <div class="muted" style="font-size: 11px; margin-bottom: 4px">✗ 缺失 ({{ _missing | length }}) — 这些 JD 关键词没在简历里出现</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px">
+            {% for kw in _missing %}
+              <span style="font-size: 11px; padding: 2px 8px; border-radius: 10px;
+                           background: #ffebe9; color: #82071e; border: 1px solid #ffabaf">{{ kw }}</span>
+            {% endfor %}
+          </div>
+          <p class="muted" style="font-size: 11px; margin: 8px 0 0; line-height: 1.5">
+            提示：缺失关键词不一定要硬塞——只在你 fact 真支持时才加进去。
+            添加 fact 后重跑改写流水线，coverage 会自动更新。
+          </p>
+        </div>
+      {% endif %}
+      {% if _native_ats.get("multi_word_keywords") %}
+        <p class="muted" style="font-size: 11px; margin: 8px 0 0">
+          多词短语（{{ _native_ats.multi_word_keywords | length }}）：{{ _native_ats.multi_word_keywords | join(' / ') }}
+        </p>
+      {% endif %}
+    </div>
+  </details>
+{% endif %}
+
+{# Bulk-action row #}
+{% set pending_count = rows | selectattr('0.user_decision', 'equalto', 'pending') | list | length %}
+{% set approved_count = rows | selectattr('0.user_decision', 'equalto', 'approved') | list | length %}
+{% set edited_count = rows | selectattr('0.user_decision', 'equalto', 'edited_by_user') | list | length %}
+{% set rejected_count = rows | selectattr('0.user_decision', 'equalto', 'rejected') | list | length %}
+
+<div style="display: flex; align-items: center; gap: 8px; margin: 0 0 10px; flex-wrap: wrap">
+  <span class="muted" style="font-size: 11.5px">{{ rows | length }} 条变换 ·</span>
+  <span class="badge badge-status-offer" style="font-size: 11px">✓ {{ approved_count }}</span>
+  {% if edited_count %}<span class="badge" style="background: #eaf0f4; color: var(--accent); font-size: 11px">✎ {{ edited_count }}</span>{% endif %}
+  {% if rejected_count %}<span class="badge" style="background: #fae5e5; color: var(--danger); font-size: 11px">✗ {{ rejected_count }}</span>{% endif %}
+  <span class="badge" style="background: var(--line); color: var(--muted); font-size: 11px">⏳ {{ pending_count }}</span>
+  <span style="flex: 1"></span>
+  {% if pending_count > 0 %}
+    <form method="post" action="{{ url_for('resume.accept_all_pending', attempt_id=attempt.id) }}"
+          onsubmit="return confirm('一键接受剩余 {{ pending_count }} 条？')"
+          style="margin: 0">
+      <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}{% endif %}">
+      <button type="submit" class="btn subtle" style="font-size: 12px; padding: 4px 10px">
+        ⚡ 一键接受剩余
+      </button>
+    </form>
+  {% endif %}
+
+  {# 📌 Promote: GitHub-style "merge to main" — appends FactRevision rows. #}
+  {% set committable = approved_count + edited_count %}
+  {% if committable > 0 %}
+    <div x-data="{ promoteOpen: false }" style="display: inline-block; margin: 0">
+      <button type="button" class="btn primary" style="font-size: 12.5px; padding: 5px 12px"
+              @click="promoteOpen = true"
+              title="{{ _('把 ✓/✎ 沉淀到 ResumeFact，影响以后所有再跑') }}">
+        📌 沉淀到我的简历（{{ committable }}）
+      </button>
+
+      {# Promote confirmation modal — matches the rerun modal pattern. #}
+      <div x-show="promoteOpen" x-cloak
+           style="position: fixed; inset: 0; background: rgba(40, 40, 35, 0.5);
+                  display: flex; align-items: center; justify-content: center; z-index: 9999"
+           @click.self="promoteOpen = false">
+        <div style="background: white; border-radius: 8px; padding: 24px; max-width: 520px; width: 90%;
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.18)">
+          <h3 style="margin: 0 0 12px; font-size: 16.5px">{{ _('📌 沉淀到我的简历事实') }}</h3>
+          <p class="muted" style="margin: 0 0 14px; font-size: 12.5px; line-height: 1.6">
+            类似 GitHub 上的 merge to main —— 把这次的决定写进简历的"main 分支"。
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 16px; font-size: 13px; line-height: 1.7">
+            <li style="padding: 4px 0">
+              <span style="color: var(--accent); font-weight: 700">📌 沉淀 {{ committable }} 条 fact</span>
+              <span class="muted" style="font-size: 12px"> · ✓ {{ approved_count }} 已批准{% if edited_count %} + ✎ {{ edited_count }} 已编辑{% endif %}</span>
+            </li>
+            <li style="padding: 4px 0; color: var(--muted); font-size: 12.5px">
+              · 每条变更写一行 <code>FactRevision</code>（kind = <code>promoted_from_attempt</code>{{ _('），永久可查') }}
+            </li>
+            <li style="padding: 4px 0; color: var(--muted); font-size: 12.5px">
+              · 之后给任意 Job 跑流水线都基于新版本
+            </li>
+            <li style="padding: 4px 0; color: var(--muted); font-size: 12.5px">
+              · 不喜欢可在「📌 沉淀历史」页单条回滚（append-only，旧版永远在）
+            </li>
+          </ul>
+          <div style="display: flex; gap: 8px; justify-content: flex-end">
+            <button type="button" class="btn subtle" @click="promoteOpen = false">{{ _('取消') }}</button>
+            <form method="post" action="{{ url_for('resume.promote_attempt', attempt_id=attempt.id) }}" style="margin: 0">
+              <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}{% endif %}">
+              <button type="submit" class="btn primary">{{ _('📌 确认沉淀') }}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{# ── Three-column grid: doc | splitter | suggestions ── #}
+<div class="review-2col" id="review-2col-{{ attempt.id }}">
+
+  {# LEFT: live resume preview #}
+  <div class="review-doc-col">
+    <div class="review-doc-header">
+      <span style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600">
+        📄 当前简历预览
+      </span>
+      <span class="muted" style="font-size: 11.5px">{{ _('应用了已 ✓ / ✎ 的变换；待决 = 原文') }}</span>
+    </div>
+    <iframe id="resume-frame-{{ attempt.id }}"
+            src="{{ url_for('exports.html_preview', job_id=job.id) }}?theme=classic"
+            class="review-doc-iframe"
+            title="{{ _('简历预览') }}"></iframe>
+  </div>
+
+  {# Draggable splitter #}
+  <div class="review-splitter" id="review-splitter-{{ attempt.id }}" title="{{ _('拖动调整左右占比') }}">
+    <div class="review-splitter-grip"></div>
+  </div>
+
+  {# RIGHT: sticky suggestions rail (Claude-in-Word style) #}
+  <div class="review-sug-rail">
+    <div class="review-sug-head">
+      <span style="font-weight: 600; font-size: 13.5px">{{ _('📝 Claude 建议') }}</span>
+      <span class="muted" style="font-size: 11.5px; margin-left: auto">{{ rows | length }} 条</span>
+    </div>
+
+    {# ─── 风险概览：每个 level 一个 chip,点击过滤；pending L4/L5 红色提示 ─── #}
+    {% set _level_counts = namespace(l0=0, l1=0, l2=0, l3=0, l4=0, l5=0, pending_high=0) %}
+    {% for v, src, menu in rows %}
+      {% set _l = v.amplification_level | default(0) %}
+      {% if _l == 0 %}{% set _level_counts.l0 = _level_counts.l0 + 1 %}
+      {% elif _l == 1 %}{% set _level_counts.l1 = _level_counts.l1 + 1 %}
+      {% elif _l == 2 %}{% set _level_counts.l2 = _level_counts.l2 + 1 %}
+      {% elif _l == 3 %}{% set _level_counts.l3 = _level_counts.l3 + 1 %}
+      {% elif _l == 4 %}{% set _level_counts.l4 = _level_counts.l4 + 1 %}
+      {% elif _l == 5 %}{% set _level_counts.l5 = _level_counts.l5 + 1 %}
+      {% endif %}
+      {% if v.user_decision == 'pending' and _l >= 3 %}
+        {% set _level_counts.pending_high = _level_counts.pending_high + 1 %}
+      {% endif %}
+    {% endfor %}
+    <div class="risk-overview"
+         style="margin: 6px 0 8px; padding: 7px 9px; background: var(--surface-2, #f7f6f0); border-radius: 4px; font-size: 11.5px"
+         x-data="{ filter: '' }">
+      <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.5">
+        <span style="color: var(--muted); margin-right: 4px">{{ _('风险概览') }}</span>
+        {% for code, count, color, label in [
+            ('L0', _level_counts.l0, 'var(--muted)', '直接抄'),
+            ('L1', _level_counts.l1, 'var(--accent)', '同义改写'),
+            ('L2', _level_counts.l2, 'var(--accent)', '显式化'),
+            ('L3', _level_counts.l3, 'var(--warn)', '需访谈'),
+            ('L4', _level_counts.l4, 'var(--warn)', '推断量化'),
+            ('L5', _level_counts.l5, 'var(--danger)', '应硬拦截'),
+          ] %}
+          {% if count > 0 %}
+            <button type="button"
+                    class="risk-chip"
+                    data-level="{{ code }}"
+                    @click="filter = (filter === '{{ code }}' ? '' : '{{ code }}'); $dispatch('risk-filter', { level: filter })"
+                    :style="filter === '{{ code }}' ? 'box-shadow: 0 0 0 2px {{ color }}; background: white' : ''"
+                    style="border: 1px solid {{ color }}; background: transparent; color: {{ color }}; padding: 1px 7px; border-radius: 10px; font: inherit; font-size: 11px; cursor: pointer"
+                    title="点击只显示 {{ code }} ({{ label }})；再次点击复位">
+              <strong>{{ code }}</strong>×{{ count }}
+            </button>
+          {% endif %}
+        {% endfor %}
+        <button type="button"
+                x-show="filter"
+                @click="filter = ''; $dispatch('risk-filter', { level: '' })"
+                style="border: none; background: transparent; color: var(--muted); font: inherit; font-size: 11px; cursor: pointer; margin-left: auto">
+          ✕ 清除
+        </button>
+      </div>
+      {% if _level_counts.pending_high > 0 %}
+        <div style="margin-top: 5px; color: var(--warn); font-size: 11px">
+          ⚠ {{ _level_counts.pending_high }} 条 L3+ 待你确认（reframing / 推断量化 — 不该自动 approve）
+        </div>
+      {% endif %}
+    </div>
+
+    {# 监听过滤事件 — 隐藏不匹配的 sug-card #}
+    <div x-data="{ activeFilter: '' }"
+         x-on:risk-filter.window="activeFilter = $event.detail.level;
+            document.querySelectorAll('.sug-card').forEach(el => {
+              const lvl = el.getAttribute('data-amp-level') || '';
+              el.style.display = (!activeFilter || lvl === activeFilter) ? '' : 'none';
+            });"
+         style="display:none"></div>
+
+    {% for v, src, menu in rows %}
+      {% set lvl = level_meta(v.amplification_level) %}
+      <div class="sug-card sug-{{ v.user_decision }}"
+           data-decision="{{ v.user_decision }}"
+           data-amp-level="{{ lvl.code }}"
+           style="border-left: 3px solid {{ lvl.color }}"
+           id="sug-{{ v.id }}">
+        <div class="sug-card-head">
+          <span class="sug-level-badge" style="background: {{ lvl.color }}">{{ lvl.code }}</span>
+          <span class="muted" style="font-size: 11px">{{ lvl.label }}</span>
+          <span style="flex: 1"></span>
+          {% if v.user_decision == 'approved' %}
+            <span style="color: var(--ok); font-size: 11px">✓</span>
+          {% elif v.user_decision == 'rejected' %}
+            <span style="color: var(--danger); font-size: 11px">✗</span>
+          {% elif v.user_decision == 'edited_by_user' %}
+            <span style="color: var(--accent); font-size: 11px">✎</span>
+          {% endif %}
+        </div>
+
+        <div class="sug-diff">
+          {% if src %}
+            {{ v.text | diff_html(src.text) }}
+          {% else %}
+            <span class="muted">{{ _('(原文丢失)') }}</span> {{ v.text }}
+          {% endif %}
+        </div>
+
+        {% if v.adversarial_objection %}
+          <details class="sug-reasoning" style="margin-top: 6px">
+            <summary class="muted" style="cursor: pointer; font-size: 11px; color: var(--warn)">⚠ Reasoning</summary>
+            <p style="margin: 4px 0 0; padding: 6px 8px; background: #faedd5; border-radius: 3px; color: var(--warn); font-size: 11.5px; line-height: 1.5">
+              {{ v.adversarial_objection }}
+            </p>
+          </details>
+        {% endif %}
+
+        {# Compact actions bar — NATIVE form POST, no HTMX (avoids redirect-into-target bug) #}
+        {% if v.user_decision == 'pending' %}
+          <div class="sug-actions" x-data="{ editMode: false }">
+            <form method="post" action="{{ url_for('resume.decide_variant', variant_id=v.id) }}" style="display: inline; margin: 0">
+              <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}#sug-{{ v.id }}{% endif %}">
+              <button type="submit" name="decision" value="approved" class="sug-btn sug-btn-accept" title="{{ _('接受这条改写') }}">
+                ✓
+              </button>
+            </form>
+            <button type="button" class="sug-btn sug-btn-edit" @click="editMode = !editMode" title="{{ _('改后接受') }}">
+              ✎
+            </button>
+            <form method="post" action="{{ url_for('resume.regenerate_variant', variant_id=v.id) }}"
+                  onsubmit="return confirm('重生成这一条建议？\n\n会用 LLM 换个角度重写，旧建议会消失。')"
+                  data-slow-action="true"
+                  style="display: inline; margin: 0">
+              <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}#sug-{{ v.id }}{% endif %}">
+              <button type="submit" class="sug-btn sug-btn-regen" title="{{ _('只重生成这条') }}">
+                ↻
+              </button>
+            </form>
+            <form method="post" action="{{ url_for('resume.decide_variant', variant_id=v.id) }}" style="display: inline; margin: 0">
+              <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}#sug-{{ v.id }}{% endif %}">
+              <button type="submit" name="decision" value="rejected" class="sug-btn sug-btn-reject" title="{{ _('拒绝这条') }}">
+                ✗
+              </button>
+            </form>
+
+            <div x-show="editMode" x-cloak style="margin-top: 6px; width: 100%">
+              <form method="post" action="{{ url_for('resume.decide_variant', variant_id=v.id) }}" style="margin: 0">
+                <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}#sug-{{ v.id }}{% endif %}">
+                <textarea name="edited_text" rows="3"
+                          style="width: 100%; padding: 6px; font-size: 11.5px; border: 1px solid var(--line); border-radius: 3px; font: inherit">{{ v.text }}</textarea>
+                <button type="submit" name="decision" value="edited_by_user" class="btn primary"
+                        style="font-size: 11px; padding: 3px 10px; margin-top: 4px">{{ _('保存编辑') }}</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <div class="sug-actions">
+            <form method="post" action="{{ url_for('resume.decide_variant', variant_id=v.id) }}" style="display: inline; margin: 0">
+              <input type="hidden" name="decision" value="pending">
+              <input type="hidden" name="next" value="{% if _is_embedded %}{{ _back_anchor_step }}{% else %}{{ _path_no_q }}#sug-{{ v.id }}{% endif %}">
+              <button type="submit" class="sug-btn sug-btn-undo" title="{{ _('撤销') }}">{{ _('↺ 撤销') }}</button>
+            </form>
+          </div>
+        {% endif %}
+
+        {# ADR-0015 改动 G — five-dimension structured suggestion menu.
+           Renders as a折叠 details panel only when this variant has
+           decomposition_json. Pre-v4 variants silently omit the panel. #}
+        {% include "resume/_decomposition_panel.html" %}
+      </div>
+    {% else %}
+      <p class="muted" style="font-size: 12px; padding: 14px; text-align: center">
+        没生成 variants — fact-keyword 没匹配上，或 facts 太少。
+      </p>
+    {% endfor %}
+  </div>
+</div>
+
+{# Single feedback widget for whole review (was per-variant).
+   Skip when embedded in jobs/detail.html — that page already has its own
+   bottom feedback widget for the JD context. #}
+{% if show_feedback | default(true) %}
+  {% with context="resume",
+          item_id=attempt.id,
+          item_label=("简历改写 attempt @ " ~ (job.title or "")),
+          ctx_kind="简历改写",
+          ctx_kind_emoji="📝" %}
+    {% include "feedback/_input_widget.html" %}
+  {% endwith %}
+{% endif %}
+
+{% if attempt.keywords_extracted %}
+  <details class="card" style="padding: 8px 14px; margin-top: 10px">
+    <summary class="muted" style="font-size: 12px; cursor: pointer">JD 关键词（{{ attempt.keywords_extracted | length }} 个）</summary>
+    <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px">
+      {% for kw in attempt.keywords_extracted %}
+        <span class="badge" style="background: #eaf0f4; color: var(--accent); font-size: 11px">{{ kw }}</span>
+      {% endfor %}
+    </div>
+  </details>
+{% endif %}
+
+<style>
+  .review-2col {
+    display: grid;
+    grid-template-columns: var(--review-left, 1.5fr) 8px var(--review-right, 1fr);
+    gap: 0;
+    align-items: start;
+  }
+  .review-doc-col { min-width: 0; padding-right: 8px; }
+  .review-doc-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  }
+  .review-doc-iframe {
+    width: 100%; height: calc(100vh - 220px); min-height: 600px;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: white;
+  }
+
+  /* Draggable column splitter */
+  .review-splitter {
+    cursor: col-resize;
+    position: relative;
+    background: transparent;
+    align-self: stretch;
+    min-height: 600px;
+    user-select: none;
+    z-index: 5;
+  }
+  .review-splitter::before {
+    content: "";
+    position: absolute; top: 0; bottom: 0; left: 50%;
+    width: 1px; background: var(--line);
+    transition: width 100ms, background 100ms;
+  }
+  .review-splitter:hover::before,
+  .review-splitter.dragging::before {
+    width: 3px; left: calc(50% - 1px);
+    background: var(--accent);
+  }
+  .review-splitter-grip {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px; height: 36px;
+    background: var(--line); border-radius: 2px;
+    transition: background 100ms;
+  }
+  .review-splitter:hover .review-splitter-grip,
+  .review-splitter.dragging .review-splitter-grip {
+    background: var(--accent);
+  }
+
+  .review-sug-rail {
+    position: sticky; top: 14px;
+    max-height: calc(100vh - 28px);
+    overflow-y: auto;
+    background: var(--bg);
+    padding-left: 8px; padding-right: 4px;
+    min-width: 0;
+  }
+  .review-sug-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0 10px;
+    border-bottom: 1px solid var(--line); margin-bottom: 10px;
+    position: sticky; top: 0; background: var(--bg); z-index: 1;
+  }
+
+  .sug-card {
+    background: white; border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px 12px; margin-bottom: 8px;
+    transition: opacity 100ms;
+  }
+  .sug-card.sug-approved { background: #fafef8; border-left: 3px solid var(--ok); }
+  .sug-card.sug-rejected { opacity: 0.55; background: #fef8f8; border-left: 3px solid var(--danger); }
+  .sug-card.sug-edited_by_user { background: #f8fafc; border-left: 3px solid var(--accent); }
+
+  .sug-card-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .sug-level-badge {
+    font-size: 10px; padding: 1px 6px; color: white; border-radius: 8px; font-weight: 600;
+  }
+
+  .sug-diff {
+    font-size: 12.5px; line-height: 1.55;
+    padding: 8px 10px; background: #fafaf6; border-radius: 4px;
+    word-break: break-word;
+  }
+
+  .sug-actions {
+    display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px;
+    padding-top: 6px; border-top: 1px dashed var(--line);
+  }
+  .sug-btn {
+    padding: 3px 9px; border: 1px solid var(--line); background: white;
+    border-radius: 3px; cursor: pointer; font-size: 12.5px; line-height: 1.4;
+  }
+  .sug-btn:hover { background: var(--line); }
+  .sug-btn-accept { color: var(--ok); border-color: var(--ok); font-weight: 700; }
+  .sug-btn-accept:hover { background: var(--ok); color: white; }
+  .sug-btn-edit { color: var(--accent); }
+  .sug-btn-regen { color: var(--warn); }
+  .sug-btn-regen:hover { background: var(--warn); color: white; }
+  .sug-btn-reject { color: var(--danger); }
+  .sug-btn-reject:hover { background: var(--danger); color: white; }
+  .sug-btn-undo { font-size: 11px; color: var(--muted); }
+
+  /* While dragging: lock cursor + disable iframe pointer events (otherwise iframe steals events) */
+  body.review-dragging,
+  body.review-dragging * { cursor: col-resize !important; user-select: none; }
+  body.review-dragging iframe { pointer-events: none; }
+
+  /* Narrow screens: stack vertically, hide splitter */
+  @media (max-width: 1100px) {
+    .review-2col { grid-template-columns: 1fr; }
+    .review-splitter { display: none; }
+    .review-sug-rail { position: static; max-height: none; padding-left: 0; }
+    .review-doc-iframe { height: 70vh; }
+    .review-doc-col { padding-right: 0; }
+  }
+</style>
+
+<script>
+  // ── Splitter drag logic ──────────────────────────────────────────
+  (function() {
+    var grid = document.getElementById('review-2col-{{ attempt.id }}');
+    var splitter = document.getElementById('review-splitter-{{ attempt.id }}');
+    if (!grid || !splitter) return;
+
+    var STORAGE_KEY = 'compass.review.splitRatio';
+    var dragging = false;
+
+    function applyRatio(ratio) {
+      // ratio = left column fraction of total grid width (0..1)
+      ratio = Math.max(0.25, Math.min(0.85, ratio));
+      var leftPct = (ratio * 100).toFixed(2) + '%';
+      var rightPct = ((1 - ratio) * 100).toFixed(2) + '%';
+      grid.style.setProperty('--review-left',  'calc(' + leftPct + ' - 4px)');
+      grid.style.setProperty('--review-right', 'calc(' + rightPct + ' - 4px)');
+    }
+
+    // Restore saved ratio
+    var saved = parseFloat(localStorage.getItem(STORAGE_KEY));
+    if (!isNaN(saved) && saved > 0.2 && saved < 0.9) applyRatio(saved);
+
+    splitter.addEventListener('pointerdown', function(e) {
+      e.preventDefault();
+      dragging = true;
+      splitter.classList.add('dragging');
+      document.body.classList.add('review-dragging');
+      try { splitter.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    splitter.addEventListener('pointermove', function(e) {
+      if (!dragging) return;
+      var rect = grid.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var ratio = x / rect.width;
+      applyRatio(ratio);
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      splitter.classList.remove('dragging');
+      document.body.classList.remove('review-dragging');
+      try { splitter.releasePointerCapture(e.pointerId); } catch (_) {}
+      // Save
+      var rect = grid.getBoundingClientRect();
+      // Read back computed --review-left as fraction
+      var lcss = grid.style.getPropertyValue('--review-left');
+      var match = /([\d.]+)%/.exec(lcss);
+      if (match) {
+        localStorage.setItem(STORAGE_KEY, (parseFloat(match[1]) / 100).toString());
+      }
+    }
+    splitter.addEventListener('pointerup', endDrag);
+    splitter.addEventListener('pointercancel', endDrag);
+  })();
+</script>

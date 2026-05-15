@@ -1,0 +1,159 @@
+{# Outreach log panel — drafts + sent + responses for current job.
+   Embedded inside step 3 (find_contact) so user has one-stop view.
+
+   Required vars (from jobs.detail route):
+     job, outreach_drafts, outreach_sent, outreach_responses
+#}
+
+{# Stats row #}
+<div class="kpi-row" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px">
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">📝</span>{{ _('待发草稿') }}</div>
+    <div class="kpi-value">{{ outreach_drafts | length }}</div>
+    <div class="kpi-sub">drafts pending</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">✉️</span>{{ _('已发') }}</div>
+    <div class="kpi-value">{{ outreach_sent | length }}</div>
+    <div class="kpi-sub">sent total</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">📥</span>{{ _('已回应') }}</div>
+    <div class="kpi-value">{{ outreach_responses | length }}</div>
+    <div class="kpi-sub">
+      {% if outreach_sent %}
+        响应率 {{ ((outreach_responses | length) / (outreach_sent | length) * 100) | round(0) }}%
+      {% else %}—{% endif %}
+    </div>
+  </div>
+  <div class="kpi" style="border-color: var(--ok)">
+    <div class="kpi-label"><span class="kpi-icon">🎯</span>{{ _('带来面试') }}</div>
+    <div class="kpi-value" style="color: var(--ok)">
+      {{ outreach_responses | selectattr('led_to_interview') | list | length }}
+    </div>
+    <div class="kpi-sub">interviews from outreach</div>
+  </div>
+</div>
+
+{% if outreach_drafts %}
+  <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 22px 0 8px">
+    📝 待发草稿 ({{ outreach_drafts | length }})
+  </h3>
+  <p class="muted" style="font-size: 11.5px; margin: 0 0 8px">
+    起草了但还没发出去的。<strong>{{ _('草稿不发出去 = 0 价值') }}</strong> {{ _('— 现在花 30 秒发掉。') }}
+  </p>
+  {% for o in outreach_drafts %}
+    <div class="card" style="border-left: 3px solid var(--warn); padding: 12px 16px; margin-bottom: 10px">
+      <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px">
+        <strong>{{ o.contact_name }}</strong>
+        <span class="muted" style="font-size: 12px">— {{ o.contact_title or "—" }} @ {{ o.contact_company or "—" }}</span>
+        <span class="badge" style="background: {% if o.path == 'warm' %}#d8efd8; color: var(--ok){% else %}#fbecd0; color: #8b6500{% endif %}; font-size: 11px">
+          {{ o.path }}
+        </span>
+      </div>
+      {% if o.draft_text %}
+        <details style="margin: 6px 0" open>
+          <summary class="muted" style="font-size: 12px; cursor: pointer">{{ _('看 / 隐藏 草稿原文（点开回忆当初写了啥）') }}</summary>
+          <pre style="margin: 6px 0 0; padding: 10px 12px; background: #fafaf6; border-radius: 4px; white-space: pre-wrap; font-family: inherit; font-size: 12.5px; line-height: 1.55">{{ o.draft_text }}</pre>
+        </details>
+      {% endif %}
+      <div style="display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap">
+        {% if o.contact_url %}
+          <a class="btn primary" href="{{ o.contact_url }}" target="_blank"
+             style="font-size: 12px; padding: 4px 10px"
+             title="{{ _('去 LinkedIn / 联系人页面，复制草稿粘贴发送') }}">
+            📤 去发送（在 LinkedIn 打开）
+          </a>
+        {% endif %}
+        <form method="post" action="{{ url_for('contacts.mark_attempt_sent', attempt_id=o.id) }}" style="margin: 0">
+          <button type="submit" class="btn"
+                  style="font-size: 12px; padding: 4px 10px"
+                  title="{{ _('标记为已发出 — 草稿移到「已发送」区，effort pack 自动 ✓') }}">
+            ✓ 我已发出
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if outreach_sent %}
+  <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 22px 0 8px">
+    ✉️ 已发出 ({{ outreach_sent | length }})
+  </h3>
+  <p class="muted" style="font-size: 11.5px; margin: 0 0 8px">
+    点开「看草稿」可回看当初发的内容（防止你忘了对这个人说过啥）。
+  </p>
+  {% for o in outreach_sent %}
+    <div class="card" style="padding: 12px 16px; margin-bottom: 8px;
+                              {% if o.response_received %}border-left: 3px solid var(--ok); background: #fafef8;{% endif %}">
+      <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap">
+        <strong>{{ o.contact_name }}</strong>
+        <span class="muted" style="font-size: 12px">@ {{ o.contact_company or "—" }}</span>
+        <span class="badge" style="background: {% if o.path == 'warm' %}#d8efd8; color: var(--ok){% else %}#fbecd0; color: #8b6500{% endif %}; font-size: 11px">
+          {{ o.path }}
+        </span>
+        <span class="muted" style="font-size: 11.5px; margin-left: auto">
+          发出 {{ o.sent_at | local_dt('%m-%d') }}
+        </span>
+      </div>
+      {% if o.draft_text %}
+        <details style="margin: 6px 0">
+          <summary class="muted" style="font-size: 11.5px; cursor: pointer">{{ _('看草稿原文（回忆当初写的啥）') }}</summary>
+          <pre style="margin: 6px 0 0; padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 4px; white-space: pre-wrap; font-family: inherit; font-size: 12px; line-height: 1.55">{{ o.draft_text }}</pre>
+        </details>
+      {% endif %}
+      {% if o.response_received %}
+        <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px; padding: 6px 10px; background: white; border-radius: 4px">
+          <span class="badge" style="background: var(--ok); color: white; font-size: 10px">{{ _('✓ 已回应') }}</span>
+          <span style="font-size: 12.5px">
+            {% if o.response_kind == 'positive_short' %}⭐ 正向（短回复 / 引荐确认）
+            {% elif o.response_kind == 'positive_chat' %}⭐ 正向（约聊）
+            {% elif o.response_kind == 'neutral' %}🟡 中性（已读）
+            {% elif o.response_kind == 'negative' %}🔴 拒绝
+            {% else %}{{ o.response_kind }}
+            {% endif %}
+          </span>
+          {% if o.led_to_interview %}<span class="badge" style="background: var(--ok); color: white; font-size: 10px">{{ _('🎯 带来面试') }}</span>{% endif %}
+          {% if o.response_at %}
+            <span class="muted" style="font-size: 11px; margin-left: auto">
+              回应 {{ o.response_at | local_dt('%m-%d') }}
+            </span>
+          {% endif %}
+        </div>
+      {% else %}
+        {% set days_ago = o.days_since_sent or 0 %}
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 6px">
+          <span class="muted" style="font-size: 12px">
+            {% if days_ago < 3 %}🟢 等待回应（{{ days_ago }} 天）
+            {% elif days_ago < 7 %}🟡 等待回应（{{ days_ago }} 天）— 别催
+            {% elif days_ago < 14 %}🟠 ({{ days_ago }} 天) — 可考虑轻量 follow-up
+            {% else %}🔴 ({{ days_ago }} 天) — 多半没回了，记 outcome
+            {% endif %}
+          </span>
+          <span style="flex: 1"></span>
+          <form method="post" action="{{ url_for('contacts.log_response', attempt_id=o.id) }}"
+                style="display: inline">
+            <input type="hidden" name="response_received" value="true">
+            <input type="hidden" name="response_kind" value="positive_short">
+            <button type="submit" class="subtle" style="font-size: 11px; padding: 3px 8px"
+                    title="{{ _('标记收到正向回应') }}">{{ _('📥 有回应') }}</button>
+          </form>
+          <form method="post" action="{{ url_for('contacts.log_response', attempt_id=o.id) }}"
+                style="display: inline">
+            <input type="hidden" name="response_received" value="true">
+            <input type="hidden" name="response_kind" value="negative">
+            <button type="submit" class="subtle" style="font-size: 11px; padding: 3px 8px; color: var(--danger)"
+                    title="{{ _('标记被拒 / 没回') }}">{{ _('✗ 没结果') }}</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if not outreach_drafts and not outreach_sent %}
+  <p class="muted" style="font-size: 12.5px; margin: 18px 0; padding: 10px; background: #fafaf6; border-radius: 4px">
+    还没起草过 outreach。点上方联系人卡片的「📝 起草信」按钮开始。
+  </p>
+{% endif %}

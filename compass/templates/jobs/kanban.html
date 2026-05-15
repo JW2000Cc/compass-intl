@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Kanban · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>Kanban</h1>
+    <p class="lede">{{ _('按状态分列，每个 job 一张卡。横向是 pipeline 进度。') }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('jobs.list_view', view='list') }}" class="pill">{{ _('📋 列表') }}</a>
+    <a href="{{ url_for('jobs.list_view', view='kanban') }}" class="pill active">📊 Kanban</a>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('所有 jobs 按 status 列：未读 → 已看 → 已投 → 面试中 → Offer / 被拒。一眼看到自己求职 pipeline 的「形状」。') }}</p>
+    <h4>{{ _('为什么需要它（vs 列表视图）') }}</h4>
+    <p>{{ _('列表视图回答「我有哪些 jobs」，Kanban 回答「我每个阶段堆了多少东西」。看到「面试中」列只有 1 个 —') }} <strong>{{ _('瓶颈在 applied → interview 那一步') }}</strong>{{ _('，不是源头不够。') }}</p>
+    <h4>{{ _('注意') }}</h4>
+    <ul>
+      <li>{{ _('Tier 5（客观不可达）和 status=passed 不显示——pipeline 板上的噪音') }}</li>
+      <li>{{ _('点卡跳详情页；状态切换在详情页改完会自动反映这里') }}</li>
+      <li>{{ _('每列上方的数字 = 该列卡数') }}</li>
+    </ul>
+  </div>
+</details>
+
+<p class="muted" style="font-size: 11.5px; margin: 4px 0 12px">显示前 {{ current_limit }} 条</p>
+
+<style>
+  .kanban-board {
+    display: flex; gap: 12px;
+    overflow-x: auto;
+    padding: 4px 0 14px;
+    margin-top: 12px;
+  }
+  .kanban-col {
+    flex: 1 1 220px;
+    min-width: 220px;
+    max-width: 280px;
+    background: #fafaf6;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .kanban-col h3 {
+    margin: 0; font-size: 13px; font-weight: 600; text-transform: none;
+    color: var(--fg); letter-spacing: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  .kanban-col h3 .count {
+    background: var(--accent); color: white;
+    font-size: 11px; padding: 1px 8px; border-radius: 9px;
+    font-weight: 500;
+  }
+  .kanban-col.col-offer h3 { color: var(--ok); }
+  .kanban-col.col-offer h3 .count { background: var(--ok); }
+  .kanban-col.col-rejected h3 { color: var(--muted); }
+  .kanban-col.col-rejected h3 .count { background: var(--muted); }
+  .kanban-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 13px;
+    transition: box-shadow 100ms ease;
+  }
+  .kanban-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .kanban-card a { color: var(--fg); text-decoration: none; font-weight: 500; }
+  .kanban-card a:hover { color: var(--accent); }
+  .kanban-card .meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .kanban-card .tier { display: inline-block; padding: 0 6px; border-radius: 3px; font-size: 10px;
+                       background: var(--line); color: var(--muted); }
+  .kanban-card .tier-1 { background: #d8efd8; color: var(--ok); }
+  .kanban-card .tier-2 { background: #f6e0c5; color: var(--warn); }
+  .kanban-card .tier-3 { background: #eaf0f4; color: var(--accent); }
+  .kanban-card .tier-4 { background: #f4f4ee; color: var(--muted); }
+  .kanban-empty { color: var(--muted); font-size: 11.5px; padding: 14px 4px; text-align: center; font-style: italic; }
+</style>
+
+<div class="kanban-board">
+  {% for status, label, items in kanban_columns %}
+    <div class="kanban-col col-{{ status }}">
+      <h3>
+        <span>{{ label }}</span>
+        <span class="count">{{ items | length }}</span>
+      </h3>
+      {% for job, match in items %}
+        <div class="kanban-card">
+          <a href="{{ url_for('jobs.detail', job_id=job.id) }}">{{ job.title }}</a>
+          <div class="meta">
+            {% if match %}
+              <span class="tier tier-{{ match.tier }}">T{{ match.tier }}</span>
+            {% endif %}
+            {{ job.company or "—" }}
+            {% if job.location %}· {{ job.location }}{% endif %}
+          </div>
+          {% if job.status_changed_at %}
+            <div class="meta" style="margin-top: 4px">
+              {{ job.status_changed_at | local_dt("%m-%d") }}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="kanban-empty">{{ _('空') }}</div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+<p class="muted" style="font-size: 11.5px; margin-top: 12px">
+  状态在 jobs detail 页修改 — Kanban 卡是只读视图（避免误拖拽改状态）。
+  整体功能想要拖拽？告诉我，下次加 hx-post 拖动接口。
+</p>
+
+{% endblock %}

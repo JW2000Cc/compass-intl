@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}拒信分析 · Compass{% endblock %}
+{% block content %}
+{% set CAT_LABELS = {
+  'skills_gap': '技能差距 — 缺硬技能',
+  'experience_gap': '经验差距 — 年限/行业经验不够',
+  'location_visa': '地点 / 签证 / relocate',
+  'language': '语言要求',
+  'culture_seniority': 'culture / seniority mismatch',
+  'filled_internally': '内部填了 / 已撤销',
+  'no_reason_given': '没说原因 (formal "another candidate")',
+  'other': '其他',
+} %}
+{% set CAT_COLORS = {
+  'skills_gap': ('#cf222e', '#ffebe9'),
+  'experience_gap': ('#9a6700', '#fff8c5'),
+  'location_visa': ('#3328ad', '#ddf4ff'),
+  'language': ('#3328ad', '#ddf4ff'),
+  'culture_seniority': ('#82071e', '#fae5e5'),
+  'filled_internally': ('#57606a', '#f6f8fa'),
+  'no_reason_given': ('#57606a', '#f6f8fa'),
+  'other': ('#57606a', '#f6f8fa'),
+} %}
+{% set color_fg, color_bg = CAT_COLORS.get(result.category, ('#57606a', '#f6f8fa')) %}
+
+<div style="max-width: 720px; margin: 0 auto; padding: 12px 0">
+  <h1 style="font-size: 22px; margin: 0 0 16px">{{ _('📉 拒信分析结果') }}</h1>
+
+  <div class="card" style="padding: 14px 18px; margin-bottom: 16px;
+                            background: {{ color_bg }}; border-left: 3px solid {{ color_fg }}">
+    <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px">
+      <strong style="font-size: 15px; color: {{ color_fg }}">
+        {{ CAT_LABELS.get(result.category, result.category) }}
+      </strong>
+      <span class="muted" style="font-size: 11.5px">confidence {{ '%.0f' | format(result.confidence * 100) }}%</span>
+    </div>
+    <p style="margin: 0; font-size: 13.5px; line-height: 1.5">{{ result.summary }}</p>
+  </div>
+
+  {% if result.skills_named %}
+    <div class="card" style="padding: 12px 16px; margin-bottom: 16px">
+      <strong style="font-size: 13px">{{ _('📌 提到缺失的技能') }}</strong>
+      <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px">
+        {% for skill in result.skills_named %}
+          <span style="font-size: 11.5px; padding: 3px 9px; border-radius: 10px;
+                       background: #fff8c5; border: 1px solid #fbcc15">{{ skill }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if result.quote %}
+    <div class="card" style="padding: 12px 16px; margin-bottom: 16px">
+      <div class="muted" style="font-size: 11px; margin-bottom: 4px">{{ _('原文引用') }}</div>
+      <blockquote style="margin: 0; padding: 8px 12px; border-left: 2px solid var(--muted);
+                          font-size: 12.5px; color: var(--fg); font-style: italic">
+        "{{ result.quote }}"
+      </blockquote>
+    </div>
+  {% endif %}
+
+  {% if result.category in ('skills_gap', 'experience_gap') and result.confidence >= 0.6 %}
+    <div class="card" style="padding: 12px 16px; margin-bottom: 16px;
+                              background: #ddf4ff; border-color: var(--accent)">
+      <strong>{{ _('✅ 已 nudge calibration') }}</strong>
+      <p style="margin: 6px 0 0; font-size: 12.5px; line-height: 1.5">
+        被拒原因 = <code>{{ result.category }}</code>（confidence ≥ 60%）→
+        calibration_learner 收到 nudge，下次同类岗位 tier 分类时会上调 expectation。
+        {% if result.skills_named %}
+          缺失技能 <strong>{{ result.skills_named | join(' / ') }}</strong> 标记为优先扩。
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
+
+  <div style="display: flex; gap: 8px; margin-top: 20px">
+    <a href="{{ url_for('rejection.overview') }}" class="btn">{{ _('← 再分析一封') }}</a>
+    <a href="{{ url_for('reflection.dashboard') }}" class="btn">{{ _('📊 看 Reflection Dashboard') }}</a>
+  </div>
+</div>
+{% endblock %}

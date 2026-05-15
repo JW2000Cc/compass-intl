@@ -1,0 +1,20 @@
+{# Rendered by /jobs/<id>/translate (HTMX swap target). Shows translated text +
+   toggle to view original. Receives target_lang and target_lang_name from route. #}
+<div id="jd-body" x-data="{ showOriginal: false }">
+  <div style="display: flex; gap: 8px; align-items: center; margin: 0 0 6px; flex-wrap: wrap">
+    <span class="badge" style="background: #d8efd8; color: var(--ok); font-size: 11px">
+      ✓ 已翻译为 {{ target_lang_name or "中文" }}
+    </span>
+    <button type="button" class="btn subtle" style="font-size: 11.5px; padding: 2px 8px"
+            @click="showOriginal = !showOriginal"
+            x-text="showOriginal ? '🌍 显示译文' : '🌐 看原文'"></button>
+  </div>
+
+  <div x-show="!showOriginal"
+       style="white-space: pre-wrap; font-size: 13.5px; max-height: 480px; overflow-y: auto;
+              border: 1px solid var(--line); padding: 12px; border-radius: 4px; background: #fafaf6">{{ translated }}</div>
+
+  <div x-show="showOriginal" x-cloak
+       style="white-space: pre-wrap; font-size: 13.5px; max-height: 480px; overflow-y: auto;
+              border: 1px solid var(--line); padding: 12px; border-radius: 4px; background: #fafaf6">{{ job.description or "（无描述）" }}</div>
+</div>

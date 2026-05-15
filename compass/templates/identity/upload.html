@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}上传简历 · Compass{% endblock %}
+{% block content %}
+
+<p><a href="{{ url_for('identity.overview') }}" class="muted">{{ _('← 返回身份') }}</a></p>
+
+<h1>{{ _('上传简历') }}</h1>
+<p class="lede">{{ _('支持 PDF / DOCX / TXT / MD。Compass 会用 LLM 抽取结构化 profile，然后拆解成不可变 facts。') }}</p>
+
+<div class="card">
+  <form method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".pdf,.docx,.doc,.txt,.md" required style="margin-bottom: 12px">
+    <br>
+    <button type="submit">{{ _('📤 上传 + 抽取') }}</button>
+  </form>
+  <p class="muted" style="font-size: 12px; margin-top: 14px">
+    上传后系统会调用一次 LLM 抽取结构化数据（教育/经历/技能等），然后建立一个新的 IdentityVersion。
+    旧版本不会被删除——它们留在数据库里供漂移分析用。
+  </p>
+</div>
+
+{% endblock %}

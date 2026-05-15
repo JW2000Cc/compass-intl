@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }} · Compass{% endblock %}
+{% block content %}
+
+<div style="display: flex; align-items: center; gap: 12px; margin: 0 0 8px; flex-wrap: wrap">
+  <a href="{{ url_for('jobs.list_view') }}{{ nav_qs }}" class="muted" style="font-size: 13px; text-decoration: none">{{ _('← 返回列表') }}</a>
+  {% if nav_total %}
+    <span class="muted" style="font-size: 12px">第 {{ nav_index }} / {{ nav_total }} 条</span>
+  {% endif %}
+  <span style="flex: 1"></span>
+  {% if prev_job_id %}
+    <a href="{{ url_for('jobs.detail', job_id=prev_job_id) }}{{ nav_qs }}"
+       class="btn subtle" id="nav-prev"
+       style="font-size: 12.5px; padding: 4px 10px"
+       title="{{ _('键盘 ← 跳上一个') }}">{{ _('← 上一个') }}</a>
+  {% else %}
+    <span class="muted" style="font-size: 12.5px; padding: 4px 10px; opacity: 0.4">{{ _('← 上一个') }}</span>
+  {% endif %}
+  {% if next_job_id %}
+    <a href="{{ url_for('jobs.detail', job_id=next_job_id) }}{{ nav_qs }}"
+       class="btn subtle" id="nav-next"
+       style="font-size: 12.5px; padding: 4px 10px"
+       title="{{ _('键盘 → 跳下一个') }}">{{ _('下一个 →') }}</a>
+  {% else %}
+    <span class="muted" style="font-size: 12.5px; padding: 4px 10px; opacity: 0.4">{{ _('下一个 →') }}</span>
+  {% endif %}
+</div>
+
+<script>
+  // Keyboard arrows for prev/next navigation; ignore when typing in inputs
+  document.addEventListener('keydown', function(e) {
+    var t = e.target;
+    var inField = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    if (inField) return;
+    if (e.key === 'ArrowLeft') {
+      var p = document.getElementById('nav-prev'); if (p) p.click();
+    } else if (e.key === 'ArrowRight') {
+      var n = document.getElementById('nav-next'); if (n) n.click();
+    }
+  });
+</script>
+
+<div class="page-head">
+  <div>
+    <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap">
+      {% if matches and matches[0] and matches[0].tier %}
+        <span class="badge badge-tier{{ matches[0].tier }}">Tier {{ matches[0].tier }}</span>
+      {% endif %}
+      <span class="badge badge-status-{{ job.status }}">{{ job.status }}</span>
+      {% if job.is_remote %}<span class="badge" style="background: #eaf0f4; color: var(--accent)">{{ _('🌐 远程') }}</span>{% endif %}
+    </div>
+    <h1>{{ job.title }}</h1>
+    <p class="lede">
+      <strong>{{ job.company or "—" }}</strong>
+      {% if job.location %} · {{ job.location }}{% endif %}
+      · 来源 {{ job.source or "—" }}
+    </p>
+  </div>
+  <div class="page-actions">
+    {% if job.link %}
+      <a class="btn" href="{{ job.link }}" target="_blank" rel="noopener">{{ _('🔗 打开原 JD') }}</a>
+    {% endif %}
+  </div>
+</div>
+
+<div x-data='{
+  activeStep: (function() {
+    /* Honor URL hash like #step-resume_rewrite. outreach_sent → find_contact
+       (merged panels). Old bookmarks still work. */
+    var h = (window.location.hash || "").replace(/^#step-/, "");
+    if (h === "outreach_sent") h = "find_contact";
+    var valid = ["read_jd","resume_rewrite","find_contact","apply","interview_prep"];
+    return valid.indexOf(h) >= 0 ? h : "{{ active_step_id }}";
+  })()
+}'>
+
+{# ─────────── Top stepper ─────────── #}
+<div class="step-bar">
+  {% set step_icons = {
+      'read_jd': '📖', 'resume_rewrite': '📝', 'find_contact': '🤝',
+      'outreach_sent': '✉️', 'apply': '📤', 'interview_prep': '🎯'
+  } %}
+  {# outreach_sent merged into find_contact panel — exclude from stepper UI but
+     keep in effort_pack so progress is still tracked. #}
+  {% set visible_steps = effort.steps | rejectattr('id', 'equalto', 'outreach_sent') | list %}
+  {% for s in visible_steps %}
+    <button type="button"
+            class="step-circle"
+            :class="{
+              'step-active': activeStep === '{{ s.id }}',
+              'step-done': '{{ s.state }}' === 'done',
+              'step-skipped': '{{ s.state }}' === 'skipped',
+              'step-current': '{{ s.id }}' === '{{ active_step_id }}'
+            }"
+            @click="activeStep = '{{ s.id }}'"
+            data-step-id="{{ s.id }}">
+      <span class="step-num">
+        {% if s.state == 'done' %}✓
+        {% elif s.state == 'skipped' %}–
+        {% else %}{{ loop.index }}
+        {% endif %}
+      </span>
+      <span class="step-icon">{{ step_icons.get(s.id, '•') }}</span>
+      <span class="step-label">{{ s.label.split('（')[0].split(' ⭐')[0] }}</span>
+      <span class="step-min muted">≈ {{ s.estimated_minutes }} min</span>
+    </button>
+    {% if not loop.last %}<div class="step-line"></div>{% endif %}
+  {% endfor %}
+</div>
+
+<style>
+  .step-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;             /* always single row */
+    gap: 0;
+    margin: 0 0 22px;
+    background: white; border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 8px 10px;
+    overflow: hidden;              /* truncate gracefully on narrow screens */
+  }
+  .step-circle {
+    background: none; border: none; cursor: pointer;
+    padding: 4px 6px;
+    flex: 1 1 0;                   /* equal share of remaining width */
+    min-width: 0;                  /* allow shrinking */
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    position: relative;
+    transition: all 100ms;
+    border-radius: 6px;
+  }
+  .step-circle:hover { background: #f8f8f3; }
+  .step-circle .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: white; border: 2px solid var(--line);
+    color: var(--muted); font-weight: 600; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 120ms;
+  }
+  .step-circle .step-icon { font-size: 13px; line-height: 1; }
+  .step-circle .step-label {
+    font-size: 11.5px; color: var(--fg); font-weight: 500;
+    text-align: center; line-height: 1.25;
+    max-width: 100%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .step-circle .step-min { font-size: 10px; line-height: 1; white-space: nowrap; }
+
+  .step-circle.step-done .step-num {
+    background: var(--ok); border-color: var(--ok); color: white;
+  }
+  .step-circle.step-skipped .step-num {
+    background: #ececec; border-color: var(--line); color: var(--muted);
+  }
+  .step-circle.step-current .step-num {
+    box-shadow: 0 0 0 4px rgba(43, 88, 118, 0.15);
+  }
+  .step-circle.step-active .step-num {
+    background: var(--accent); border-color: var(--accent); color: white;
+  }
+  .step-circle.step-active .step-label { color: var(--accent); font-weight: 600; }
+
+  /* Connecting lines between steps */
+  .step-line {
+    height: 2px; background: var(--line);
+    align-self: center;
+    flex: 0 1 24px;                /* small filler, can shrink to 0 */
+    min-width: 4px;
+    margin: -18px 0 0;             /* align with circle row */
+  }
+
+  /* Step panel container */
+  .step-panel {
+    background: white; border: 1px solid var(--line); border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 14px;
+  }
+  .step-panel-head {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin: 0 0 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  .step-panel-head .step-title {
+    font-size: 18px; font-weight: 600; margin: 0; letter-spacing: -0.01em;
+  }
+  .step-panel-head .step-why {
+    font-size: 12.5px; color: var(--muted); margin: 4px 0 0;
+    width: 100%;
+  }
+  .step-panel-head .step-actions {
+    margin-left: auto; display: flex; gap: 6px; align-items: center;
+  }
+  .step-mark-done {
+    font-size: 11.5px; padding: 4px 10px; border-radius: 4px;
+    border: 1px solid var(--ok); background: white; color: var(--ok);
+    cursor: pointer;
+  }
+  .step-mark-done:hover { background: var(--ok); color: white; }
+  .step-mark-skip {
+    font-size: 11.5px; padding: 4px 10px; border-radius: 4px;
+    border: 1px solid var(--line); background: white; color: var(--muted);
+    cursor: pointer;
+  }
+  .step-mark-skip:hover { background: var(--line); }
+
+  @media (max-width: 900px) {
+    .step-bar { grid-template-columns: repeat({{ visible_steps | length }}, max-content); overflow-x: auto; }
+    .step-circle .step-label { font-size: 11px; max-width: 90px; }
+  }
+</style>
+
+{# ─────────── Step 1: read_jd ─────────── #}
+<div x-show="activeStep === 'read_jd'" x-transition.opacity>
+  <div class="step-panel">
+    <div class="step-panel-head">
+      <h2 class="step-title">{{ _('📖 第一步：读 JD') }}</h2>
+      <div class="step-actions">
+        {% set step_obj = effort.steps | selectattr('id', 'equalto', 'read_jd') | first %}
+        {% include "jobs/_step_action_buttons.html" %}
+      </div>
+      <p class="step-why">{{ _('2 分钟读完决定后续 30 分钟值不值得花。先看 JD，再看 LLM 给出的 Tier 判断。') }}</p>
+    </div>
+
+    {# JD 原文 #}
+    <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 0 0 8px">{{ _('JD 原文') }}</h3>
+    <div style="display: flex; align-items: center; gap: 10px; margin: 0 0 10px; flex-wrap: wrap">
+      {% if jd_lang_info.lang and jd_lang_info.lang not in ['unknown'] %}
+        <span class="muted" style="font-size: 11.5px">检测到：{{ jd_lang_info.name }}</span>
+      {% endif %}
+      <span style="flex: 1"></span>
+      {% if jd_lang_info.offer_translation %}
+        {# Translation form: dropdown + button. Defaults to user's most-used target lang. #}
+        <form method="post" action="{{ url_for('jobs.translate_jd', job_id=job.id) }}"
+              hx-post="{{ url_for('jobs.translate_jd', job_id=job.id) }}"
+              hx-target="#jd-body" hx-swap="outerHTML"
+              hx-indicator="#jd-translate-spinner"
+              style="display: inline-flex; gap: 6px; align-items: center">
+          <select name="lang" style="padding: 4px 8px; font: inherit; font-size: 12.5px; border: 1px solid var(--line); border-radius: 4px">
+            {% for opt in jd_lang_info.supported_targets %}
+              <option value="{{ opt.code }}" {% if opt.code == jd_lang_info.preferred_target %}selected{% endif %}>
+                {{ opt.name }}{% if opt.count %} (x{{ opt.count }}){% endif %}
+              </option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn" style="font-size: 12.5px; padding: 4px 10px">
+            🌐 翻译
+          </button>
+        </form>
+        <span id="jd-translate-spinner" class="htmx-indicator muted" style="font-size: 12px">{{ _('⏳ 翻译中…') }}</span>
+      {% endif %}
+    </div>
+
+    {# ─── JD 关键词覆盖摘要(Resume-Matcher 启发):仅在跑过 rewrite 后显示 ─── #}
+    {% if jd_coverage and jd_coverage.total > 0 %}
+      <div class="jd-coverage-bar"
+           style="margin: 4px 0 8px; padding: 7px 10px; background: var(--surface-2, #f7f6f0); border-radius: 4px; font-size: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+        <span style="font-weight: 600; color: var(--accent)">{{ _('JD 关键词覆盖') }}
+          <span style="font-size: 14px">{{ jd_coverage.coverage_pct }}%</span>
+          <span class="muted" style="font-weight: 400">({{ jd_coverage.hit_keywords|length }}/{{ jd_coverage.total }})</span>
+        </span>
+        <span class="muted" style="font-size: 11px">
+          <mark class="kw-hit" style="padding: 0 4px">{{ _('绿 = 已在简历') }}</mark>
+          ·
+          <mark class="kw-miss" style="padding: 0 4px">{{ _('橙 = JD 要但缺') }}</mark>
+        </span>
+        {% if jd_coverage.miss_keywords %}
+          <details style="margin-left: auto; font-size: 11.5px">
+            <summary class="muted" style="cursor: pointer">缺 {{ jd_coverage.miss_keywords|length }} 个 ▾</summary>
+            <div style="margin-top: 6px; max-width: 100%">
+              {% for kw in jd_coverage.miss_keywords %}
+                <mark class="kw-miss" style="padding: 1px 5px; margin: 2px 2px 0 0; display: inline-block; border-radius: 3px; font-size: 11px">{{ kw }}</mark>
+              {% endfor %}
+            </div>
+          </details>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if job.description_translated %}
+      {% set _cached_lang = job.description_translated_lang or 'zh' %}
+      {% set _LANG_NAMES = {'zh':'中文','en':'English','it':'Italiano','de':'Deutsch','fr':'Français','es':'Español','pt':'Português','ja':'日本語','ko':'한국어','ru':'Русский'} %}
+      <div id="jd-body" x-data="{ showOriginal: false }">
+        <div style="display: flex; gap: 8px; align-items: center; margin: 0 0 6px; flex-wrap: wrap">
+          <span class="badge" style="background: #d8efd8; color: var(--ok); font-size: 11px">
+            ✓ 已翻译为 {{ _LANG_NAMES.get(_cached_lang, _cached_lang) }}
+          </span>
+          <button type="button" class="btn subtle" style="font-size: 11.5px; padding: 2px 8px"
+                  @click="showOriginal = !showOriginal"
+                  x-text="showOriginal ? '🌍 显示译文' : '🌐 看原文'"></button>
+        </div>
+        <div x-show="!showOriginal"
+             style="white-space: pre-wrap; font-size: 13.5px; max-height: 480px; overflow-y: auto;
+                    border: 1px solid var(--line); padding: 12px; border-radius: 4px; background: #fafaf6">{% if jd_html_translated %}{{ jd_html_translated }}{% else %}{{ job.description_translated }}{% endif %}</div>
+        <div x-show="showOriginal" x-cloak
+             style="white-space: pre-wrap; font-size: 13.5px; max-height: 480px; overflow-y: auto;
+                    border: 1px solid var(--line); padding: 12px; border-radius: 4px; background: #fafaf6">{% if jd_html_orig %}{{ jd_html_orig }}{% else %}{{ job.description or "（无描述）" }}{% endif %}</div>
+      </div>
+    {% else %}
+      <div id="jd-body"
+           style="white-space: pre-wrap; font-size: 13.5px; max-height: 480px; overflow-y: auto;
+                  border: 1px solid var(--line); padding: 12px; border-radius: 4px; background: #fafaf6">{% if jd_html_orig %}{{ jd_html_orig }}{% else %}{{ job.description or "（无描述）" }}{% endif %}</div>
+    {% endif %}
+
+    {# Tier 分类 — 接在 JD 下面，用户读完直接看判断 #}
+    <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 22px 0 8px">{{ _('系统判断') }}</h3>
+    {% include "jobs/_match_card.html" %}
+
+    {# Axis-tagged 快速反馈（替代旧 thumbs；类别从 brief 派生 + 5 次升级提示）#}
+    {% include "jobs/_quick_feedback.html" %}
+  </div>
+</div>
+
+{# ─────────── Step 2: resume_rewrite — Claude-in-Word 风内嵌审核 ─────────── #}
+<div id="step-resume_rewrite" x-show="activeStep === 'resume_rewrite'" x-transition.opacity x-cloak>
+  <div class="step-panel">
+    <div class="step-panel-head">
+      <h2 class="step-title">{{ _('📝 第二步：针对此 job 改写简历') }}</h2>
+      <div class="step-actions">
+        {% set step_obj = effort.steps | selectattr('id', 'equalto', 'resume_rewrite') | first %}
+        {% include "jobs/_step_action_buttons.html" %}
+      </div>
+      <p class="step-why">
+        ATS + HR 6 秒扫——通用简历过不去。流水线 6 步：JD 关键词 → fact 匹配 → 逐 bullet 改写 → claim grounding → adversarial voice → ATS/HR/HM judge。
+        {% if latest_attempt %}
+          <span class="muted" style="margin-left: 6px">· 最近改写：{{ latest_attempt.created_at | local_dt('%m-%d %H:%M') }}</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {# Run / re-run pipeline. Rerun shows a confirmation modal with breakdown
+       (✓/✎ preserved, ⏳ replaced, ✗ regenerated with negative prompt). #}
+    {% set _approved_n = (review_rows or []) | selectattr('0.user_decision', 'equalto', 'approved') | list | length %}
+    {% set _edited_n   = (review_rows or []) | selectattr('0.user_decision', 'equalto', 'edited_by_user') | list | length %}
+    {% set _pending_n  = (review_rows or []) | selectattr('0.user_decision', 'equalto', 'pending') | list | length %}
+    {% set _rejected_n = (review_rows or []) | selectattr('0.user_decision', 'equalto', 'rejected') | list | length %}
+
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap"
+         x-data="{ rerunOpen: false }">
+      {% if latest_attempt %}
+        <button type="button" class="primary" @click="rerunOpen = true">
+          ↻ 再跑一次
+        </button>
+      {% else %}
+        <form method="post" action="{{ url_for('resume.run', job_id=job.id) }}" style="margin: 0" data-slow-action="true">
+          <button type="submit" class="primary">{{ _('▶ 跑改写流水线') }}</button>
+        </form>
+      {% endif %}
+      <a href="{{ url_for('resume.workbench') }}#job-{{ job.id }}" class="btn subtle">{{ _('📚 查看历史版本') }}</a>
+      {% if latest_attempt %}
+        <span class="muted" style="font-size: 11.5px; margin-left: auto">
+          当前显示：最新 attempt · <code>{{ latest_attempt.id[:8] }}</code>
+        </span>
+      {% endif %}
+
+      {# Confirmation modal — explicit breakdown so the user sees exactly what
+         survives and what gets thrown away. Mirrors GitHub's "this will close
+         X PRs / discard Y commits" dialogs. #}
+      <div x-show="rerunOpen" x-cloak
+           style="position: fixed; inset: 0; background: rgba(40, 40, 35, 0.5);
+                  display: flex; align-items: center; justify-content: center; z-index: 9999"
+           @click.self="rerunOpen = false">
+        <div style="background: white; border-radius: 8px; padding: 24px; max-width: 520px; width: 90%;
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.18)">
+          <h3 style="margin: 0 0 12px; font-size: 16.5px">{{ _('↻ 再跑一次会做什么') }}</h3>
+          <p class="muted" style="margin: 0 0 14px; font-size: 12.5px">
+            类似 GitHub 上 push 一批新 commits — 你已批准的不会被覆盖，未决的会被新建议替换。
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 18px; font-size: 13px">
+            <li style="padding: 6px 0; border-bottom: 1px solid var(--line)">
+              <span style="color: var(--ok); font-weight: 700">✓ 保留 {{ _approved_n }} 条已批准</span>
+              <span class="muted" style="font-size: 12px"> {{ _('· 你的 ✓ 决定不会动') }}</span>
+            </li>
+            {% if _edited_n %}
+            <li style="padding: 6px 0; border-bottom: 1px solid var(--line)">
+              <span style="color: var(--accent); font-weight: 700">✎ 保留 {{ _edited_n }} 条已编辑</span>
+              <span class="muted" style="font-size: 12px"> {{ _('· 你改写过的版本不会丢') }}</span>
+            </li>
+            {% endif %}
+            <li style="padding: 6px 0; border-bottom: 1px solid var(--line)">
+              <span style="color: var(--warn); font-weight: 700">⚠ 替换 {{ _pending_n }} 条待决建议</span>
+              <span class="muted" style="font-size: 12px"> {{ _('· 旧建议会消失，') }}<strong>{{ _('无法恢复') }}</strong></span>
+            </li>
+            {% if _rejected_n %}
+            <li style="padding: 6px 0">
+              <span style="color: var(--danger); font-weight: 700">✗ 重新生成 {{ _rejected_n }} 条已拒绝</span>
+              <span class="muted" style="font-size: 12px"> {{ _('· 拒绝原因作为反向提示，避免生成相似版本') }}</span>
+            </li>
+            {% endif %}
+          </ul>
+          <div style="display: flex; gap: 8px; justify-content: flex-end">
+            <button type="button" class="btn subtle" @click="rerunOpen = false">{{ _('取消') }}</button>
+            <form method="post" action="{{ url_for('resume.run', job_id=job.id) }}" style="margin: 0" data-slow-action="true">
+              <button type="submit" class="btn primary">{{ _('↻ 确认再跑') }}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# If there's an attempt, embed Claude-in-Word style review inline #}
+    {% if latest_attempt and review_rows %}
+      {% with attempt=latest_attempt, rows=review_rows, show_header=false, show_feedback=false %}
+        {% include "resume/_review_panel.html" %}
+      {% endwith %}
+    {% elif latest_attempt %}
+      <div class="card">
+        <p class="muted">{{ _('这次改写没有生成 variants — 可能是 fact-keyword 没匹配上，或简历 facts 太少。换个 job 或先补充 facts。') }}</p>
+      </div>
+    {% else %}
+      <div class="card" style="background: #f8f8f3; border-color: var(--accent)">
+        <h3 style="margin: 0 0 4px">{{ _('还没跑过改写流水线') }}</h3>
+        <p class="muted" style="font-size: 12.5px; margin: 0 0 8px">
+          点上方「▶ 跑改写流水线」开始。LLM 会做：
+        </p>
+        <ol class="muted" style="font-size: 12.5px; margin: 0; padding-left: 20px">
+          <li>{{ _('抽 JD 关键词') }}</li>
+          <li>{{ _('把简历 facts 跟关键词配对') }}</li>
+          <li>{{ _('逐 bullet 改写（多 amplification level）') }}</li>
+          <li>{{ _('每条做 claim grounding（防编造）') }}</li>
+          <li>{{ _('Adversarial voice 给反对意见') }}</li>
+          <li>{{ _('三角色 judge（ATS / HR 6s scan / 招聘经理）打分') }}</li>
+        </ol>
+        <p class="muted" style="font-size: 12.5px; margin: 10px 0 0">
+          跑完 ↑ 这里就会出现 Claude-in-Word 风的 track-changes 审核 — 在<strong>{{ _('同一个页面') }}</strong>{{ _('逐条 ✓ 接受 / ✎ 编辑 / ✗ 拒绝。') }}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{# ─────────── Step 3: find_contact ─────────── #}
+<div x-show="activeStep === 'find_contact'" x-transition.opacity x-cloak>
+  <div class="step-panel">
+    <div class="step-panel-head">
+      <h2 class="step-title">{{ _('🤝 第三步：联系人 + outreach') }}</h2>
+      <div class="step-actions">
+        {% set step_obj = effort.steps | selectattr('id', 'equalto', 'find_contact') | first %}
+        {% include "jobs/_step_action_buttons.html" %}
+        {% set step4_obj = effort.steps | selectattr('id', 'equalto', 'outreach_sent') | first %}
+        {% if step4_obj and step4_obj.state == 'done' %}
+          <span class="badge badge-status-offer" style="font-size: 11px" title="{{ _('outreach 任务已自动完成') }}">{{ _('✓ outreach 已发') }}</span>
+        {% endif %}
+      </div>
+      <p class="step-why">
+        内推回应率 30-50% vs 冷投 1-3% — 15 倍差，最高 ROI 步骤。
+        本面板一站式：找联系人 → 起草信 → 标记发出 → 跟进回应。
+      </p>
+    </div>
+
+    {# A. Find contacts panel (warm + cold) #}
+    <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 0 0 8px">
+      A · 找联系人
+    </h3>
+    <div hx-get="{{ url_for('contacts.panel', job_id=job.id) }}?stage={{ workflow_stage }}"
+         hx-trigger="load" hx-swap="innerHTML">
+      <p class="muted" style="font-size: 12px">{{ _('⏳ 加载联系人中…') }}</p>
+    </div>
+
+    {# B. Outreach log (drafts / sent / responses) #}
+    <h3 style="font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin: 22px 0 8px">
+      B · 你给该 job 发过的 outreach
+    </h3>
+    {% include "jobs/_outreach_log.html" %}
+  </div>
+</div>
+
+<div x-show="activeStep === 'apply'" x-transition.opacity x-cloak>
+  <div class="step-panel">
+    <div class="step-panel-head">
+      <h2 class="step-title">{{ _('📤 第五步：投递 + 标记 applied') }}</h2>
+      <div class="step-actions">
+        {% set step_obj = effort.steps | selectattr('id', 'equalto', 'apply') | first %}
+        {% include "jobs/_step_action_buttons.html" %}
+      </div>
+      <p class="step-why">{{ _('完整准备但没投出去 = 0。投递后切换状态到 applied，自动激活 cold contacts follow-up + 进入 sent 阶段。') }}</p>
+    </div>
+
+    {% include "jobs/_status_card.html" %}
+  </div>
+</div>
+
+{# ─────────── Step 6: interview_prep (only shown if reached) ─────────── #}
+{% if effort.steps | selectattr('id', 'equalto', 'interview_prep') | first %}
+<div x-show="activeStep === 'interview_prep'" x-transition.opacity x-cloak>
+  <div class="step-panel">
+    <div class="step-panel-head">
+      <h2 class="step-title">{{ _('🎯 第六步：面试准备') }}</h2>
+      <div class="step-actions">
+        {% set step_obj = effort.steps | selectattr('id', 'equalto', 'interview_prep') | first %}
+        {% include "jobs/_step_action_buttons.html" %}
+      </div>
+      <p class="step-why">{{ _('到了面试这步——别裸面。两件 Claude Code Skill 推荐跑：') }}</p>
+    </div>
+    <ul style="font-size: 13.5px; margin: 4px 0; padding-left: 22px">
+      <li><code>/company_brief {{ job.id }}</code> {{ _('— 公司近况 / 团队 / 文化研究') }}</li>
+      <li><code>/ats_keyword_audit {{ job.id }}</code> {{ _('— 简历 vs JD 关键词覆盖') }}</li>
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+{# ─────────── Always-visible bottom: feedback widget ─────────── #}
+{% with context="jobs",
+        item_id=job.id,
+        item_label=(job.title + " @ " + (job.company or "")),
+        ctx_kind="JD / 岗位偏好",
+        ctx_kind_emoji="📋" %}
+  {% include "feedback/_input_widget.html" %}
+{% endwith %}
+
+</div>{# end x-data #}
+
+{% endblock %}

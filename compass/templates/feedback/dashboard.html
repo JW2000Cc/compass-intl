@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}反馈历史 · Compass{% endblock %}
+{% block content %}
+
+<h1>{{ _('反馈历史') }}</h1>
+<p class="lede">{{ _('你给系统的偏好信号——你说要什么、要避开什么。下次推送和简历改写都会读这些。') }}</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('所有 thumbs / status / 简历反馈累积出的偏好简报，分两层：') }}</p>
+    <ul>
+      <li><strong>{{ _('找工作偏好') }}</strong> {{ _('— 影响 tier_classifier 给新岗位打分') }}</li>
+      <li><strong>{{ _('简历偏好') }}</strong> {{ _('— 影响 resume_writer 改写风格') }}</li>
+      <li><strong>{{ _('地区工资底线') }}</strong>{{ _('（仅 jobs）— 按地区设置 yearly 阈值，低于自动降 Tier') }}</li>
+    </ul>
+    <h4>{{ _('为什么需要它') }}</h4>
+    <p>{{ _('thumbs 不应该是礼仪动作。你反馈过的偏好系统真的会读——这页是让你') }}<strong>{{ _('看见这件事') }}</strong>。</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('顶部红色 banner 报"stated vs revealed 分歧"时——必须来处理') }}</li>
+      <li>{{ _('觉得推送跑偏 → 看下当前生效偏好是不是合你预期') }}</li>
+      <li>{{ _('每周一次扫一眼，过期偏好考虑续期或放手') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# ── Conflict alerts at top ── #}
+{% if conflicts %}
+  {% include "feedback/_conflicts_banner.html" %}
+{% endif %}
+
+{# ── Tab nav ── #}
+<div class="card" style="display: flex; gap: 0; padding: 0; overflow: hidden">
+  {% set jobs_count = jobs_brief.active_lines() | length %}
+  {% set resume_count = resume_brief.active_lines() | length %}
+  <a hx-get="{{ url_for('feedback.dashboard', tab='jobs', partial='tab') }}"
+     hx-target="#feedback-tab-content" hx-swap="outerHTML"
+     hx-push-url="{{ url_for('feedback.dashboard', tab='jobs') }}"
+     href="{{ url_for('feedback.dashboard', tab='jobs') }}"
+     style="flex: 1; padding: 12px 16px; text-align: center;
+            background: {% if tab == 'jobs' %}var(--accent); color: white{% else %}white; color: var(--muted){% endif %};
+            text-decoration: none; border-right: 1px solid var(--line)">
+    找工作偏好 ({{ jobs_count }}/{{ HARD_CAP }})
+  </a>
+  <a hx-get="{{ url_for('feedback.dashboard', tab='resume', partial='tab') }}"
+     hx-target="#feedback-tab-content" hx-swap="outerHTML"
+     hx-push-url="{{ url_for('feedback.dashboard', tab='resume') }}"
+     href="{{ url_for('feedback.dashboard', tab='resume') }}"
+     style="flex: 1; padding: 12px 16px; text-align: center;
+            background: {% if tab == 'resume' %}var(--accent); color: white{% else %}white; color: var(--muted){% endif %};
+            text-decoration: none">
+    简历偏好 ({{ resume_count }}/{{ HARD_CAP }})
+  </a>
+</div>
+
+{% if tab == 'jobs' %}
+  {% include "feedback/_jobs_tab.html" %}
+{% else %}
+  {% include "feedback/_resume_tab.html" %}
+{% endif %}
+
+{% endblock %}

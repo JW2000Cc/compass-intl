@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Compass · 主页{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>🧭 Compass</h1>
+    <p class="lede">A compass shows direction, not destination.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('jobs.list_view') }}" class="pill">{{ _('📋 看岗位') }}</a>
+    <a href="{{ url_for('reflection.dashboard') }}" class="pill">{{ _('📊 漂移仪表盘') }}</a>
+  </div>
+</div>
+
+{# C3: 摘要卡 ─ 高频信息一屏看完。深入信息走二级页（漂移/漏斗/jobs/...） #}
+<div class="dashboard-grid">
+
+  {# ─────────── 抓取状态 ─────────── #}
+  <div class="dash-card">
+    <div class="dash-card-head">
+      <h3>{{ _('📥 抓取') }}</h3>
+      {% if scrape_diag and scrape_diag.when %}
+        <span class="muted dash-card-time">🕒 {{ scrape_diag.when | local_dt('%m-%d %H:%M') }}</span>
+      {% endif %}
+    </div>
+    {% if scrape_diag and scrape_diag.when %}
+      <p class="dash-card-headline">{{ scrape_diag.headline }}</p>
+      <div class="dash-stat-row">
+        <div><span class="dash-stat-num">{{ scrape_diag.raw }}</span><span class="dash-stat-lbl">jobspy</span></div>
+        <div class="dash-stat-arrow">→</div>
+        <div><span class="dash-stat-num">{{ scrape_diag.gate_blocked }}</span><span class="dash-stat-lbl">{{ _('滤掉') }}</span></div>
+        <div class="dash-stat-arrow">→</div>
+        <div><span class="dash-stat-num dash-stat-good">{{ scrape_diag.new }}</span><span class="dash-stat-lbl">{{ _('入库') }}</span></div>
+      </div>
+      {% if scrape_diag.fix_hint %}
+        <p class="dash-card-hint">⚠ {{ scrape_diag.fix_hint }}</p>
+      {% endif %}
+    {% else %}
+      <p class="muted">{{ _('还没跑过抓取。') }}</p>
+    {% endif %}
+    <div class="dash-card-actions">
+      <form method="post" action="{{ url_for('jobs.scrape_direct') }}" data-slow-action="true" data-progress-source="scrape" style="margin: 0">
+        <button type="submit" class="primary"
+                data-loading-text="⏳ 抓取中... (30-60 秒)">{{ _('⚡ 一键抓取') }}</button>
+      </form>
+      <a href="{{ url_for('jobs.search_config_overview') }}" class="btn subtle">{{ _('🧭 调整意图') }}</a>
+    </div>
+  </div>
+
+  {# ─────────── 漏斗 ─────────── #}
+  <div class="dash-card">
+    <div class="dash-card-head">
+      <h3>{{ _('🎯 漏斗') }}</h3>
+      <a href="{{ url_for('funnel.dashboard') }}" class="muted dash-card-time">{{ _('详细 →') }}</a>
+    </div>
+    <div class="dash-funnel-row">
+      <div><span class="dash-stat-num">{{ funnel.scraped }}</span><span class="dash-stat-lbl">{{ _('抓回') }}</span></div>
+      <div><span class="dash-stat-num">{{ funnel.pushable }}</span><span class="dash-stat-lbl">{{ _('可推') }}</span></div>
+      <div><span class="dash-stat-num">{{ funnel.applied }}</span><span class="dash-stat-lbl">{{ _('已投') }}</span></div>
+      <div><span class="dash-stat-num">{{ funnel.interview }}</span><span class="dash-stat-lbl">{{ _('面试') }}</span></div>
+      <div><span class="dash-stat-num dash-stat-good">{{ funnel.offer }}</span><span class="dash-stat-lbl">offer</span></div>
+    </div>
+    <p class="muted" style="font-size: 12px; margin: 10px 0 0">
+      Tier 分布：
+      {% for t in [1,2,3,4,5] %}
+        T{{ t }} {{ funnel.by_tier.get(t, 0) }}{% if not loop.last %} · {% endif %}
+      {% endfor %}
+    </p>
+  </div>
+
+  {# ─────────── 待办 ─────────── #}
+  <div class="dash-card">
+    <div class="dash-card-head">
+      <h3>{{ _('📌 待办') }}</h3>
+    </div>
+    <ul class="dash-todo-list">
+      {% if pending_review %}
+        <li><a href="{{ url_for('jobs.list_view') }}?status=new">{{ pending_review }} 个新岗位待 review →</a></li>
+      {% endif %}
+      {% if pending_apply %}
+        <li><a href="{{ url_for('jobs.list_view') }}?status=reviewed">{{ pending_apply }} 个已 review 待投 →</a></li>
+      {% endif %}
+      {% if pending_interview %}
+        <li><a href="{{ url_for('jobs.list_view') }}?status=interview">{{ pending_interview }} 个面试中 →</a></li>
+      {% endif %}
+      {% if active_alerts and active_alerts | length > 0 %}
+        <li>
+          <a href="{{ url_for('reflection.dashboard') }}">
+            ⚠ {{ active_alerts | length }} 条漂移告警 →
+          </a>
+        </li>
+      {% endif %}
+      {% if llm_silent_failures_7d %}
+        <li>
+          <a href="{{ url_for('jobs.llm_overview') }}" style="color: var(--warn, #c79100)">
+            ⚠ 近 7 天 {{ llm_silent_failures_7d }} 次 LLM 静默失败 → 检查 API key
+          </a>
+        </li>
+      {% endif %}
+      {% if not pending_review and not pending_apply and not pending_interview and not (active_alerts and active_alerts | length > 0) and not llm_silent_failures_7d %}
+        <li class="muted">{{ _('暂无待办。') }}</li>
+      {% endif %}
+    </ul>
+  </div>
+
+  {# ─────────── 反思系统 ─────────── #}
+  <div class="dash-card">
+    <div class="dash-card-head">
+      <h3>{{ _('🪞 反思') }}</h3>
+      <a href="{{ url_for('reflection.dashboard') }}" class="muted dash-card-time">{{ _('详细 →') }}</a>
+    </div>
+    <ul class="dash-link-list">
+      <li><a href="{{ url_for('reflection.dashboard') }}">{{ _('📊 漂移仪表盘') }}</a></li>
+      <li><a href="{{ url_for('reflection.assumptions') }}">{{ _('🪞 系统假设') }}</a></li>
+      <li><a href="{{ url_for('identity.overview') }}">{{ _('👤 身份') }}</a></li>
+      <li><a href="{{ url_for('calibration.overview') }}">{{ _('⚖️ 边界') }}</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<style>
+  .dashboard-grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    margin-top: 18px;
+  }
+  .dash-card {
+    background: white; border: 1px solid var(--line);
+    border-radius: 6px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .dash-card-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px; margin-bottom: 4px;
+  }
+  .dash-card-head h3 { margin: 0; font-size: 14px; }
+  .dash-card-time { font-size: 11.5px; text-decoration: none; }
+  .dash-card-headline { margin: 6px 0; font-size: 13.5px; line-height: 1.4; }
+  .dash-stat-row, .dash-funnel-row {
+    display: flex; gap: 14px; align-items: center; margin: 8px 0 4px;
+    flex-wrap: wrap;
+  }
+  .dash-funnel-row > div {
+    text-align: center; min-width: 50px;
+    padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px;
+    background: #fafaf6;
+  }
+  .dash-stat-row > div { text-align: center; min-width: 60px; }
+  .dash-stat-num {
+    display: block; font-size: 22px; font-weight: 600; color: var(--fg);
+  }
+  .dash-stat-lbl {
+    display: block; font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em;
+  }
+  .dash-stat-good { color: var(--ok, #2a7); }
+  .dash-stat-arrow { color: var(--muted); font-size: 16px; }
+  .dash-card-hint {
+    font-size: 12px; color: var(--warn, #c79100);
+    margin: 8px 0; padding: 6px 10px;
+    background: #fffaeb; border-left: 3px solid var(--warn, #c79100);
+    border-radius: 2px;
+  }
+  .dash-card-actions {
+    display: flex; gap: 8px; margin-top: auto; padding-top: 10px;
+  }
+  .dash-todo-list, .dash-link-list {
+    list-style: none; padding: 0; margin: 4px 0 0;
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 13px;
+  }
+  .dash-todo-list a, .dash-link-list a {
+    color: var(--accent); text-decoration: none;
+    display: block; padding: 4px 6px; border-radius: 3px;
+  }
+  .dash-todo-list a:hover, .dash-link-list a:hover {
+    background: var(--side-hover, #f0efeb);
+  }
+</style>
+
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}漏斗 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('漏斗') }}</h1>
+    <p class="lede">最近 {{ days }} 天 · 从抓取到 offer 的整条转化链。</p>
+  </div>
+  <div class="page-actions">
+    <span style="font-size: 12px; color: var(--muted); margin-right: 4px">{{ _('时间窗口') }}</span>
+    {% for d in [7, 30, 90, 365] %}
+      <a href="?days={{ d }}" class="pill {% if days == d %}active{% endif %}">{{ d }}天</a>
+    {% endfor %}
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('7 阶段转化漏斗：') }}<code>scraped → classified → pushable → interacted → applied → interview → offer</code>{{ _('。每阶段的转化率显式可见，加上 by-Tier 分布。') }}</p>
+    <h4>{{ _('为什么需要它') }}</h4>
+    <p>{{ _('很多人投了几十个简历没回响——但不知道是哪一步坏了：JD 不准 / 简历过不了 ATS / 面试表现差 / 定位偏了。漏斗让你') }}<strong>{{ _('看见瓶颈') }}</strong>{{ _('——比如 applied → interview 转化只有 5%%，那是简历问题不是定位问题。') }}</p>
+    <p>{{ _('配合') }} <a href="{{ url_for('gmail.overview') }}">{{ _('Gmail 集成') }}</a>{{ _('，applied/interview/offer/rejected 状态可') }}<strong>{{ _('自动') }}</strong>{{ _('从邮件检测——不用手动改。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('每周一次扫一眼整体转化率') }}</li>
+      <li>{{ _('感觉"投了很多没回音"时——找瓶颈环节') }}</li>
+      <li>{{ _('看 by-Tier 分布——Tier 1/2/3 哪一档实际转化最高（验证 5-tier 是否合理）') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# ─────────── 顶部 KPI 行：7 个阶段计数 ─────────── #}
+{% set stage_meta = [
+  ('scraped',    counts.scraped,    '🕸️', '#6b6b6b'),
+  ('classified', counts.classified, '🏷️', '#2b5876'),
+  ('pushable',   counts.pushable,   '✅', '#2d6a2d'),
+  ('interacted', counts.interacted, '👆', '#2b5876'),
+  ('applied',    counts.applied,    '📤', '#8b6500'),
+  ('interview',  counts.interview,  '💬', '#6f4eaa'),
+  ('offer',      counts.offer,      '🏆', '#2d6a2d'),
+] %}
+<div class="kpi-row" style="grid-template-columns: repeat(7, minmax(0, 1fr))">
+  {% for stage, count, icon, color in stage_meta %}
+    <div class="kpi">
+      <div class="kpi-label"><span class="kpi-icon">{{ icon }}</span>{{ stage }}</div>
+      <div class="kpi-value" style="color: {{ color }}">{{ count }}</div>
+    </div>
+  {% endfor %}
+</div>
+
+{# ─────────── 漏斗 + 转化率 ─────────── #}
+<div style="display: grid; gap: 14px; grid-template-columns: 1.6fr 1fr; align-items: start">
+  <div class="card">
+    <h3>{{ _('漏斗') }}</h3>
+    <table style="width: 100%; border-collapse: collapse">
+      <tbody>
+        {% for stage, count, icon, color in stage_meta %}
+          <tr>
+            <td style="padding: 7px 8px; border-bottom: 1px solid var(--line); font-weight: 500; width: 28%; font-size: 13.5px">
+              <span style="margin-right:6px">{{ icon }}</span>{{ stage }}
+            </td>
+            <td style="padding: 7px 8px; border-bottom: 1px solid var(--line)">
+              <div style="display:flex; align-items:center; gap:10px">
+                <div style="flex:1; height: 16px; background: var(--line); border-radius: 3px; overflow: hidden">
+                  <div style="height: 100%; background: {{ color }}; width: {{ ((count / counts.scraped * 100) if counts.scraped else 0) | round(1) }}%; border-radius: 3px; transition: width 200ms"></div>
+                </div>
+                <strong style="min-width: 36px; text-align: right">{{ count }}</strong>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td style="padding: 7px 8px; color: var(--danger); font-weight: 500; font-size: 13.5px">
+            <span style="margin-right:6px">❌</span>rejected
+          </td>
+          <td style="padding: 7px 8px; color: var(--danger)">
+            <strong>{{ counts.rejected }}</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <div class="card">
+      <h3>{{ _('按 Tier 分布') }}</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13.5px">
+        {% for t in [1, 2, 3, 4, 5] %}
+          <tr>
+            <td style="padding: 5px 0">
+              <span class="badge badge-tier{{ t }}">Tier {{ t }}</span>
+            </td>
+            <td style="text-align:right; padding: 5px 0"><strong>{{ counts.by_tier.get(t, 0) }}</strong></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>{{ _('转化率') }}</h3>
+      <ul style="margin: 0; padding-left: 18px; font-size: 13.5px">
+        {% for stage, rate in conversion.items() %}
+          <li style="padding: 2px 0">
+            {{ stage }}:
+            {% if rate is none %}
+              <span class="muted">—</span>
+            {% else %}
+              <strong>{{ rate }}%</strong>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{# ─────────── 多维切片 ─────────── #}
+{% macro slice_table(title, rows, since_days, icon) %}
+  <div class="card">
+    <h3>{{ icon }} {{ title }}</h3>
+    {% if rows %}
+      <p class="muted" style="font-size: 12px; margin: 4px 0 8px">
+        最近 {{ since_days }} 天 · 按 scraped 数量排序 · top {{ rows | length }}
+      </p>
+      <div style="overflow-x: auto">
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px">
+        <thead>
+          <tr style="background: #f8f8f3; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em">
+            <th style="text-align: left; padding: 6px 8px">key</th>
+            <th style="text-align: right; padding: 6px 8px">scraped</th>
+            <th style="text-align: right; padding: 6px 8px">classified</th>
+            <th style="text-align: right; padding: 6px 8px">interacted</th>
+            <th style="text-align: right; padding: 6px 8px">applied</th>
+            <th style="text-align: right; padding: 6px 8px">interview</th>
+            <th style="text-align: right; padding: 6px 8px">offer</th>
+            <th style="text-align: right; padding: 6px 8px" title="scraped → applied">{{ _('→应聘率') }}</th>
+            <th style="text-align: right; padding: 6px 8px" title="applied → interview">{{ _('→面试率') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr style="border-bottom: 1px solid var(--line)">
+              <td style="padding: 5px 8px"><code style="font-size:12px">{{ r.key }}</code></td>
+              <td style="text-align: right; padding: 5px 8px">{{ r.counts.scraped }}</td>
+              <td style="text-align: right; padding: 5px 8px">{{ r.counts.classified }}</td>
+              <td style="text-align: right; padding: 5px 8px">{{ r.counts.interacted }}</td>
+              <td style="text-align: right; padding: 5px 8px">{{ r.counts.applied }}</td>
+              <td style="text-align: right; padding: 5px 8px">{{ r.counts.interview }}</td>
+              <td style="text-align: right; padding: 5px 8px">
+                {% if r.counts.offer > 0 %}<strong style="color: var(--ok)">{{ r.counts.offer }}</strong>{% else %}—{% endif %}
+              </td>
+              <td style="text-align: right; padding: 5px 8px; color: var(--muted)">
+                {% set sc = r.counts.scraped %}
+                {% if sc > 0 and r.counts.applied > 0 %}{{ ((r.counts.applied / sc * 100) | round(0)) }}%{% else %}—{% endif %}
+              </td>
+              <td style="text-align: right; padding: 5px 8px; color: var(--muted)">
+                {% if r.counts.applied > 0 and r.counts.interview > 0 %}{{ ((r.counts.interview / r.counts.applied * 100) | round(0)) }}%{% else %}—{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    {% else %}
+      <p class="muted" style="font-size: 13px">{{ _('暂无数据。') }}</p>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{{ slice_table("按来源切片 (LinkedIn vs Indeed vs ...)", by_source, days, "📡") }}
+{{ slice_table("按地区切片 (米兰 vs 柏林 vs ...)", by_location, days, "📍") }}
+{{ slice_table("按角色切片 (data analyst vs PM vs ...)", by_role, days, "👤") }}
+
+<div class="card" style="border-color: var(--accent); background: linear-gradient(180deg, #f8f8f3 0%, white 60%);">
+  <h3>{{ _('🪞 怎么看这些切片') }}</h3>
+  <ul style="margin: 4px 0; padding-left: 18px; font-size: 13.5px">
+    <li><strong>{{ _('scraped 数量大但 applied 少') }}</strong> {{ _('— 说明那个来源/地区/角色你不感兴趣，但抓了——考虑加黑名单或调整 keywords') }}</li>
+    <li><strong>{{ _('applied 多但 interview 率低') }}</strong> {{ _('— 简历对那类岗位可能不准——简历改写时调整针对性') }}</li>
+    <li><strong>{{ _('interview 率高的来源/角色') }}</strong> {{ _('— 把它当 signal——下次抓取多投资源/精力到这些方向') }}</li>
+    <li><strong>{{ _('某个 key 出现 offer') }}</strong> {{ _('— 那是你真正成功的渠道——记下来，下个月继续走这条路') }}</li>
+  </ul>
+</div>
+
+{% endblock %}

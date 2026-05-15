@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}改写历史 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('简历改写历史') }}</h1>
+    <p class="lede">
+      所有针对各 job 跑过的改写 attempts，按 job 分组。新改写从 job 详情页 prepare 阶段发起。
+    </p>
+  </div>
+  <div class="page-actions">
+    <span class="muted" style="font-size: 12.5px">
+      {{ attempt_groups | length }} 个 job · 共 {{ total_attempts }} 次改写
+    </span>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么这样组织') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这页是什么') }}</h4>
+    <p>{{ _('每次给某个 job 跑改写流水线都会留一条 attempt。这页 = 所有 attempts，') }}<strong>{{ _('按 job 分组') }}</strong>{{ _('，每组里 v1/v2/v3 倒序（最新在最上）。') }}</p>
+    <h4>{{ _('为什么按 job 分组 + 折叠') }}</h4>
+    <p>{{ _('同一 job 的多次改写是') }}<strong>{{ _('同一目标') }}</strong>{{ _('的迭代，应该并排比较。组数多时默认折叠，避免页面过长。') }}</p>
+    <h4>{{ _('为什么不在这里发起新改写') }}</h4>
+    <p>{{ _('改写是针对某 job 的动作 — 没 job 就没目标。正确路径：') }}</p>
+    <ol>
+      <li>{{ _('到') }} <a href="{{ url_for('jobs.list_view') }}">{{ _('岗位') }}</a> {{ _('找想投的 job') }}</li>
+      <li>{{ _('详情页第 2 步「跑改写流水线」') }}</li>
+      <li>{{ _('结果原地展示 — 同页 Claude-in-Word 风审核') }}</li>
+    </ol>
+  </div>
+</details>
+
+{% if not identity %}
+  <div class="card" style="text-align: center; padding: 40px 24px">
+    <p class="muted" style="margin-bottom: 12px">{{ _('还没有上传简历。') }}</p>
+    <a href="{{ url_for('identity.upload') }}" class="btn primary">{{ _('→ 上传简历 facts') }}</a>
+  </div>
+{% elif not attempt_groups %}
+  <div class="card" style="text-align: center; padding: 40px 24px">
+    <p class="muted" style="margin-bottom: 8px">{{ _('还没有改写记录。') }}</p>
+    <p class="muted" style="font-size: 13px; margin-bottom: 16px">
+      到 <a href="{{ url_for('jobs.list_view') }}">{{ _('岗位') }}</a> {{ _('选一个发起。') }}
+    </p>
+    <a href="{{ url_for('jobs.list_view') }}" class="btn primary">{{ _('→ 去看岗位') }}</a>
+  </div>
+{% else %}
+  {# Search + bulk controls — Alpine state shared with list below #}
+  <div class="card" style="padding: 12px 16px; margin-bottom: 14px"
+       x-data="rewriteHistory()">
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+      <input type="text"
+             x-model="query"
+             @input="$dispatch('rewrite-search', {query: query})"
+             placeholder="{{ _('搜索 job 标题 / 公司 / 状态…') }}"
+             style="flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--line);
+                    border-radius: 4px; font: inherit; font-size: 13.5px">
+      <span class="muted" style="font-size: 12px">
+        显示 <span x-text="visibleCount" style="font-weight:600">{{ attempt_groups | length }}</span> / {{ attempt_groups | length }} 个 job
+      </span>
+      <button class="subtle" type="button" style="font-size: 12px; padding: 4px 10px"
+              @click="expandAll()">{{ _('↧ 全展开') }}</button>
+      <button class="subtle" type="button" style="font-size: 12px; padding: 4px 10px"
+              @click="collapseAll()">{{ _('↥ 全折叠') }}</button>
+    </div>
+  </div>
+
+  <div id="rewrite-history-list">
+    {% for g in attempt_groups %}
+      {% set j = g.job %}
+      {% set search_blob = ((j.title or '') ~ ' ' ~ (j.company or '') ~ ' ' ~ (j.location or '') ~ ' ' ~ (j.status or '')) | lower %}
+      <details id="job-{{ j.id if j else 'unknown' }}"
+               class="rh-group"
+               data-search="{{ search_blob }}"
+               {% if g.attempts | length <= 2 %}open{% endif %}
+               style="margin-bottom: 10px; border: 1px solid var(--line); border-radius: 7px; background: white; overflow: hidden">
+        <summary class="rh-summary">
+          {% if j %}
+            <span class="rh-title">{{ j.title or "(no title)" }}</span>
+            <span class="muted" style="font-size: 12.5px">@ {{ j.company or "—" }}</span>
+            <span class="badge badge-status-{{ j.status }}" style="font-size: 11px; padding: 1px 7px">{{ j.status }}</span>
+          {% else %}
+            <span class="muted">(unknown job)</span>
+          {% endif %}
+          {% set best = g.best_score | default(0) %}
+          {% if best %}
+            {% if best >= 8 %}
+              <span class="badge badge-status-offer" style="font-size: 11px">最佳 {{ best }}/10</span>
+            {% elif best >= 6 %}
+              <span class="badge badge-tier2" style="font-size: 11px">最佳 {{ best }}/10</span>
+            {% else %}
+              <span class="badge" style="background: #fae5e5; color: var(--danger); font-size: 11px">最佳 {{ best }}/10</span>
+            {% endif %}
+          {% endif %}
+          <span style="flex: 1"></span>
+          <span class="muted" style="font-size: 11.5px">
+            {{ g.attempts | length }} 次 · 最新 {{ g.latest_at | local_dt('%m-%d %H:%M') }}
+          </span>
+          <span class="rh-toggle muted">▾</span>
+        </summary>
+
+        <div style="padding: 10px 16px 14px">
+          {% for a in g.attempts %}
+            <a href="{{ url_for('resume.review', attempt_id=a.id) }}"
+               class="rh-attempt-row">
+              <span class="muted" style="font-size: 11.5px; min-width: 36px">v{{ loop.revindex }}</span>
+              <span style="flex: 1; font-size: 13px">
+                {{ a.created_at | local_dt('%m-%d %H:%M') }}
+                <span class="muted">· 关键词 {{ a.keywords_extracted | length if a.keywords_extracted else 0 }}</span>
+              </span>
+              {% if a.judge_score %}
+                {% if a.judge_score >= 8 %}
+                  <span class="badge badge-status-offer" style="font-size: 11px">{{ a.judge_score }}/10</span>
+                {% elif a.judge_score >= 6 %}
+                  <span class="badge badge-tier2" style="font-size: 11px">{{ a.judge_score }}/10</span>
+                {% else %}
+                  <span class="badge" style="background: #fae5e5; color: var(--danger); font-size: 11px">{{ a.judge_score }}/10</span>
+                {% endif %}
+              {% else %}
+                <span class="badge" style="font-size: 11px">{{ _('未评') }}</span>
+              {% endif %}
+              <span style="color: var(--accent); font-weight: 500; font-size: 13px">{{ _('审核 →') }}</span>
+            </a>
+          {% endfor %}
+
+          {% if j %}
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line)">
+              <a href="{{ url_for('jobs.detail', job_id=j.id) }}#step-resume_rewrite"
+                 class="muted" style="font-size: 11.5px; text-decoration: none">
+                → 在 job 详情页里再跑一次（生成新版本）
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </details>
+    {% endfor %}
+
+    <p id="rh-empty" class="muted" style="text-align: center; padding: 30px; display: none">
+      没有匹配的 job。
+    </p>
+  </div>
+{% endif %}
+
+<style>
+  .rh-summary {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 12px 16px; cursor: pointer;
+    list-style: none; user-select: none;
+    background: linear-gradient(180deg, #fafaf6 0%, white 80%);
+    border-bottom: 1px solid transparent;
+    transition: background 100ms;
+  }
+  .rh-summary::-webkit-details-marker { display: none; }
+  details[open] > .rh-summary { border-bottom-color: var(--line); }
+  .rh-summary:hover { background: #f4f4ee; }
+  .rh-title { font-weight: 600; font-size: 14.5px; color: var(--fg); }
+  .rh-toggle { font-size: 12px; transition: transform 150ms; }
+  details[open] > .rh-summary .rh-toggle { transform: rotate(180deg); }
+
+  .rh-attempt-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; margin: 4px 0;
+    background: #fafaf6; border: 1px solid var(--line); border-radius: 4px;
+    text-decoration: none; color: inherit;
+    transition: border-color 100ms;
+  }
+  .rh-attempt-row:hover { border-color: var(--accent); background: white; }
+</style>
+
+<script>
+function rewriteHistory() {
+  return {
+    query: "",
+    visibleCount: {{ attempt_groups | length if attempt_groups else 0 }},
+    init() {
+      this.$watch('query', () => this.applyFilter());
+    },
+    applyFilter() {
+      const q = (this.query || "").trim().toLowerCase();
+      const groups = document.querySelectorAll('#rewrite-history-list .rh-group');
+      let visible = 0;
+      groups.forEach(g => {
+        const blob = g.dataset.search || "";
+        const match = !q || blob.indexOf(q) >= 0;
+        g.style.display = match ? "" : "none";
+        if (match) visible += 1;
+        // Auto-expand on search match
+        if (q && match) g.setAttribute('open', '');
+      });
+      this.visibleCount = visible;
+      const empty = document.getElementById('rh-empty');
+      if (empty) empty.style.display = visible === 0 ? "" : "none";
+    },
+    expandAll() {
+      document.querySelectorAll('#rewrite-history-list .rh-group').forEach(g => g.setAttribute('open', ''));
+    },
+    collapseAll() {
+      document.querySelectorAll('#rewrite-history-list .rh-group').forEach(g => g.removeAttribute('open'));
+    },
+  };
+}
+</script>
+
+{% endblock %}

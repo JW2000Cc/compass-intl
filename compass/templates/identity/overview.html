@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}身份 · Compass{% endblock %}
+{% block content %}
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px">
+  <h1 style="margin: 0">{{ _('身份') }}</h1>
+  <div style="display: flex; gap: 6px">
+    <a href="{{ url_for('identity.sediments_overview') }}" class="btn subtle" style="font-size: 12.5px">
+      📌 沉淀历史
+    </a>
+  </div>
+</div>
+<p class="lede">{{ _('事实层 — 你简历的"main 分支"。改写流水线产生的 variants 只在沙盒里生效；点「📌 沉淀」才会更新这里。每条 fact 都有完整修订历史，可单独回滚。') }}</p>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('你的 resume facts —— 原子事实（比如"Built X in coursework"）。每个 fact 有') }} <code>kind</code>{{ _('（experience / education / skill / project / language / certification）+ 可选') }} <code>sensitive_category</code>{{ _('（学历 / 语言级别 / 工作日期等会触发 L5 硬拦截的）。') }}</p>
+    <h4>{{ _('为什么需要它（Git 模型搬到简历）') }}</h4>
+    <p>{{ _('事实是 main 分支。每份针对某 job 改写的简历是 PR（RewriteAttempt + Variants）。直到你点「📌 沉淀」之前，main 不会动；沉淀 = merge to main，会写进 fact 的修订历史，永远可回滚。这样防止"在简历 A 写 5 years，简历 B 写 6 years"的渐进漂移——不同 variants 共享同一 source of truth。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li><strong>{{ _('第一次使用') }}</strong>{{ _('：上传简历 → LLM 抽 facts') }}</li>
+      <li>{{ _('新经历（升职 / 新项目）→ 上传新简历建新 IdentityVersion') }}</li>
+      <li>{{ _('觉得某个 fact 不再代表你 → 点 🗑 停用（不删，archive）') }}</li>
+      <li>{{ _('对某个 fact 的 explanation 不够清晰 → 🎤 跑访谈深挖') }}</li>
+    </ul>
+  </div>
+</details>
+
+{% if not identity %}
+  <div class="card">
+    <p>{{ _('还没有上传简历。') }}</p>
+    <a href="{{ url_for('identity.upload') }}" class="btn">{{ _('📤 上传简历') }}</a>
+  </div>
+{% else %}
+<div x-data="factEditor()">
+  <div class="card">
+    <h3>{{ _('当前身份版本') }}</h3>
+    <p>
+      <strong>{{ identity.label }}</strong> · 语言 {{ identity.language }} ·
+      <span class="muted">{{ identity.created_at | local_dt("%Y-%m-%d") }}</span>
+    </p>
+    <a href="{{ url_for('identity.upload') }}" class="btn subtle">{{ _('↻ 上传新版本') }}</a>
+  </div>
+
+  {% for kind, facts in groups.items() %}
+    <h2>{{ kind | replace("_", " ") | title }} ({{ facts | length }})</h2>
+    {% for f in facts %}
+      {% include "identity/_fact_card.html" %}
+    {% endfor %}
+  {% endfor %}
+
+  {# Edit modal — Alpine x-show, HTMX submit #}
+  <div class="alias-modal" x-show="modal.open" x-cloak style="display:none" x-transition.opacity>
+    <div class="alias-modal-backdrop" @click="closeEditModal()"></div>
+    <div class="alias-modal-content" style="max-width: 620px">
+      <h3>{{ _('编辑 fact') }}</h3>
+      <p class="muted" style="font-size: 12.5px; margin: 4px 0 14px">
+        ⚠ Facts 设计上不可变。这里支持修 LLM 抽取错误（原文会保留）+ 改元数据。
+        如果是事实变了（升职 / 新经历），上传新简历建新版本。
+      </p>
+      <form :hx-post="modal.fact ? '/identity/fact/' + modal.fact.id + '/edit' : ''"
+            :hx-target="modal.fact ? '#fact-card-' + modal.fact.id : ''"
+            hx-swap="outerHTML"
+            @htmx:after-request="closeEditModal()">
+        <label style="display: block; margin-bottom: 4px; font-size: 13px; color: var(--muted)">{{ _('文本') }}</label>
+        <textarea name="text" x-model="modal.text" rows="3"
+                  style="width: 100%; padding: 8px; font: inherit; border: 1px solid var(--line); border-radius: 3px;"></textarea>
+
+        <label style="display: block; margin: 12px 0 4px; font-size: 13px; color: var(--muted)">{{ _('敏感类别（触发 L5 硬拦截 — 无关变换的禁止）') }}</label>
+        <select name="sensitive_category" x-model="modal.sensitive_category"
+                style="width: 100%; padding: 6px; font: inherit; border: 1px solid var(--line); border-radius: 3px;">
+          <option value="">{{ _('（不敏感）') }}</option>
+          <option value="education_credential">{{ _('education_credential — 学历/学位') }}</option>
+          <option value="language_level">{{ _('language_level — 语言等级') }}</option>
+          <option value="employment_dates">{{ _('employment_dates — 任职日期') }}</option>
+          <option value="health_status">{{ _('health_status — 健康/出勤') }}</option>
+          <option value="legal_status">{{ _('legal_status — 签证/工作许可') }}</option>
+        </select>
+
+        <label style="display: flex; align-items: center; gap: 8px; margin: 14px 0 4px; font-size: 13px">
+          <input type="checkbox" name="user_verified" x-model="modal.user_verified" value="1">
+          ✓ 已通过访谈验证（解锁 L4 inferred quantification）
+        </label>
+
+        <label style="display: block; margin: 14px 0 4px; font-size: 13px; color: var(--muted)">{{ _('改动原因（可选 — 留 audit log）') }}</label>
+        <input type="text" name="reason" x-model="modal.reason"
+               placeholder="{{ _('例：LLM 把 EE 写成了 ME') }}"
+               style="width: 100%; padding: 6px; font: inherit; border: 1px solid var(--line); border-radius: 3px;">
+
+        <div style="display: flex; gap: 8px; margin-top: 18px">
+          <button type="button" class="cancel" @click="closeEditModal()">{{ _('取消') }}</button>
+          <div style="flex: 1"></div>
+          <button type="submit" class="add-selected">{{ _('✓ 保存') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function factEditor() {
+    return {
+      modal: {
+        open: false,
+        fact: null,
+        text: '',
+        sensitive_category: '',
+        user_verified: false,
+        reason: '',
+      },
+      openEditModal(fact) {
+        this.modal = {
+          open: true,
+          fact,
+          text: fact.text || '',
+          sensitive_category: fact.sensitive_category || '',
+          user_verified: !!fact.user_verified,
+          reason: '',
+        };
+      },
+      closeEditModal() {
+        this.modal.open = false;
+      },
+    };
+  }
+</script>
+<style>[x-cloak] { display: none !important; }</style>
+{% endif %}
+
+{% endblock %}

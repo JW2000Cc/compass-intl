@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Gmail 同步结果 · Compass{% endblock %}
+{% block content %}
+
+<p><a href="{{ url_for('gmail.overview') }}" class="muted">{{ _('← 返回 Gmail') }}</a></p>
+
+<h1>{{ _('Gmail 同步结果') }}</h1>
+
+<div class="card">
+  <h3>{{ _('统计') }}</h3>
+  <ul>
+    <li>{{ _('扫描邮件:') }} <strong>{{ stats.fetched }}</strong></li>
+    <li>{{ _('识别为求职邮件:') }} <strong>{{ stats.classified }}</strong></li>
+    <li>{{ _('匹配到 Compass job:') }} <strong>{{ stats.matched }}</strong></li>
+    <li>{{ _('自动更新状态:') }} <strong>{{ stats.status_updated }}</strong></li>
+  </ul>
+  <p>{{ _('分类分布:') }}</p>
+  <ul>
+    {% for kind, n in stats.by_kind.items() %}
+      <li>{{ kind }}: {{ n }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="card">
+  <h3>{{ _('详细记录') }}</h3>
+  <table style="width: 100%; border-collapse: collapse; font-size: 13px">
+    <thead>
+      <tr style="background: var(--line)">
+        <th style="text-align: left; padding: 4px">{{ _('邮件主题') }}</th>
+        <th style="text-align: left; padding: 4px">{{ _('分类') }}</th>
+        <th style="text-align: left; padding: 4px">{{ _('公司') }}</th>
+        <th style="text-align: left; padding: 4px">{{ _('匹配?') }}</th>
+        <th style="text-align: left; padding: 4px">{{ _('状态变了?') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in stats.details %}
+        <tr style="border-bottom: 1px solid var(--line)">
+          <td style="padding: 4px">{{ d.subject }}</td>
+          <td style="padding: 4px">{{ d.kind }}</td>
+          <td style="padding: 4px">{{ d.company }}</td>
+          <td style="padding: 4px">{% if d.matched_job_id %}✓{% else %}—{% endif %}</td>
+          <td style="padding: 4px">{% if d.status_changed %}✓{% else %}—{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p class="muted" style="font-size: 12px">
+  状态变化已写入 ReflectionEvent 流——calibration learner 现在能看到真投递反馈。
+  这正是 funnel 闭环的关键缺失环节。
+</p>
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}被拒原因追踪 · Compass{% endblock %}
+{% block content %}
+{% set CAT_LABELS = {
+  'skills_gap': '技能差距',
+  'experience_gap': '经验差距',
+  'location_visa': '地点 / 签证',
+  'language': '语言要求',
+  'culture_seniority': 'culture / seniority',
+  'filled_internally': '内部填了',
+  'no_reason_given': '没说原因',
+  'other': '其他',
+} %}
+<div style="max-width: 920px; margin: 0 auto; padding: 12px 0">
+  <h1 style="font-size: 22px; margin: 0 0 4px">{{ _('📉 被拒原因追踪') }}</h1>
+  <p class="muted" style="font-size: 13px; margin: 0 0 24px">
+    把拒信粘贴进来，LLM 提取结构化原因 → 反喂 calibration（5-01 "funnel 金矿"）。
+    分类信号 ≥ 60% confidence 时自动 nudge calibration_learner，让下次 tier 分类更准。
+  </p>
+
+  {# Aggregated stats #}
+  <div class="card" style="padding: 14px 18px; margin-bottom: 16px">
+    <h3 style="font-size: 14px; margin: 0 0 10px">最近 {{ agg.lookback_days }} 天 · 共 {{ agg.total }} 封拒信</h3>
+    {% if agg.total > 0 %}
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px;
+                  font-size: 12px">
+        {% for cat, cnt in agg.by_category.items() %}
+          {% if cnt > 0 %}
+            <div style="padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px;
+                        background: white">
+              <div class="muted" style="font-size: 10.5px">{{ CAT_LABELS.get(cat, cat) }}</div>
+              <div style="font-weight: 600; font-size: 14px">{{ cnt }}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if agg.top_skills_named %}
+        <div style="margin-top: 14px">
+          <div class="muted" style="font-size: 11px; margin-bottom: 6px">最常被点名的缺失技能 (top {{ agg.top_skills_named | length }})</div>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap">
+            {% for skill, cnt in agg.top_skills_named %}
+              <span style="font-size: 11px; padding: 3px 8px; border-radius: 10px;
+                           background: #fff8c5; border: 1px solid #fbcc15">
+                {{ skill }} · ×{{ cnt }}
+              </span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% else %}
+      <p class="muted" style="font-size: 12.5px; margin: 0">{{ _('还没有分析过的拒信。粘一封进来开始。') }}</p>
+    {% endif %}
+  </div>
+
+  {# Paste form #}
+  <form method="post" action="{{ url_for('rejection.analyze') }}"
+        style="padding: 16px 18px; border: 1px solid var(--line); border-radius: 6px; background: white">
+    <h3 style="font-size: 14px; margin: 0 0 10px">{{ _('📋 粘贴拒信 → 分析') }}</h3>
+
+    <div class="field" style="margin-bottom: 10px">
+      <label>{{ _('关联 job (可选)') }}</label>
+      {% if rejected_jobs %}
+        <select name="job_id" style="width: 100%; padding: 5px 7px; font: inherit;
+                                       border: 1px solid var(--line); border-radius: 3px">
+          <option value="">{{ _('（不关联具体 job）') }}</option>
+          {% for jid, title, company in rejected_jobs %}
+            <option value="{{ jid }}">{{ title }} @ {{ company }}</option>
+          {% endfor %}
+        </select>
+      {% else %}
+        <input type="text" name="job_id" placeholder="{{ _('job id (可选)') }}"
+               style="width: 100%; padding: 5px 7px; font: inherit; border: 1px solid var(--line); border-radius: 3px">
+      {% endif %}
+    </div>
+
+    <div class="field" style="margin-bottom: 10px">
+      <label>{{ _('拒信文本 *') }}</label>
+      <textarea name="rejection_text" rows="10" required
+                placeholder="Dear Candidate, Thank you for applying. We have decided to move forward with another candidate who has more direct experience with..."
+                style="width: 100%; padding: 8px 10px; font: inherit; border: 1px solid var(--line);
+                       border-radius: 3px; font-family: ui-monospace, monospace; font-size: 12.5px"></textarea>
+    </div>
+
+    <button type="submit" class="primary">{{ _('🔍 分析') }}</button>
+  </form>
+
+  <details style="margin-top: 20px; font-size: 12px; color: var(--muted)">
+    <summary style="cursor: pointer">{{ _('为什么不自动从 Gmail 抓？') }}</summary>
+    <div style="margin-top: 8px; line-height: 1.6">
+      Gmail OAuth 集成是后续工作（5-01 P1 原计划）。MVP 走 paste 路径——你看到拒信
+      时 paste 一次，10 秒得分类 + 反喂 calibration。
+      Gmail 自动抓需要 OAuth 同意 + 关键词过滤 + 防误判，工作量更大。
+    </div>
+  </details>
+</div>
+{% endblock %}

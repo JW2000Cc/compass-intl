@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}人脉 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('人脉网络') }}</h1>
+    <p class="lede">{{ _('导入 LinkedIn 连接 — jobs 详情页显示「该公司有谁是你认识的」。内推回应率比冷投高 15-30 倍。') }}</p>
+  </div>
+</div>
+
+{# KPI 行 #}
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">👥</span>{{ _('活跃连接') }}</div>
+    <div class="kpi-value">{{ total }}</div>
+    <div class="kpi-sub">total connections</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">🏢</span>{{ _('覆盖公司') }}</div>
+    <div class="kpi-value">{{ top_companies | length if top_companies else 0 }}</div>
+    <div class="kpi-sub">{{ _('≥1 人脉的公司') }}</div>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('从你 LinkedIn 导出的 connections.csv 建本地索引。jobs 详情页查"该公司是否有你认识的人"瞬间出结果，**不爬 LinkedIn**——是合法的「你自己的数据」。') }}</p>
+    <h4>{{ _('为什么需要它') }}</h4>
+    <p>{{ _('冷投 ATS 简历 1-3%% 回应；走人脉内推 30-50%% 回应——15 倍差。你已经在 LinkedIn 上有的连接是最高 ROI 的资产，但现在没工具把它和正在投的 job 做 join。这页就是这个 join。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li><strong>{{ _('第一次') }}</strong>{{ _('：去 LinkedIn Settings → Data Privacy → "Get a copy of your data" → 下载 → 解压拿 Connections.csv → 上传') }}</li>
+      <li><strong>{{ _('每 6 个月') }}</strong>{{ _('：重新导出 + 上传，刷新过期信息') }}</li>
+      <li>{{ _('jobs detail 页看到「你认识的人在 X (3)」时——那条信息就是这里查出来的') }}</li>
+    </ul>
+  </div>
+</details>
+
+<div class="card">
+  <h3>{{ _('导入 LinkedIn 连接') }}</h3>
+  <p class="muted" style="font-size: 12.5px; margin: 4px 0 8px">
+    LinkedIn → Settings & Privacy → Data Privacy → <strong>Get a copy of your data</strong> →
+    勾选 "Connections" → Request archive。
+    24-48 小时后收到邮件 → 下载 zip → 解压拿 <code>Connections.csv</code> {{ _('→ 上传到这里。') }}
+  </p>
+  <form method="post" action="{{ url_for('connections.upload_csv') }}" enctype="multipart/form-data"
+        style="display: flex; gap: 8px; align-items: center; margin-top: 8px">
+    <input type="file" name="csv_file" accept=".csv" required style="flex: 1">
+    <button type="submit">{{ _('📥 导入') }}</button>
+  </form>
+  <p class="muted" style="font-size: 11.5px; margin-top: 6px">
+    重复导入会更新现有联系人（按 LinkedIn URL 去重）。停用过的不会被重新激活。
+  </p>
+</div>
+
+{% if top_companies %}
+  <div class="card">
+    <h3>{{ _('top 公司（≥1 人脉）') }}</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px">
+      {% for company, cnt in top_companies %}
+        <span class="badge" style="background: #eaf0f4; color: var(--accent); padding: 4px 10px; font-size: 12.5px">
+          {{ company }} <strong style="margin-left: 3px">×{{ cnt }}</strong>
+        </span>
+      {% endfor %}
+    </div>
+    <p class="muted" style="font-size: 12px; margin-top: 10px">
+      💡 Stage B 计划：让这些公司<strong>{{ _('自动驱动 scrape 优先级') }}</strong>{{ _('——查这些公司的招聘比关键词搜更高 ROI。') }}
+    </p>
+  </div>
+{% endif %}
+
+<div class="card">
+  <h3>{{ _('📝 PKM markdown 导出（可选）') }}</h3>
+  <p class="muted" style="font-size: 12.5px; margin: 4px 0 8px">
+    把 connections / companies / jobs 同步成本地 .md 文件——你可以用 Obsidian / VS Code / 任何 markdown 编辑器读、加注、git 版本化。
+    系统块（自动生成）和你的笔记块（手写）分开，**重新同步不会覆盖你的手写部分**。
+  </p>
+  {% if config['SETTINGS'].pkm_export_enabled %}
+    <form method="post" action="{{ url_for('connections.sync_markdown') }}" style="display: inline">
+      <button type="submit">{{ _('↻ 同步全部到 markdown') }}</button>
+    </form>
+    <span class="muted" style="font-size: 11.5px; margin-left: 10px">
+      写到 <code>{{ config['SETTINGS'].data_dir }}/contacts|companies|jobs/</code>
+    </span>
+  {% else %}
+    <p class="muted" style="font-size: 12px; margin: 0">
+      <strong>{{ _('当前关闭') }}</strong>{{ _('。打开：在') }} <code>.env</code> {{ _('加') }} <code>COMPASS_PKM_EXPORT=1</code> {{ _('然后重启。') }}
+    </p>
+  {% endif %}
+</div>
+
+{% if recent %}
+  <h2 style="margin-top: 24px; font-size: 15px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600">{{ _('最近导入') }}</h2>
+  <p class="muted" style="font-size: 12px; margin: 0 0 12px">{{ _('最新 30 条（用于检查导入是否成功）') }}</p>
+  <div class="card-grid">
+    {% for c in recent %}
+      <div class="item-card">
+        <div style="display: flex; align-items: start; gap: 8px">
+          <div style="flex: 1">
+            <h3 class="card-title" style="font-size: 14px">
+              {% if c.linkedin_url %}
+                <a href="{{ c.linkedin_url }}" target="_blank" rel="noopener" style="color: inherit; text-decoration: none">{{ c.name }}</a>
+              {% else %}
+                {{ c.name }}
+              {% endif %}
+            </h3>
+          </div>
+          <form method="post" action="{{ url_for('connections.deactivate', conn_id=c.id) }}"
+                hx-confirm="确认停用？" style="margin: 0">
+            <button type="submit" class="subtle" style="font-size: 11px; color: var(--danger); padding: 2px 6px">🗑</button>
+          </form>
+        </div>
+        <p class="card-sub">
+          {% if c.current_title %}{{ c.current_title }}{% endif %}
+          {% if c.current_title and c.current_company %} @ {% endif %}
+          {% if c.current_company %}<strong>{{ c.current_company }}</strong>{% endif %}
+        </p>
+        <div class="card-meta">
+          <span>{{ c.source }}</span>
+          {% if c.connected_at %}<span>· {{ c.connected_at | local_dt("%Y-%m") }}</span>{% endif %}
+          {% if c.last_contacted_at %}<span>· 上次联系 {{ c.last_contacted_at | local_dt("%Y-%m-%d") }}</span>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% endblock %}

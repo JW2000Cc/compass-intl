@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}简历模板 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('简历模板') }}</h1>
+    <p class="lede">{{ _('选择内建模板，或上传你自己的（HTML + Jinja 占位符）。改写后的简历用所选模板渲染。') }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('themes.inspire_page') }}" class="btn primary">{{ _('📎 借鉴别人的模板') }}</a>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('怎么用 / 怎么写自己的模板') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('选模板') }}</h4>
+    <p>{{ _('每个 job 详情页 prepare 阶段跑改写流水线后，进 review 页可以选模板预览 → Cmd+P 保存 PDF。') }}</p>
+
+    <h4>{{ _('用我自己的模板') }}</h4>
+    <p>{{ _('写一份带 Jinja 占位符的 HTML，上传即可。Compass 会传') }} <code>r</code>{{ _('（JSON Resume 对象）给你的模板。') }}</p>
+    <p><strong>{{ _('可用变量') }}</strong>：</p>
+    <pre style="background:#f4f4ee;padding:10px;border-radius:4px;font-size:11.5px;line-height:1.5;overflow-x:auto"><code>{{ '{{ r.basics.name }}' }}              # 姓名
+{{ '{{ r.basics.email }}' }}             # 邮箱
+{{ '{{ r.basics.phone }}' }}             # 电话
+{{ '{{ r.basics.location.address }}' }}  # 地址
+{{ '{{ r.basics.summary }}' }}           # summary
+
+{{ '{% for w in r.work %}' }}            # 工作经历列表
+  {{ '{{ w.position }}' }}              # 职位
+  {{ '{{ w.name }}' }}                  # 公司
+  {{ '{{ w.startDate }} – {{ w.endDate }}' }}
+  {{ '{{ w.location }}' }}
+  {{ '{% for h in w.highlights %}' }}    # 每条 bullet
+    {{ '{{ h }}' }}
+  {{ '{% endfor %}' }}
+{{ '{% endfor %}' }}
+
+{{ '{% for e in r.education %}' }}       # 教育
+  {{ '{{ e.studyType }} {{ e.area }} · {{ e.institution }}' }}
+{{ '{% endfor %}' }}
+
+{{ '{% for s in r.skills %}' }}          # skills
+  {{ '{{ s.name }}: {{ s.keywords | join(", ") }}' }}
+{{ '{% endfor %}' }}
+
+{{ '{% for p in r.projects %}' }}        # projects
+{{ '{% for l in r.languages %}' }}       # languages — l.language
+{{ '{% for c in r.certificates %}' }}    # c.name, c.issuer, c.date</code></pre>
+    <h4>{{ _('渲染后的简历会自动用 approved 的 variants') }}</h4>
+    <p>{{ _('当你已经在 review 页 ✓ 接受/✎ 编辑了某些 bullets，') }}<code>w.highlights</code> {{ _('里就是改写后的版本，不是原文。这一层在') }} <code>json_resume_exporter.py</code> {{ _('完成，你模板不用管。') }}</p>
+    <h4>{{ _('调试技巧') }}</h4>
+    <ul>
+      <li>{{ _('每个模板 ID 都有 sample 预览：点列表中的「预览样本」按钮') }}</li>
+      <li>{{ _('样本数据是 hard-coded 的虚拟简历——不会泄漏你真实数据') }}</li>
+      <li>{{ _('Jinja 报错会在 Compass 错误页里显示完整 traceback') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# ─────────── 已有模板列表 ─────────── #}
+<h2 style="margin-top: 18px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600">
+  已注册模板（{{ themes | length }}）
+</h2>
+<div class="card-grid">
+  {% for t in themes %}
+    <div class="item-card" style="border-top: 3px solid {{ t.preview_color or '#888' }}">
+      <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap">
+        {% if t.kind == 'builtin' %}
+          <span class="badge" style="background: #d8efd8; color: var(--ok)">{{ _('内建') }}</span>
+        {% else %}
+          <span class="badge" style="background: #e6dcef; color: #6f4eaa">{{ _('用户上传') }}</span>
+        {% endif %}
+        <span class="muted" style="font-size: 11.5px; margin-left: auto"><code>{{ t.id }}</code></span>
+      </div>
+      <h3 class="card-title">{{ t.name }}</h3>
+      <p class="card-excerpt">{{ t.description }}</p>
+      <div class="card-meta">
+        <a href="{{ url_for('themes.preview', theme_id=t.id) }}" target="_blank"
+           style="color: var(--accent); font-weight: 500; text-decoration: none">
+          🌐 预览样本 →
+        </a>
+        {% if t.kind == 'user' %}
+          <form method="post"
+                action="{{ url_for('themes.delete', uid=t.id.replace('user:', '')) }}"
+                onsubmit="return confirm('确认删除模板 {{ t.name }}？');"
+                style="margin-left: auto">
+            <button type="submit" class="subtle" style="font-size: 11.5px; color: var(--danger); padding: 2px 8px">{{ _('🗑 删除') }}</button>
+          </form>
+        {% else %}
+          <span style="margin-left: auto; font-size: 11px; color: var(--muted)">{{ _('不可删') }}</span>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{# ─────────── 上传新模板 ─────────── #}
+<div class="card" style="margin-top: 22px; border-color: var(--accent)">
+  <h3>{{ _('📤 上传你的模板') }}</h3>
+  <form method="post" action="{{ url_for('themes.upload') }}" enctype="multipart/form-data"
+        x-data="{ mode: 'file' }">
+
+    <div style="margin-bottom: 12px">
+      <label class="muted" style="font-size: 12.5px; display: block; margin-bottom: 4px">{{ _('名称 *') }}</label>
+      <input type="text" name="name" required placeholder="{{ _('比如：我的咨询模板 / Europass 中文版') }}"
+             style="width: 100%; padding: 7px; border: 1px solid var(--line); border-radius: 4px; font: inherit">
+    </div>
+
+    <div style="margin-bottom: 12px">
+      <label class="muted" style="font-size: 12.5px; display: block; margin-bottom: 4px">{{ _('描述（可选）') }}</label>
+      <input type="text" name="description" placeholder="{{ _('一句话说明：双栏 / 单栏 / 适用场景') }}"
+             style="width: 100%; padding: 7px; border: 1px solid var(--line); border-radius: 4px; font: inherit">
+    </div>
+
+    <div style="margin-bottom: 12px">
+      <label class="muted" style="font-size: 12.5px; display: block; margin-bottom: 4px">{{ _('来源') }}</label>
+      <div style="display: flex; gap: 12px">
+        <label><input type="radio" x-model="mode" value="file"> {{ _('上传 .html 文件') }}</label>
+        <label><input type="radio" x-model="mode" value="paste"> {{ _('直接粘贴 HTML') }}</label>
+      </div>
+    </div>
+
+    <div x-show="mode === 'file'" style="margin-bottom: 12px">
+      <input type="file" name="file" accept=".html,.htm,text/html"
+             style="font-size: 13px">
+    </div>
+
+    <div x-show="mode === 'paste'" style="margin-bottom: 12px">
+      <textarea name="html" rows="10" placeholder="粘贴完整 HTML 模板（Jinja 占位符如 {{ '{{' }} r.basics.name {{ '}}' }} 会自动渲染）"
+                style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 4px; font: 12px monospace; min-height: 200px"></textarea>
+    </div>
+
+    <button type="submit" class="primary">{{ _('📤 上传') }}</button>
+    <p class="muted" style="font-size: 11.5px; margin: 8px 0 0">
+      ⚠ 模板只在你本机渲染，不会传到任何服务器。但请避免在模板里写敏感信息（API key 等）。
+    </p>
+  </form>
+</div>
+
+{% endblock %}

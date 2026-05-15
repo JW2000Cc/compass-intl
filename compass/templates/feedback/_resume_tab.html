@@ -1,0 +1,61 @@
+{# Resume preferences tab — same shape as jobs but no salary table #}
+<div id="feedback-tab-content">
+
+  {% if resume_brief.is_at_soft_warn() %}
+    <div class="alert-banner warn" style="margin-top: 12px">
+      <div class="alert-body-wrap">
+        <span class="alert-title">⚠</span>
+        已 {{ resume_brief.active_lines() | length }} 条偏好（软上限 {{ SOFT_WARN }}，硬上限 {{ HARD_CAP }}），考虑清理低强度的或合并相近的。
+      </div>
+    </div>
+  {% endif %}
+  {% set warn_axes = resume_brief.axes_at_warn() %}
+  {% if warn_axes %}
+    <div class="alert-banner info" style="margin-top: 8px">
+      <div class="alert-body-wrap">
+        <span class="alert-title">ℹ</span>
+        有 {{ warn_axes | length }} 个 axis 的偏好太多（≥ {{ PER_AXIS_WARN }} 条）：
+        <code>{{ warn_axes | join(", ") }}</code> {{ _('— 看下能不能合并。') }}
+      </div>
+    </div>
+  {% endif %}
+
+  <h2 style="margin-top: 18px">{{ _('当前生效偏好') }}</h2>
+  {% if resume_brief.active_lines() %}
+    {% for line in resume_brief.active_lines() | sort(attribute="last_confirmed_at", reverse=True) %}
+      {% set kind = "resume" %}
+      {% include "feedback/_line_card.html" %}
+    {% endfor %}
+  {% else %}
+    <div class="card">
+      <p class="muted">{{ _('还没有简历偏好。在简历改写预览页针对某条 bullet 反馈即可累积。') }}</p>
+    </div>
+  {% endif %}
+
+  {% set total_archive = resume_brief.archive | length %}
+  {% if total_archive %}
+    <h2 style="margin-top: 24px">{{ _('历史 / Archive') }}</h2>
+    {% for a in resume_brief.archive | reverse %}
+      {% if loop.index0 < 30 %}
+        {% set full_idx = total_archive - 1 - loop.index0 %}
+        <div class="card" style="opacity: 0.7; padding: 10px 14px; font-size: 13px">
+          <div style="display: flex; gap: 12px; align-items: center">
+            <div style="flex: 1">
+              {% if a.line.side == "+" %}<span style="color: var(--ok)">✓</span>{% else %}<span style="color: var(--muted)">✗</span>{% endif %}
+              <strong>{{ a.line.text }}</strong>
+              {% if a.line.scope %}<span class="muted">[{{ a.line.scope }}]</span>{% endif %}
+              <span class="muted" style="font-size: 11px; margin-left: 6px">
+                {{ a.archived_at | local_dt("%m-%d") }} · {{ a.archive_reason }}
+              </span>
+            </div>
+            <form method="post" action="{{ url_for('feedback.reactivate_archived', kind='resume', idx=full_idx) }}"
+                  style="margin: 0">
+              <button type="submit" class="subtle" style="font-size: 11px">{{ _('↻ 激活') }}</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+</div>

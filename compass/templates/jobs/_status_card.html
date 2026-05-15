@@ -1,0 +1,23 @@
+{# Reusable status card. Rendered by jobs/detail.html and re-rendered by HTMX
+   after a status change (when no pre-submit-reflection interception fires). #}
+<div id="status-card-{{ job.id }}" class="card">
+  <h3>{{ _('状态') }}</h3>
+  <p>{{ _('当前:') }} <strong>{{ job.status }}</strong>
+    {% if job.status_changed_at %}
+      <span class="muted" style="font-size: 12px">· {{ job.status_changed_at | local_dt }}</span>
+    {% endif %}
+  </p>
+  <form hx-post="{{ url_for('jobs.change_status', job_id=job.id) }}"
+        hx-target="#status-card-{{ job.id }}"
+        hx-swap="outerHTML"
+        method="post"
+        action="{{ url_for('jobs.change_status', job_id=job.id) }}"
+        style="display: inline-flex; gap: 6px; flex-wrap: wrap">
+    {% for s in ["new", "reviewed", "applied", "interview", "offer", "rejected", "passed"] %}
+      <button type="submit" name="status" value="{{ s }}"
+              class="{% if s == job.status %}{% else %}subtle{% endif %}">
+        {{ s }}{% if s == job.status %} ✓{% endif %}
+      </button>
+    {% endfor %}
+  </form>
+</div>

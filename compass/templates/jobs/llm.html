@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+{% block title %}LLM 配置 · Compass{% endblock %}
+{% block content %}
+
+<style>
+  /* GitHub settings flavor — same idiom as search_config UI. */
+  .ll-page { max-width: 760px; margin: 0 auto; padding: 24px 28px 80px; }
+  .ll-h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.2px; }
+  .ll-sub { color: var(--muted); font-size: 13px; margin: 0 0 24px; }
+
+  .ll-field { margin-bottom: 22px; }
+  .ll-field > label {
+    display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px;
+  }
+  .ll-field .help {
+    color: var(--muted); font-size: 11.5px; line-height: 1.5; margin-top: 5px;
+  }
+  .ll-field input[type=text],
+  .ll-field input[type=password],
+  .ll-field select {
+    width: 100%; padding: 7px 10px; font-size: 13px;
+    border: 1px solid var(--line); border-radius: 5px;
+    background: white; box-sizing: border-box; transition: border-color 100ms;
+    font-family: inherit;
+  }
+  .ll-field input:focus, .ll-field select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(43,88,118,0.15);
+  }
+
+  .ll-row { display: flex; gap: 8px; align-items: stretch; }
+  .ll-row > input { flex: 1; }
+  .ll-row > button {
+    background: white; border: 1px solid var(--line); border-radius: 4px;
+    padding: 0 14px; font-size: 12.5px; cursor: pointer;
+    transition: background 80ms, border-color 80ms;
+  }
+  .ll-row > button:hover { border-color: var(--accent); background: #fafaf6; }
+
+  /* Stats block */
+  .ll-stats {
+    background: #fbfbf7; border: 1px solid var(--line);
+    border-radius: 6px; padding: 14px 18px; margin-bottom: 24px;
+    font-size: 12.5px;
+  }
+  .ll-stats h4 { margin: 0 0 8px; font-size: 13px; font-weight: 600; }
+  .ll-stats table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .ll-stats td { padding: 3px 0; }
+  .ll-stats td:last-child { text-align: right; font-family: ui-monospace, monospace; }
+  .ll-stats .current { color: var(--accent); font-weight: 600; }
+
+  /* Test connection inline status */
+  #test-result {
+    margin-top: 8px; padding: 6px 10px; font-size: 12px;
+    border-radius: 4px; display: none;
+  }
+  #test-result.ok { background: #e8f5e9; color: var(--ok); display: block; }
+  #test-result.err { background: #fdecec; color: var(--danger); display: block; }
+  #test-result.loading { background: #fff5e0; color: var(--warn); display: block; }
+
+  .ll-flag-row {
+    display: flex; align-items: start; gap: 10px;
+    padding: 10px 0; border-top: 1px solid var(--line);
+  }
+  .ll-flag-row:first-child { border-top: none; padding-top: 0; }
+  .ll-flag-row input[type=checkbox] { margin-top: 3px; }
+  .ll-flag-row label { font-weight: 500; font-size: 13px; cursor: pointer; }
+  .ll-flag-row .desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+  /* Advanced fold */
+  .ll-advanced {
+    margin-top: 28px; padding: 14px 18px;
+    border: 1px solid var(--line); border-radius: 6px; background: #fbfbf7;
+  }
+  .ll-advanced > summary {
+    cursor: pointer; list-style: none; outline: none;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13.5px; font-weight: 500;
+  }
+  .ll-advanced > summary::-webkit-details-marker { display: none; }
+  .ll-advanced > summary .chev { color: var(--muted); transition: transform 120ms; }
+  .ll-advanced[open] > summary .chev { transform: rotate(90deg); }
+  .ll-advanced .body {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  .ll-step-grid { display: grid; gap: 8px 12px;
+                  grid-template-columns: minmax(180px, 1fr) 2fr;
+                  align-items: center; }
+  .ll-step-grid .step-name { font-family: ui-monospace, monospace;
+                              font-size: 12px; color: var(--side-fg-strong); }
+  .ll-step-grid select { font-size: 12px; padding: 4px 8px; }
+
+  .ll-footer {
+    margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line);
+    display: flex; gap: 10px;
+  }
+  .ll-footer .save-btn {
+    background: var(--accent); color: white; border: none;
+    padding: 8px 22px; border-radius: 5px; font-size: 13.5px; font-weight: 500;
+    cursor: pointer;
+  }
+</style>
+
+<div class="ll-page">
+
+  <h1 class="ll-h1">{{ _('LLM 配置') }}</h1>
+  <p class="ll-sub">
+    Provider / API key / model — 改这里不需要重启。<br>
+    存在 <code>data/llm_settings.json</code>{{ _('（已 .gitignore，不上传）。') }}
+  </p>
+
+  {# ── 用量统计 ──────────────────────────────────── #}
+  <div class="ll-stats">
+    <h4>{{ _('近 30 天用量参考') }}</h4>
+    <table>
+      <tr><td>Rewrite attempts</td><td>{{ usage.n_attempts_30d }}</td></tr>
+      <tr><td>Job classifications</td><td>{{ usage.n_classifications_30d }}</td></tr>
+      <tr><td>{{ _('估算 LLM 调用次数') }}</td><td>{{ usage.estimated_calls_30d }}</td></tr>
+      <tr style="border-top: 1px solid var(--line)">
+        <td colspan="2" style="padding-top: 10px; font-weight: 600">{{ _('按 model 估算 30 天成本：') }}</td>
+      </tr>
+      {% for alt in usage.alternatives %}
+        <tr>
+          <td>· {{ alt.model }}</td>
+          <td class="{% if alt.model == settings.llm_model %}current{% endif %}">
+            ${{ "%.2f"|format(alt.cost) }}
+            {% if alt.model == settings.llm_model %}（当前）{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  {# ── 一键预设 — separate forms outside main update form ─────────────────── #}
+  {# Why outside: HTML5 forbids nested <form>. When the parser saw `<form>` inside another
+     open form, it dropped the inner tag and the </form> closed the outer form prematurely,
+     orphaning every field below (including the 保存 button). User reported "无法保存" — exactly
+     this. Hoisting all preset forms above the main form fixes it without touching layout. #}
+  <div class="ll-field" style="background: #fbfbf7; border: 1px solid var(--line);
+                               border-radius: 6px; padding: 12px 16px; margin-bottom: 16px;">
+    <label style="margin-bottom: 8px">{{ _('⚡ 一键应用预设') }}</label>
+    <div style="display: grid; gap: 6px">
+      {% for pid, preset in preset_configs.items() %}
+        <form method="post" action="{{ url_for('jobs.llm_apply_preset', preset_id=pid) }}"
+              style="display: flex; gap: 10px; align-items: center; margin: 0">
+          <button type="submit" class="chip"
+                  style="background: white; border: 1px solid var(--line);
+                         padding: 4px 12px; font-size: 11.5px; cursor: pointer;
+                         border-radius: 4px; flex-shrink: 0">{{ preset.label }}</button>
+          <span class="muted" style="font-size: 11.5px">{{ preset.description }}</span>
+        </form>
+      {% endfor %}
+    </div>
+    <div class="help">{{ _('应用后立即生效，不动 API Key。') }}</div>
+  </div>
+
+  <form method="post" action="{{ url_for('jobs.llm_update') }}">
+
+    <div class="ll-field">
+      <label>Provider</label>
+      <select name="provider" onchange="onProviderChange(this.value)" id="provider-select">
+        <option value="claude" {% if effective_provider == 'claude' %}selected{% endif %}>{{ _('claude — Anthropic 官方') }}</option>
+        <option value="openai" {% if effective_provider == 'openai' %}selected{% endif %}>{{ _('openai — OpenAI 官方') }}</option>
+        <option value="custom" {% if effective_provider == 'custom' %}selected{% endif %}>{{ _('custom — OpenAI-compatible 自定义 endpoint') }}</option>
+      </select>
+      <div class="help">
+        custom 模式支持 DeepSeek / Moonshot / Groq / Together / Mistral / Ollama / vLLM 等任何 OpenAI-compatible API。
+      </div>
+    </div>
+
+    {# ── Base URL (custom only) ─────────────────── #}
+    <div class="ll-field" id="base-url-field" style="{% if effective_provider != 'custom' %}display: none;{% endif %}">
+      <label>Base URL</label>
+      <input type="text" name="base_url" id="base-url-input"
+             value="{{ overlay.base_url or settings.llm_base_url or '' }}"
+             placeholder="https://api.deepseek.com/v1"
+             autocomplete="off" spellcheck="false">
+      <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px">
+        {% for label, url, default_model, desc in known_base_urls %}
+          <button type="button" class="chip"
+                  onclick="applyBaseUrlPreset({{ url|tojson }}, {{ default_model|tojson }})"
+                  title="{{ desc }}"
+                  style="background: white; border: 1px solid var(--line);
+                         padding: 3px 9px; font-size: 11px; cursor: pointer;
+                         border-radius: 3px; color: var(--side-fg)">{{ label }}</button>
+        {% endfor %}
+      </div>
+      <div class="help" style="margin-top: 8px">
+        点 chip 一键填。<strong>{{ _('本地部署') }}</strong>{{ _('（Ollama / LMStudio）的 API Key 可以填任意非空字符串。') }}
+      </div>
+    </div>
+
+    {# ── API key ───────────────────────────────────── #}
+    <div class="ll-field">
+      <label>API Key</label>
+      <div class="ll-row">
+        <input type="text" name="api_key"
+               value="{{ overlay.masked_key() if overlay.api_key else '' }}"
+               placeholder="{{ _('sk-ant-... 或 sk-proj-... 或本地任意字符串') }}"
+               autocomplete="off" spellcheck="false">
+        <button type="button" onclick="testConnection()">{{ _('测试连接') }}</button>
+      </div>
+      <div id="test-result"></div>
+      <div class="help">
+        本地存，不会上传。修改时直接覆盖（删除星号粘贴新 key 即可）。
+        留空 → fallback 到 .env 的 LLM_API_KEY。
+      </div>
+    </div>
+
+    {# ── Model ─────────────────────────────────────── #}
+    <div class="ll-field">
+      <label>Default Model</label>
+      {# Custom 模式: 自由文本输入。其他: dropdown #}
+      <input type="text" name="model" id="model-input"
+             value="{{ settings.llm_model }}"
+             placeholder="{{ _('自由输入 model id，如 deepseek-chat / llama3.3') }}"
+             style="{% if effective_provider != 'custom' %}display: none;{% endif %}">
+      <select name="model_select" id="model-select"
+              onchange="document.getElementById('model-input').value = this.value"
+              style="{% if effective_provider == 'custom' %}display: none;{% endif %}">
+        {% for entry in available_models %}
+          {# entry: (mid, label, in_p, out_p, description) #}
+          <option value="{{ entry[0] }}" {% if entry[0] == settings.llm_model %}selected{% endif %}>
+            {{ entry[1] }} — {{ entry[4] }}
+          </option>
+        {% endfor %}
+      </select>
+      <div class="help" id="model-help">
+        {% if effective_provider == 'custom' %}
+          自由输入 model id。本地 Ollama 可输入 <code>llama3.3</code> / <code>qwen2.5-coder:32b</code> / <code>deepseek-r1</code> 等。
+        {% else %}
+          所有 LLM 调用默认用这个。每个 model 后面的描述写明适合哪些 step。
+        {% endif %}
+      </div>
+    </div>
+
+    {# ── Feature flags (ADR-0015 #3-5 opt-in) ────── #}
+    <div class="ll-field">
+      <label>{{ _('可选功能（ADR-0015）') }}</label>
+      <div style="border: 1px solid var(--line); border-radius: 5px; padding: 8px 14px; background: white">
+        <div class="ll-flag-row">
+          <input type="checkbox" id="flag_decompose" name="flag_decompose_bullets"
+                 {% if overlay.is_enabled('decompose_bullets') %}checked{% endif %}>
+          <div>
+            <label for="flag_decompose">{{ _('五维度建议菜单（B 改动）') }}</label>
+            <div class="desc">{{ _('每条 variant 多 1 次 LLM 调用生成 verb/tone 候选，UI 展开"📊 建议分解"panel。') }}</div>
+          </div>
+        </div>
+        <div class="ll-flag-row">
+          <input type="checkbox" id="flag_translate" name="flag_translate_variants"
+                 {% if overlay.is_enabled('translate_variants') %}checked{% endif %}>
+          <div>
+            <label for="flag_translate">{{ _('多语言简历渲染（E 改动）') }}</label>
+            <div class="desc">{{ _('按 search_config.global.user_languages 给每个 variant 翻译。每语言 +1 次 LLM。') }}</div>
+          </div>
+        </div>
+        <div class="ll-flag-row">
+          <input type="checkbox" id="flag_native_ats" name="flag_native_ats_check"
+                 {% if overlay.is_enabled('native_ats_check') %}checked{% endif %}>
+          <div>
+            <label for="flag_native_ats">{{ _('原语言 ATS 字面扫描（C 改动）') }}</label>
+            <div class="desc">{{ _('judge 阶段附加 deterministic 字面命中扫描。') }}<strong>{{ _('不调 LLM，免费。') }}</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="help">{{ _('默认全关——开了之后下次 rewrite 就触发。') }}</div>
+    </div>
+
+    {# ── 高级 per-step override ────────────────── #}
+    <details class="ll-advanced">
+      <summary>
+        <span class="chev">›</span>
+        <strong>{{ _('Per-step model override（高级）') }}</strong>
+        <span style="color: var(--muted); margin-left: auto; font-weight: 400; font-size: 12px">
+          {% if overlay.step_overrides %}{{ overlay.step_overrides | length }} 项已设{% else %}全部使用默认 model{% endif %}
+        </span>
+      </summary>
+      <div class="body">
+        <p style="font-size: 12px; color: var(--muted); margin: 0 0 12px">
+          每个 pipeline step 可以挑不同 model。常见配置:<br>
+          · <code>rewrite_per_bullet</code> + <code>raise_objection</code> {{ _('用 sonnet (创造/推理)') }}<br>
+          · 其他全用 haiku (省 60-70% 成本)
+        </p>
+        <div class="ll-step-grid">
+          {% for step in known_steps %}
+            <div class="step-name">{{ step }}</div>
+            <select name="step_{{ step }}">
+              <option value="">— default ({{ settings.llm_model }}) —</option>
+              {% for entry in available_models %}
+                <option value="{{ entry[0] }}"
+                        {% if overlay.step_overrides.get(step) == entry[0] %}selected{% endif %}>{{ entry[0] }}</option>
+              {% endfor %}
+            </select>
+          {% endfor %}
+        </div>
+      </div>
+    </details>
+
+    <div class="ll-footer">
+      <button type="submit" class="save-btn">{{ _('保存') }}</button>
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+  window.LLM_I18N = {
+    custom_model_help:    {{ _('自由输入 model id。本地 Ollama 可输入 <code>llama3.3</code> / <code>qwen2.5-coder:32b</code> / <code>deepseek-r1</code> 等。')|tojson }},
+    default_model_help:   {{ _('所有 LLM 调用默认用这个。每个 model 后面的描述写明适合哪些 step。')|tojson }},
+    calling:              {{ _('⏳ 调用中...')|tojson }},
+    response_ok:          {{ _('响应正常')|tojson }},
+    network_error_prefix: {{ _('✗ 网络错误:')|tojson }},
+  };
+</script>
+<script>
+  const KNOWN_MODELS = {{ known_models | tojson }};
+
+  // Provider switch — toggle base_url field, swap model widget (custom: input,
+  // others: dropdown), repopulate options.
+  function onProviderChange(provider) {
+    document.getElementById('base-url-field').style.display =
+      (provider === 'custom') ? '' : 'none';
+
+    const input = document.getElementById('model-input');
+    const select = document.getElementById('model-select');
+    const help = document.getElementById('model-help');
+
+    if (provider === 'custom') {
+      input.style.display = '';
+      select.style.display = 'none';
+      help.innerHTML = window.LLM_I18N.custom_model_help;
+    } else {
+      input.style.display = 'none';
+      select.style.display = '';
+      help.textContent = window.LLM_I18N.default_model_help;
+      // Repopulate select with this provider's models
+      select.innerHTML = '';
+      (KNOWN_MODELS[provider] || []).forEach(entry => {
+        const [mid, label, _i, _o, desc] = entry;
+        const opt = document.createElement('option');
+        opt.value = mid;
+        opt.textContent = `${label} — ${desc || ''}`;
+        select.appendChild(opt);
+      });
+      if (select.options.length > 0) {
+        input.value = select.value;  // sync hidden input
+      }
+    }
+  }
+
+  // Click a base_url preset chip → fill base_url + suggest default model
+  function applyBaseUrlPreset(url, defaultModel) {
+    document.getElementById('base-url-input').value = url;
+    const input = document.getElementById('model-input');
+    if (!input.value || input.value === '(自填)') {
+      input.value = defaultModel;
+    }
+  }
+
+  // Test connection — POST to /settings/llm/test, show inline result.
+  async function testConnection() {
+    const result = document.getElementById('test-result');
+    result.className = 'loading';
+    result.textContent = window.LLM_I18N.calling;
+    try {
+      const resp = await fetch('{{ url_for('jobs.llm_test_connection') }}', {
+        method: 'POST',
+        headers: {'X-Requested-With': 'fetch'},
+      });
+      const data = await resp.json();
+      if (data.ok) {
+        result.className = 'ok';
+        result.textContent = `✓ ${data.model} ${window.LLM_I18N.response_ok} (${data.elapsed_ms}ms): "${data.reply}"`;
+      } else {
+        result.className = 'err';
+        result.textContent = `✗ ${data.msg}`;
+      }
+    } catch (e) {
+      result.className = 'err';
+      result.textContent = `${window.LLM_I18N.network_error_prefix} ${e.message}`;
+    }
+  }
+</script>
+
+{% endblock %}

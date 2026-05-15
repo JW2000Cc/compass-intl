@@ -1,0 +1,169 @@
+{# Axis-tagged quick feedback (replaces thumbs card). HTMX swap target.
+
+   Idempotent per (job, axis): clicking the SAME button toggles off; clicking
+   the OPPOSITE sentiment flips. So spam-clicking doesn't inflate counts.
+
+   Counts shown next to each button are DISTINCT jobs (across user's history),
+   not raw event count.
+
+   Vars:
+     job             — current job
+     axis_buttons    — list of {id, emoji, label}
+     axis_counts     — {axis: {"+": distinct_jobs_n, "-": distinct_jobs_n}}
+     job_axis_state  — {axis: "+"/"-"} for axes locked-in on THIS job
+     last_axis, last_sentiment, last_action  — most recent action (HTMX returns)
+     upgrade_prompt  — (optional) {axis, sentiment, count, label, suggested_text}
+#}
+<div id="quick-feedback-{{ job.id }}" class="card">
+  <h3>{{ _('👍/👎 快速判断 · 选「为什么」') }}</h3>
+  <p class="muted" style="font-size: 11.5px; margin: 0 0 8px">
+    一键给信号 + 自动归类。<strong>{{ _('同 axis 同 sentiment 再点 = 取消；点反方向 = 翻转。') }}</strong>
+    <span style="margin-left: 6px">{{ _('想说更多 → 用页面最底「💬 详细反馈」。') }}</span>
+  </p>
+
+  {# This job's current state — what's locked in #}
+  {% if job_axis_state %}
+    <div style="display: flex; gap: 4px; align-items: center; margin: 0 0 10px; flex-wrap: wrap; padding: 6px 10px; background: #f8f8f3; border-radius: 4px">
+      <span class="muted" style="font-size: 11.5px">{{ _('这个 job 你已标:') }}</span>
+      {% for ax_id, sign in job_axis_state.items() %}
+        {% set ax_obj = axis_buttons | selectattr('id', 'equalto', ax_id) | first %}
+        <span class="badge" style="background: {% if sign == '+' %}#d8efd8{% else %}#fae5e5{% endif %}; color: {% if sign == '+' %}var(--ok){% else %}var(--danger){% endif %}; font-size: 11px">
+          {{ sign }} {% if ax_obj %}{{ ax_obj.emoji }} {{ ax_obj.label }}{% else %}{{ ax_id }}{% endif %}
+        </span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# Sentiment toggle (Alpine state) #}
+  <div x-data="{ sentiment: '{{ last_sentiment or '-' }}' }">
+    <div style="display: flex; gap: 6px; margin: 0 0 10px">
+      <button type="button" class="qf-sent-btn" :class="sentiment === '+' && 'qf-sent-active-pos'"
+              @click="sentiment = '+'" style="flex: 1">
+        <span style="font-size: 18px">😀</span> <strong style="margin-left: 4px">{{ _('喜欢') }}</strong>
+      </button>
+      <button type="button" class="qf-sent-btn" :class="sentiment === '-' && 'qf-sent-active-neg'"
+              @click="sentiment = '-'" style="flex: 1">
+        <span style="font-size: 18px">😞</span> <strong style="margin-left: 4px">{{ _('不喜欢') }}</strong>
+      </button>
+    </div>
+
+    <p class="muted" style="font-size: 11.5px; margin: 0 0 6px">
+      <span x-show="sentiment === '+'">{{ _('这条吸引你的是…（点亮已选；再点取消）') }}</span>
+      <span x-show="sentiment === '-'" x-cloak>{{ _('这条让你不想要的是…（点亮已选；再点取消）') }}</span>
+    </p>
+
+    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px">
+      {% for ax in axis_buttons %}
+        {% set cnt = axis_counts.get(ax.id, {}) %}
+        {% set this_state = job_axis_state.get(ax.id) %}
+        <form method="post"
+              action="{{ url_for('jobs.quick_feedback', job_id=job.id) }}"
+              hx-post="{{ url_for('jobs.quick_feedback', job_id=job.id) }}"
+              hx-target="#quick-feedback-{{ job.id }}"
+              hx-swap="outerHTML"
+              style="display: inline">
+          <input type="hidden" name="axis" value="{{ ax.id }}">
+          <input type="hidden" name="sentiment" :value="sentiment">
+          <button type="submit" class="qf-axis-btn"
+                  data-this-state="{{ this_state or '' }}"
+                  :class="(sentiment === '+' && '{{ this_state }}' === '+') ? 'qf-axis-locked-pos' :
+                          (sentiment === '-' && '{{ this_state }}' === '-') ? 'qf-axis-locked-neg' :
+                          ''"
+                  :title="'{{ this_state }}' === sentiment ? '已标 — 再点取消' : ('{{ this_state }}' && '{{ this_state }}' !== sentiment ? '当前是另一方向 — 再点翻转' : '点击标记')">
+            {% if this_state %}<span style="margin-right: 2px">{% if this_state == '+' %}✓{% else %}✓{% endif %}</span>{% endif %}
+            <span style="font-size: 13px">{{ ax.emoji }}</span> {{ ax.label }}
+            {% if cnt.get('+', 0) or cnt.get('-', 0) %}
+              <span class="qf-axis-count" style="margin-left: 5px"
+                    title="{{ _('跨 jobs 累计：去重 distinct job 数（30 天内）') }}">
+                {% if cnt.get('+', 0) %}<span style="color: var(--ok)">+{{ cnt['+'] }}</span>{% endif %}
+                {% if cnt.get('+', 0) and cnt.get('-', 0) %} {% endif %}
+                {% if cnt.get('-', 0) %}<span style="color: var(--danger)">-{{ cnt['-'] }}</span>{% endif %}
+              </span>
+            {% endif %}
+          </button>
+        </form>
+      {% endfor %}
+      <form method="post"
+            action="{{ url_for('jobs.quick_feedback', job_id=job.id) }}"
+            hx-post="{{ url_for('jobs.quick_feedback', job_id=job.id) }}"
+            hx-target="#quick-feedback-{{ job.id }}"
+            hx-swap="outerHTML"
+            style="display: inline">
+        <input type="hidden" name="axis" value="other">
+        <input type="hidden" name="sentiment" :value="sentiment">
+        <button type="submit" class="qf-axis-btn"
+                :class="'{{ job_axis_state.get('other', '') }}' === sentiment && 'qf-axis-locked-' + (sentiment === '+' ? 'pos' : 'neg')">
+          ✏️ 其他
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {# Upgrade prompt — appears when same axis+sentiment hits threshold across DISTINCT jobs #}
+  {% if upgrade_prompt %}
+    <div class="qf-upgrade-prompt">
+      <div style="display: flex; align-items: start; gap: 10px">
+        <span style="font-size: 22px; line-height: 1">💡</span>
+        <div style="flex: 1">
+          <p style="margin: 0 0 4px; font-weight: 600; font-size: 13.5px">
+            你在 {{ upgrade_prompt.count }} 个不同 job 都标了「{{ upgrade_prompt.label }}」{% if upgrade_prompt.sentiment == '-' %}不喜欢{% else %}喜欢{% endif %}
+          </p>
+          <p class="muted" style="margin: 0 0 8px; font-size: 12.5px">
+            升级成一条规则 → 下次 LLM 推送时直接读，类似的 job 自动避开/优先。
+          </p>
+          <a href="#" class="btn primary" style="font-size: 12.5px; padding: 4px 12px"
+             onclick="document.querySelector('.feedback-widget')?.scrollIntoView({behavior:'smooth'}); document.querySelector('.feedback-widget [x-data]')?.click(); return false">
+            ☑ 在下方写一条规则
+          </a>
+          <span class="muted" style="font-size: 11px; margin-left: 8px">{{ _('或继续 click') }}</span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if last_axis and last_action %}
+    <p class="muted" style="font-size: 11.5px; margin: 6px 0 0">
+      {% if last_action == 'cleared' %}
+        ✗ 已取消 <strong>{{ last_axis }}</strong> 标记
+      {% elif last_action == 'flipped' %}
+        ↻ 已翻转 <strong>{{ last_axis }}</strong> {{ _('为') }} <strong>{{ last_sentiment }}</strong>
+      {% else %}
+        ✓ 已标 <strong>{{ last_axis }}</strong> {{ _('为') }} <strong>{{ last_sentiment }}</strong>
+      {% endif %}
+      · 同按钮再点会取消，点反方向会翻转
+    </p>
+  {% endif %}
+</div>
+
+<style>
+  .qf-sent-btn {
+    padding: 8px 14px; background: white; border: 1px solid var(--line);
+    border-radius: 5px; cursor: pointer; font: inherit; font-size: 13.5px;
+    transition: all 100ms;
+  }
+  .qf-sent-btn:hover { background: #fafaf6; }
+  .qf-sent-active-pos { background: #e6f4e6; border-color: var(--ok); color: var(--ok); }
+  .qf-sent-active-neg { background: #fae5e5; border-color: var(--danger); color: var(--danger); }
+
+  .qf-axis-btn {
+    padding: 5px 10px; background: white; border: 1px solid var(--line);
+    border-radius: 14px; cursor: pointer; font: inherit; font-size: 12.5px;
+    transition: all 100ms; line-height: 1.5;
+  }
+  .qf-axis-btn:hover { background: #f4f4ee; border-color: var(--accent); }
+  /* 已锁定（这条 job 当前 axis 状态对应当前 sentiment）— 点击会取消 */
+  .qf-axis-locked-pos {
+    background: var(--ok) !important; color: white !important; border-color: var(--ok) !important;
+    font-weight: 600;
+  }
+  .qf-axis-locked-neg {
+    background: var(--danger) !important; color: white !important; border-color: var(--danger) !important;
+    font-weight: 600;
+  }
+  .qf-axis-count { font-size: 10.5px; font-family: "SF Mono", monospace; }
+
+  .qf-upgrade-prompt {
+    margin-top: 12px; padding: 10px 14px;
+    background: #fff8e6; border: 1px solid #ffd97e; border-radius: 5px;
+  }
+</style>

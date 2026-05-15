@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block title %}借鉴模板 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('📎 借鉴模板') }}</h1>
+    <p class="lede">{{ _('上传别人的简历模板（任意格式），Compass 自动识别 sample 数据 → 替换为占位符 → 生成你能直接用的 Jinja 模板。') }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('themes.overview') }}" class="btn subtle">{{ _('← 返回模板') }}</a>
+  </div>
+</div>
+
+{% if not has_llm %}
+  <div class="card" style="border-color: var(--danger); background: #fef0f0">
+    <h3 style="color: var(--danger)">{{ _('⚠ LLM 未配置') }}</h3>
+    <p>{{ _('借鉴功能依赖 LLM 识别 sample 数据。请先在') }} <code>.env</code> {{ _('设') }} <code>LLM_API_KEY</code> {{ _('后重启。') }}</p>
+  </div>
+{% else %}
+  <div class="card" style="background: #f4f4ee; border-color: var(--accent)">
+    <p style="margin: 0; font-size: 13.5px"><strong>{{ _('当前 LLM') }}</strong>：
+      <code>{{ provider }}</code> {{ _('· 模型') }} <code>{{ model }}</code>
+      {% if provider != 'claude' %}
+        <span class="muted">{{ _('（图片路推荐用 Claude，对视觉任务更稳）') }}</span>
+      {% endif %}
+    </p>
+  </div>
+{% endif %}
+
+<details class="module-help" open>
+  <summary><strong>{{ _('4 条路 — 上传什么 → 走哪条 → 保真多少') }}</strong></summary>
+  <div class="help-body">
+    <h4>{{ _('方法对比') }}</h4>
+    <table style="width: 100%; font-size: 13px; border-collapse: collapse">
+      <tr style="background: #f0f0e6">
+        <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line)">{{ _('输入格式') }}</th>
+        <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line)">{{ _('走的路') }}</th>
+        <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line)">{{ _('保真度') }}</th>
+        <th style="text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line)">{{ _('原理') }}</th>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px"><code>.docx</code> ⭐</td>
+        <td style="padding: 6px 8px">{{ _('DOCX 路（docxtpl）') }}</td>
+        <td style="padding: 6px 8px"><strong style="color: var(--ok)">99%</strong></td>
+        <td style="padding: 6px 8px">{{ _('XML 结构原样保留，只替换 text run，颜色/字体/表格/图片全部不动') }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px"><code>.html</code> / <code>.htm</code></td>
+        <td style="padding: 6px 8px">{{ _('HTML 路（lxml）') }}</td>
+        <td style="padding: 6px 8px"><strong style="color: var(--ok)">97%</strong></td>
+        <td style="padding: 6px 8px">{{ _('DOM 不动，只替换 text node；CSS / class / 嵌入图全部保留') }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px"><code>.pdf</code></td>
+        <td style="padding: 6px 8px">{{ _('PDF 路 → DOCX 路') }}</td>
+        <td style="padding: 6px 8px"><strong style="color: var(--warn)">85-95%</strong></td>
+        <td style="padding: 6px 8px">{{ _('先 pdf2docx 转 .docx，再走 DOCX 路。复杂多列布局可能位置略偏') }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px"><code>.png</code> / <code>.jpg</code> {{ _('/ 扫描 PDF') }}</td>
+        <td style="padding: 6px 8px">{{ _('图片路（vision LLM）') }}</td>
+        <td style="padding: 6px 8px"><strong style="color: var(--danger)">70-80%</strong></td>
+        <td style="padding: 6px 8px">{{ _('vision LLM「看图」重画 HTML+CSS，字体细节/特殊背景会丢') }}</td>
+      </tr>
+    </table>
+
+    <h4>{{ _('建议') }}</h4>
+    <ul>
+      <li><strong>{{ _('有 .docx 就上传 .docx') }}</strong> {{ _('— 保真度最高、成本最低') }}</li>
+      <li>{{ _('找到的是 PDF？看里面文字能不能选中复制：') }}<strong>{{ _('能选 → PDF 路') }}</strong>，<strong>{{ _('不能选（扫描件）→ 自动切到图片路') }}</strong></li>
+      <li>{{ _('图片路最贵（vision LLM token 多）+ 保真度最低，') }}<strong>{{ _('能避免就避免') }}</strong></li>
+      <li>{{ _('所有路都用同一份 sample 数据预览（hard-coded 假人 Alex Chen，不会泄漏真实数据）') }}</li>
+    </ul>
+
+    <h4>{{ _('关于版权') }}</h4>
+    <p class="muted" style="font-size: 12.5px">
+      ⚠ 只上传你有权利使用的模板：<strong>{{ _('朋友给的 / 你自己的旧版 / 免费 template / Creative Commons 作品') }}</strong>。
+      付费商业模板请尊重原作者。Compass 不存档你上传的源文件 — 只把识别结果存为你的私有 user theme。
+    </p>
+
+    <h4>{{ _('Compass 知道哪些数据字段（LLM 会用到这些）') }}</h4>
+    <pre style="background:white;padding:10px;border-radius:4px;font-size:11.5px;line-height:1.5;overflow-x:auto"><code>r.basics.{name, email, phone, location.address, summary}
+r.work[N].{name, position, location, startDate, endDate, highlights[M]}
+r.education[N].{institution, studyType, area, startDate, endDate, gpa}
+r.skills[N].{name, keywords[M]}      r.languages[N].language
+r.projects[N].{name, description, keywords[M], url}
+r.certificates[N].{name, issuer, date}</code></pre>
+  </div>
+</details>
+
+{# ─────────── Upload form (Alpine) ─────────── #}
+<div class="card" x-data="inspireFlow()" style="margin-top: 18px">
+  <h3>{{ _('📎 上传模板') }}</h3>
+  <p class="muted" style="font-size: 12.5px; margin: 4px 0 12px">
+    支持：<code>.docx</code> · <code>.html</code> · <code>.pdf</code> · <code>.png</code> / <code>.jpg</code>{{ _('。最大 15MB。') }}
+  </p>
+
+  <div class="dropzone"
+       @dragover.prevent="dragover = true"
+       @dragleave.prevent="dragover = false"
+       @drop.prevent="onDrop($event)"
+       :class="dragover && 'dragover'"
+       @click="$refs.fileInput.click()">
+    <input type="file" x-ref="fileInput" @change="onFileSelect($event)" style="display:none"
+           accept=".docx,.html,.htm,.pdf,.png,.jpg,.jpeg,.webp">
+    <template x-if="!file">
+      <div>
+        <p style="font-size: 28px; margin: 0">📎</p>
+        <p style="font-weight: 600; margin: 6px 0 4px">{{ _('拖拽文件到这里 / 点击选择') }}</p>
+        <p class="muted" style="font-size: 12px; margin: 0">.docx / .html / .pdf / .png / .jpg</p>
+      </div>
+    </template>
+    <template x-if="file">
+      <div>
+        <p style="font-size: 22px; margin: 0">📄</p>
+        <p style="font-weight: 600; margin: 6px 0 4px" x-text="file.name"></p>
+        <p class="muted" style="font-size: 12px; margin: 0" x-text="`${(file.size/1024).toFixed(0)} KB · 检测到：${detectedFormat()}`"></p>
+        <p style="margin-top: 10px">
+          <button type="button" class="primary" @click.stop="upload()" :disabled="processing">
+            <span x-show="!processing">{{ _('▶ 开始借鉴') }}</span>
+            <span x-show="processing" x-cloak>⏳ <span x-text="statusText"></span></span>
+          </button>
+          <button type="button" class="subtle" @click.stop="reset()" style="margin-left:6px">{{ _('↺ 换一份') }}</button>
+        </p>
+      </div>
+    </template>
+  </div>
+
+  <p class="muted" style="font-size: 11px; margin-top: 8px">
+    💰 LLM 成本：DOCX/HTML/PDF 路 ≈ $0.005 ~ $0.01；图片路 ≈ $0.02 ~ $0.05
+  </p>
+
+  {# Result panel #}
+  <div x-show="result" x-cloak style="margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px">
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px">
+      <span class="badge badge-status-applied" x-text="`走的路: ${result?.route || '-'}`"></span>
+      <span class="badge"
+            :class="(result?.fidelity || 0) >= 0.9 ? 'badge-status-offer' : (result?.fidelity || 0) >= 0.8 ? 'badge-tier2' : 'badge-tier4'"
+            x-text="`保真度估算: ${Math.round((result?.fidelity || 0) * 100)}%`"></span>
+      <span class="badge" style="background: #eaf0f4; color: var(--accent)"
+            x-text="`识别字段: ${result?.notes_count || 0} 处`"></span>
+    </div>
+
+    <template x-if="result?.warnings?.length">
+      <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; font-size: 12.5px">
+        <strong>{{ _('⚠ 注意') }}</strong>
+        <ul style="margin: 4px 0 0; padding-left: 18px">
+          <template x-for="w in result.warnings"><li x-text="w"></li></template>
+        </ul>
+      </div>
+    </template>
+
+    <h3 style="margin: 14px 0 6px; text-transform: none; font-size: 14px; color: var(--fg)">{{ _('预览') }}</h3>
+    <p class="muted" style="font-size: 11.5px; margin: 0 0 6px">
+      用 hard-coded 的虚拟简历 (Alex Chen) 渲染。下载 .docx 后请在 Word 中打开看真实效果。
+    </p>
+    <iframe :src="result?.preview_url" style="width: 100%; height: 500px; border: 1px solid var(--line); border-radius: 4px; background: white"></iframe>
+
+    <div style="display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap">
+      <a :href="result?.download_url" target="_blank" class="btn subtle" x-show="result"
+         title="带 {{ '{{}}' }} placeholder 的裸模板，用于排查 LLM 抽错的占位符">{{ _('⬇ 模板源') }}</a>
+      <a :href="result?.sample_url" target="_blank" class="btn subtle"
+         x-show="result?.sample_url"
+         title="{{ _('用 SAMPLE_RESUME 渲染过的 .docx — 在 Word/Pages 打开看真实效果') }}">{{ _('⬇ 样品 .docx') }}</a>
+      <span style="flex: 1"></span>
+      {# Both HTML and DOCX themes go through the same save form now (ADR-0018) #}
+      <template x-if="result">
+        <form method="post" :action="`/templates/inspire/${result?.token}/save`"
+              style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap">
+          <input type="text" name="name" placeholder="{{ _('给模板起个名字') }}" required
+                 style="padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font-size: 13px">
+          <input type="text" name="description" placeholder="{{ _('（可选）一句描述') }}"
+                 style="padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font-size: 13px; max-width: 220px">
+          <button type="submit" class="primary">
+            <span x-text="result?.kind === 'docx' ? '💾 存为 DOCX 模板' : '💾 存为 HTML 模板'"></span>
+          </button>
+        </form>
+      </template>
+    </div>
+  </div>
+
+  {# Error panel #}
+  <div x-show="error" x-cloak class="flash error" x-text="error" style="margin-top: 14px"></div>
+</div>
+
+<style>
+  .dropzone {
+    border: 2px dashed var(--line);
+    border-radius: 6px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 100ms;
+    background: #fafaf6;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--accent);
+    background: #f0f4f8;
+  }
+</style>
+
+<script>
+  window.INSPIRE_I18N = {
+    route_docx:        {{ _('DOCX 路 (99%% 保真)')|tojson }},
+    route_html_97:     {{ _('HTML 路 (97%%)')|tojson }},
+    route_pdf:         {{ _('PDF 路 (85-95%%)')|tojson }},
+    route_image:       {{ _('图片路 (70-80%%)')|tojson }},
+    unknown_format:    {{ _('未知格式')|tojson }},
+    uploading:         {{ _('上传中…')|tojson }},
+    analyzing:         {{ _('分析中…')|tojson }},
+    llm_thinking:      {{ _('LLM 思考中…')|tojson }},
+    llm_recognizing:   {{ _('LLM 识别中…')|tojson }},
+    still_processing:  {{ _('仍在处理…（图片/PDF 路较慢）')|tojson }},
+    unknown_error:     {{ _('未知错误')|tojson }},
+    network_error:     {{ _('网络错误：')|tojson }},
+  };
+</script>
+<script>
+function inspireFlow() {
+  return {
+    file: null,
+    processing: false,
+    statusText: "",
+    result: null,
+    error: null,
+    dragover: false,
+
+    onDrop(e) {
+      this.dragover = false;
+      const files = e.dataTransfer.files;
+      if (files.length > 0) this.file = files[0];
+    },
+    onFileSelect(e) {
+      const files = e.target.files;
+      if (files.length > 0) this.file = files[0];
+    },
+    detectedFormat() {
+      if (!this.file) return "";
+      const ext = this.file.name.toLowerCase().split('.').pop();
+      const I = window.INSPIRE_I18N;
+      const map = {
+        docx: I.route_docx, htm: I.route_html_97, html: I.route_html_97,
+        pdf: I.route_pdf, png: I.route_image, jpg: I.route_image,
+        jpeg: I.route_image, webp: I.route_image,
+      };
+      return map[ext] || I.unknown_format;
+    },
+    reset() {
+      this.file = null;
+      this.result = null;
+      this.error = null;
+    },
+    async upload() {
+      if (!this.file) return;
+      this.processing = true;
+      this.error = null;
+      this.result = null;
+      this.statusText = window.INSPIRE_I18N.uploading;
+
+      const fd = new FormData();
+      fd.append("file", this.file);
+
+      // Progress hint timer
+      const ext = this.file.name.toLowerCase().split('.').pop();
+      const slow = ext === "pdf" || ext === "png" || ext === "jpg" || ext === "jpeg";
+      let elapsed = 0;
+      const tick = setInterval(() => {
+        elapsed += 1;
+        const I = window.INSPIRE_I18N;
+        if (slow) {
+          this.statusText = elapsed < 5 ? `${I.analyzing} ${elapsed}s` :
+                           elapsed < 20 ? `${I.llm_thinking} ${elapsed}s` :
+                           `${I.still_processing.replace('…', '… ' + elapsed + 's ')}`;
+        } else {
+          this.statusText = elapsed < 3 ? `${I.analyzing} ${elapsed}s` :
+                           `${I.llm_recognizing} ${elapsed}s`;
+        }
+      }, 1000);
+
+      try {
+        const r = await fetch("/templates/inspire", {method: "POST", body: fd});
+        const j = await r.json();
+        clearInterval(tick);
+        this.processing = false;
+        if (!j.ok) {
+          this.error = j.error || window.INSPIRE_I18N.unknown_error;
+          return;
+        }
+        this.result = j;
+      } catch (e) {
+        clearInterval(tick);
+        this.processing = false;
+        this.error = window.INSPIRE_I18N.network_error + (e.message || e);
+      }
+    }
+  };
+}
+</script>
+
+{% endblock %}

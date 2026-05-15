@@ -1,0 +1,61 @@
+{# stated vs revealed conflict banner — shown at top of /feedback when any exist #}
+<div id="conflicts" class="card" style="border-color: var(--warn); background: #fef6e6">
+  <h3 style="color: var(--warn)">⚠ 检测到 {{ conflicts | length }} 个 stated vs revealed 矛盾</h3>
+  <p class="muted" style="font-size: 12.5px; margin: 4px 0 12px">
+    你的反馈和你 stated 的搜索条件 / 校准 / 锁定项有冲突。
+    <strong>{{ _('哪个是真的你？') }}</strong>{{ _('每条都需要你处理或确认。') }}
+  </p>
+
+  {% for c in conflicts %}
+    <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 4px; border-left: 4px solid {% if c.severity == 'hard' %}var(--danger){% else %}var(--warn){% endif %}">
+      <p style="margin: 0 0 6px">
+        <strong>{{ _('反馈说') }}</strong>:
+        {% if c.line_side == "+" %}✓{% else %}✗{% endif %} {{ c.line_text }}
+        <span class="muted" style="font-size: 11px">(确认 {{ c.confirmed_count }} 次, axis: {{ c.line_axis }})</span>
+      </p>
+      <p style="margin: 0 0 6px; font-size: 13px">
+        <strong>{{ _('但 stated 说') }}</strong>:
+        <code>{{ c.stated_source }}</code> = "{{ c.stated_value }}"
+      </p>
+      <p class="muted" style="font-size: 12.5px; margin: 0 0 10px">{{ c.explanation }}</p>
+
+      <form method="post" action="{{ url_for('feedback.resolve_conflict') }}"
+            x-data="{ mode: 'choose' }" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <input type="hidden" name="line_id" value="{{ c.line_id }}">
+
+        <button type="submit" name="resolution" value="update_stated" class="subtle" style="font-size: 12px">
+          {% if c.stated_source.startswith("scrape_") %}
+            去改 scrape 关键词
+          {% else %}
+            去改 stated（{{ c.stated_source }}）
+          {% endif %}
+        </button>
+
+        <button type="button" class="subtle" style="font-size: 12px" @click="mode = 'narrow'">
+          缩小反馈范围
+        </button>
+
+        <button type="submit" name="resolution" value="acknowledge" class="subtle" style="font-size: 12px">
+          知道了，先这样
+        </button>
+
+        {# narrow_brief inline form (Alpine x-show) #}
+        <div x-show="mode === 'narrow'" x-cloak
+             style="flex-basis: 100%; margin-top: 8px; padding: 10px; background: #fafaf6; border-radius: 4px">
+          <input type="hidden" name="resolution" value="narrow_brief">
+          <p class="muted" style="font-size: 12px; margin: 0 0 6px">{{ _('改成更具体的版本（保留主张但加 scope）：') }}</p>
+          <input type="text" name="narrow_text" maxlength="60"
+                 placeholder="{{ _('例：避开 fintech junior（仍要 fintech 但避免初级）') }}"
+                 style="width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 3px; font: inherit; margin-bottom: 6px">
+          <input type="text" name="narrow_scope" maxlength="80"
+                 placeholder="{{ _('可选 scope：例 \'for junior roles\' / \'in Germany\'') }}"
+                 style="width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 3px; font: inherit">
+          <div style="margin-top: 8px; display: flex; gap: 8px">
+            <button type="submit" style="font-size: 12px">{{ _('应用') }}</button>
+            <button type="button" class="subtle" style="font-size: 12px" @click="mode = 'choose'">{{ _('取消') }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  {% endfor %}
+</div>

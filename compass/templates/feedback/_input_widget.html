@@ -1,0 +1,106 @@
+{# Reusable feedback input widget — inline card with explicit context banner.
+   Used on jobs/detail (JD/preferences), resume/review (per variant), etc.
+
+   Required vars:
+     context        — "jobs" or "resume"
+     item_id        — job id or variant id
+     item_label     — short human label e.g. "Acme · Senior Data Analyst"
+     bullet_index   — (optional, resume only)
+
+   Optional vars (cosmetic):
+     ctx_kind       — UI label: "JD" | "简历 variant" | …
+     ctx_kind_emoji — emoji for the banner
+#}
+{% set _emoji = ctx_kind_emoji or ('📝' if context == 'resume' else '📋') %}
+{% set _kind = ctx_kind or ('简历 variant' if context == 'resume' else 'JD / 岗位') %}
+{% set _uid = context ~ '-' ~ item_id ~ ('-' ~ bullet_index|string if (bullet_index is defined and bullet_index is not none) else '') %}
+
+<div x-data="{ open: false }" class="feedback-widget" data-uid="{{ _uid }}">
+  <div class="fb-banner" @click="open = !open" :class="open && 'fb-banner-open'">
+    <span class="fb-emoji">{{ _emoji }}</span>
+    <div class="fb-context">
+      <div class="fb-context-line">
+        <span class="fb-label">{{ _('你在反馈') }}</span>
+        <strong class="fb-target">{{ _kind }} · {{ item_label }}</strong>
+      </div>
+      <div class="fb-context-hint muted">
+        告诉系统这一项<strong>{{ _('哪里好/哪里不好') }}</strong> {{ _('— 下次推送和改写会读到') }}
+      </div>
+    </div>
+    <span class="fb-toggle" x-text="open ? '▾ 收起' : '▸ 展开写'"></span>
+  </div>
+
+  <div x-show="open" x-cloak x-transition.duration.150ms class="fb-body">
+    <form hx-post="{{ url_for('feedback.extract_preview') }}"
+          hx-target="#extract-preview-{{ _uid }}"
+          hx-swap="outerHTML">
+      <input type="hidden" name="context" value="{{ context }}">
+      <input type="hidden" name="item_id" value="{{ item_id }}">
+      <input type="hidden" name="item_label" value="{{ item_label }}">
+      {% if bullet_index is defined and bullet_index is not none %}
+        <input type="hidden" name="bullet_index" value="{{ bullet_index }}">
+      {% endif %}
+      <textarea name="user_text" rows="3" maxlength="500"
+                placeholder="{% if context == 'resume' %}例：这条改写过头了 / 我希望保留原文的口吻 / 不要把"协助"改成"领导"{% else %}例：太 startup 氛围，不喜欢；远程加分；薪资 < €2000 不要{% endif %}"
+                style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 4px; font: inherit"
+                required></textarea>
+      <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center">
+        <span class="muted" style="font-size: 11px">
+          LLM 会把这段提炼成 brief 条目，先给你看 → 你确认 → 写入。
+        </span>
+        <span style="flex: 1"></span>
+        <span class="htmx-indicator muted" style="font-size: 12px">{{ _('⏳ 提取中…') }}</span>
+        <button type="submit" class="primary" style="font-size: 12.5px; padding: 5px 12px">{{ _('→ 提取') }}</button>
+      </div>
+    </form>
+
+    <div id="extract-preview-{{ _uid }}" style="margin-top: 10px"></div>
+  </div>
+</div>
+
+{# Scoped styles — add once via @scope or rely on first include. Inline-once
+   pattern: a guard via a Jinja request-level variable would be cleaner, but
+   the simplest is to put styles on _every_ render and let the browser dedupe. #}
+<style>
+  .feedback-widget {
+    margin: 12px 0;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: white;
+    overflow: hidden;
+  }
+  .fb-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; cursor: pointer;
+    background: linear-gradient(180deg, #fafaf6 0%, white 80%);
+    transition: background 100ms;
+    border-left: 3px solid var(--accent);
+  }
+  .fb-banner:hover { background: #f4f4ee; }
+  .fb-banner-open {
+    border-bottom: 1px solid var(--line);
+    background: #f8f8f3 !important;
+  }
+  .fb-emoji { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .fb-context { flex: 1; min-width: 0; }
+  .fb-context-line {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+    line-height: 1.3;
+  }
+  .fb-label {
+    font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--line); padding: 1px 8px; border-radius: 9px;
+  }
+  .fb-target {
+    font-size: 13.5px; color: var(--fg);
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .fb-context-hint {
+    font-size: 11.5px; margin-top: 2px;
+  }
+  .fb-toggle {
+    font-size: 11.5px; color: var(--accent); flex-shrink: 0;
+    font-weight: 500;
+  }
+  .fb-body { padding: 12px 14px 14px; }
+</style>

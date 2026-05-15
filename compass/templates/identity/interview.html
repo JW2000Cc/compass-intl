@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}访谈 · Compass{% endblock %}
+{% block content %}
+
+<p><a href="{{ url_for('identity.overview') }}" class="muted">{{ _('← 返回身份') }}</a></p>
+
+<h1>{{ _('访谈式发现') }}</h1>
+<p class="lede">
+  Compass 不替你编造事实——它问问题，让你回忆出**已有但没意识到值得写**的真事实。
+</p>
+
+<div class="card">
+  <h3>{{ _('原始 fact') }}</h3>
+  <p>{{ parent_fact.text }}</p>
+  <p class="muted" style="font-size: 12px">{{ parent_fact.kind }}</p>
+</div>
+
+<form method="post">
+  {% for qa in qas %}
+    <div class="card">
+      <p style="font-weight: 500; margin: 4px 0">Q{{ loop.index }}. {{ qa.question }}</p>
+      <textarea name="answer_{{ qa.id }}" rows="3" placeholder="{{ _('如实回答 — 不知道就空着') }}">{{ qa.answer or "" }}</textarea>
+      {% if qa.answer_skipped %}<p class="muted" style="font-size: 11px">(skipped)</p>{% endif %}
+    </div>
+  {% endfor %}
+
+  <div style="display: flex; gap: 10px; margin: 16px 0">
+    <button type="submit" name="action" value="save" class="subtle">{{ _('💾 保存（继续编辑）') }}</button>
+    <button type="submit" name="action" value="synthesize">{{ _('✓ 完成访谈 + 合成 facts') }}</button>
+  </div>
+
+  <p class="muted" style="font-size: 12px">
+    点"完成访谈"后，Compass 会从你的回答里提取出**新的原子事实**（不会改原始 fact），
+    每条新 fact 都会附上"来自访谈第 X 题"的证据链接。
+  </p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{# Returned after user confirms "I sent it" — replaces modal content. #}
+<h3 style="color: var(--ok)">{{ _('✓ 已记录') }}</h3>
+<p style="font-size: 13.5px; margin: 8px 0">
+  Outreach 给 <strong>{{ contact_name }}</strong> {{ _('已写入 OutreachAttempt 表（id:') }} <code>{{ attempt_id }}</code>）。
+</p>
+<p class="muted" style="font-size: 12px; margin: 8px 0">
+  几天后回来在 jobs detail 页底部「已发送给该 job 的 outreach」区块标记是否收到回应。
+  这个反馈是 Compass 学习"什么 outreach 起作用"的核心数据。
+</p>
+<button type="button" class="cancel" onclick="document.querySelector('.alias-modal').style.display='none'">{{ _('关闭') }}</button>

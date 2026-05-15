@@ -1,0 +1,27 @@
+{# Reusable mark-done / skip / undo buttons for a step.
+   Required: step_obj — Step dataclass instance (has .id, .state, .user_override)
+   Plain form POST — server redirects to detail page, full reload OK here. #}
+{% if step_obj %}
+  {% if step_obj.state == 'done' and step_obj.user_override == 'done' %}
+    <form method="post" action="{{ url_for('jobs.effort_override', job_id=job.id, step_id=step_obj.id) }}" style="display: inline">
+      <input type="hidden" name="override" value="">
+      <button type="submit" class="step-mark-skip" title="{{ _('撤销手动 done') }}">{{ _('↺ 撤销 done') }}</button>
+    </form>
+  {% elif step_obj.state == 'todo' %}
+    <form method="post" action="{{ url_for('jobs.effort_override', job_id=job.id, step_id=step_obj.id) }}" style="display: inline">
+      <input type="hidden" name="override" value="done">
+      <button type="submit" class="step-mark-done" title="{{ _('手动标完成') }}">{{ _('✓ 标完成') }}</button>
+    </form>
+    <form method="post" action="{{ url_for('jobs.effort_override', job_id=job.id, step_id=step_obj.id) }}" style="display: inline">
+      <input type="hidden" name="override" value="skipped">
+      <button type="submit" class="step-mark-skip" title="{{ _('跳过这步') }}">{{ _('– 跳过') }}</button>
+    </form>
+  {% elif step_obj.state == 'skipped' %}
+    <form method="post" action="{{ url_for('jobs.effort_override', job_id=job.id, step_id=step_obj.id) }}" style="display: inline">
+      <input type="hidden" name="override" value="">
+      <button type="submit" class="step-mark-skip" title="{{ _('撤销跳过') }}">{{ _('↺ 撤销 skip') }}</button>
+    </form>
+  {% elif step_obj.state == 'done' %}
+    <span style="font-size: 11px; color: var(--ok); padding: 4px 10px">{{ _('✓ 已自动检测完成') }}</span>
+  {% endif %}
+{% endif %}

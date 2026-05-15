@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="{{ current_locale }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ _('Compass · 首次配置') }}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 580px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; font-weight: 600; }
+    .subtitle { color: #6e6e73; margin-bottom: 32px; font-size: 15px; }
+    .step { margin-bottom: 28px; }
+    .step label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .step .hint {
+      color: #6e6e73;
+      font-size: 13px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .step .hint a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .step .hint a:hover { text-decoration: underline; }
+    input[type="text"], input[type="password"], select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      transition: border-color 0.15s;
+      background: white;
+    }
+    select { font-family: inherit; }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+    }
+    .status-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+    .status-tag.set { background: #d4edda; color: #155724; }
+    .status-tag.empty { background: #fff3cd; color: #856404; }
+    button {
+      width: 100%;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: #0052a3; }
+    .error {
+      background: #fee;
+      color: #c00;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .info {
+      background: #e7f3ff;
+      color: #003d7a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .note {
+      background: #fff8e1;
+      color: #8a6d3b;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div style="max-width:580px;margin:0 auto 12px;text-align:right;color:#1d1d1f;">{% include '_language_switcher.html' %}</div>
+  <div class="container">
+    <h1>{{ _('首次配置') }}</h1>
+    <p class="subtitle">{{ _('Compass 需要一个 LLM API key 才能跑 AI 功能（简历改写、岗位匹配等）。') }}</p>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="info">
+      <strong>{{ _('填完保存后') }}</strong> {{ _('key 会写入') }} <code>.env</code> {{ _('文件，只存在你本地。') }}<br>
+      想用别的 LLM provider（OpenAI / 自托管）可以选 OpenAI 并填对应 key。
+    </div>
+
+    <form method="POST" action="/setup">
+      <div class="step">
+        <label for="llm_provider">1. LLM Provider</label>
+        <div class="hint">
+          推荐用 Claude，Compass 的 skill 生态依赖 Claude Code Skill 路径。
+          OpenAI 也能跑核心功能（matcher / claim grounder / 改写）。
+        </div>
+        <select id="llm_provider" name="llm_provider" required>
+          <option value="claude" {% if current_provider == 'claude' %}selected{% endif %}>{{ _('Claude (Anthropic) — 推荐') }}</option>
+          <option value="openai" {% if current_provider == 'openai' %}selected{% endif %}>OpenAI</option>
+        </select>
+      </div>
+
+      <div class="step">
+        <label for="llm_api_key">
+          2. LLM API Key
+          <span class="status-tag {{ 'set' if has_key else 'empty' }}">
+            {{ '已填' if has_key else '待填' }}
+          </span>
+        </label>
+        <div class="hint">
+          Claude key: 去 <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+          → Create Key，会给 <code>sk-ant-...</code><br>
+          OpenAI key: 去 <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>
+          → Create new key，会给 <code>sk-...</code>
+        </div>
+        <input type="password"
+               id="llm_api_key"
+               name="llm_api_key"
+               placeholder="{{ _('sk-ant-... 或 sk-...') }}"
+               autocomplete="off"
+               required>
+        <div class="note">
+          key 不在前端 / 不上传任何服务器，只本地 .env 落盘。
+        </div>
+      </div>
+
+      <button type="submit">{{ _('保存并启动') }}</button>
+    </form>
+  </div>
+</body>
+</html>

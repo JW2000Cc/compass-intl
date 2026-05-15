@@ -1,0 +1,14 @@
+[project]
+name = "compass"
+version = "0.1.0"
+description = "A career reflection system. Shows direction, not destination."
+requires-python = ">=3.11"
+authors = [{name = "Jiawen"}]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]

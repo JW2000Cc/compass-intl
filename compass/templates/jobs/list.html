@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}岗位 · Compass{% endblock %}
+{% block content %}
+
+{% set total_count = (groups[1] | length) + (groups[2] | length) + (groups[3] | length) + (groups[4] | length) + (groups[5] | length) + (groups[0] | length) %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('岗位') }}</h1>
+    <p class="lede">{{ _('按 Tier 分组——核心 / 邻近 / 学习 / 远距 / 不可达。Tier 5 静默存档。') }}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('jobs.list_view', view='list') }}" class="pill {% if current_view == 'list' %}active{% endif %}">{{ _('📋 列表') }}</a>
+    <a href="{{ url_for('jobs.list_view', view='kanban') }}" class="pill {% if current_view == 'kanban' %}active{% endif %}">📊 Kanban</a>
+  </div>
+</div>
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('jobspy 多站抓回来的 jobs，按 5 个 Tier 分组：') }}</p>
+    <ul>
+      <li><strong>{{ _('Tier 1 核心专业圈') }}</strong> {{ _('— 你背景直接对口的（推送主力，70%% 配额）') }}</li>
+      <li><strong>{{ _('Tier 2 邻近迁移圈') }}</strong> {{ _('— 你能转的相邻方向（') }}<strong>{{ _('反茧房甜点') }}</strong>，20%）</li>
+      <li><strong>{{ _('Tier 3 可学习扩展') }}</strong> {{ _('— 补 1-2 个 skill 即可进入（带 learning_gap，10%%）') }}</li>
+      <li><strong>{{ _('Tier 4 远距迁移') }}</strong> {{ _('— 完全转方向（默认不推，仅强信号触发）') }}</li>
+      <li><strong>{{ _('Tier 5 不可达') }}</strong> {{ _('— 学历/签证/语言硬不够（永远静默存档）') }}</li>
+    </ul>
+    <h4>{{ _('为什么需要它（vs Job Mate 的 push/skip 二元）') }}</h4>
+    <p>{{ _('二元判断丢弃 90%% 信息，且消灭反茧房可能。5-tier 让"邻近迁移"成为显式甜点——你不用刻意找跨方向工作，系统自动给你 20%% 配额。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('配置好抓取关键词 + 地区，跑"📥 抓取"（多组配置支持不同地区不同关键词）') }}</li>
+      <li>{{ _('抓完进单条 job 详情页跑"重新分类"——LLM 给出 tier 判断') }}</li>
+      <li>{{ _('每天看 Tier 1（核心）+ 偶尔看 Tier 2（反茧房）—— Tier 5 永远不点') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# C1 (5-08): 抓取面板抽到 jobs/searches/_panel.html partial。
+   sidebar『求职意图』指向独立的 search-config 页面（同一个 partial）。
+   list.html 仍 include 此 partial 以兼容老书签 ?scrape=1#scrape；
+   panel 在 jobs 列表为空 / hash 跳转时自动展开。 #}
+{% include "jobs/searches/_panel.html" %}
+
+{# ─────────── Filter pills ─────────── #}
+<div class="pill-row" style="margin: 18px 0 8px">
+  <span style="font-size: 12px; color: var(--muted); margin-right: 4px">Tier:</span>
+  <a class="pill {% if not current_tier %}active{% endif %}"
+     href="{{ url_for('jobs.list_view', status=current_status, limit=current_limit) }}"
+     hx-get="{{ url_for('jobs.list_view', status=current_status, limit=current_limit) }}"
+     hx-target="#jobs-list-results" hx-swap="outerHTML" hx-push-url="true">{{ _('全部') }}</a>
+  {% for t in [1, 2, 3, 4, 5] %}
+    <a class="pill {% if current_tier == t %}active{% endif %}"
+       href="{{ url_for('jobs.list_view', tier=t, status=current_status, limit=current_limit) }}"
+       hx-get="{{ url_for('jobs.list_view', tier=t, status=current_status, limit=current_limit) }}"
+       hx-target="#jobs-list-results" hx-swap="outerHTML" hx-push-url="true">
+      <span class="badge badge-tier{{ t }}" style="margin-right: 2px; font-size: 10px; padding: 0 5px">T{{ t }}</span>
+      {{ groups[t] | length }}
+    </a>
+  {% endfor %}
+  <a class="pill {% if current_tier == 0 %}active{% endif %}"
+     href="{{ url_for('jobs.list_view', tier=0, status=current_status, limit=current_limit) }}"
+     hx-get="{{ url_for('jobs.list_view', tier=0, status=current_status, limit=current_limit) }}"
+     hx-target="#jobs-list-results" hx-swap="outerHTML" hx-push-url="true">未分类 {{ groups[0] | length }}</a>
+</div>
+
+<div class="pill-row" style="margin: 8px 0 6px">
+  <span style="font-size: 12px; color: var(--muted); margin-right: 4px">{{ _('状态:') }}</span>
+  <a class="pill {% if not current_status %}active{% endif %}"
+     href="{{ url_for('jobs.list_view', tier=current_tier, limit=current_limit, sort=current_sort, q=current_q, location=current_location) }}">{{ _('全部') }}</a>
+  {% for s in ["new", "reviewed", "applied", "interview", "offer", "rejected", "passed"] %}
+    <a class="pill {% if current_status == s %}active{% endif %}"
+       href="{{ url_for('jobs.list_view', tier=current_tier, status=s, limit=current_limit, sort=current_sort, q=current_q, location=current_location) }}">{{ s }}</a>
+  {% endfor %}
+  <span class="htmx-indicator muted" style="font-size: 12px">{{ _('⏳ 加载中…') }}</span>
+</div>
+
+{% if location_pills %}
+<div class="pill-row" style="margin: 6px 0 14px">
+  <span style="font-size: 12px; color: var(--muted); margin-right: 4px">{{ _('📍 地区:') }}</span>
+  <a class="pill {% if not current_location %}active{% endif %}"
+     href="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort=current_sort, q=current_q) }}">{{ _('全部') }}</a>
+  {% for loc, cnt in location_pills %}
+    <a class="pill {% if current_location and current_location.lower() in loc.lower() %}active{% endif %}"
+       href="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort=current_sort, q=current_q, location=loc) }}">
+      {{ loc }} <span class="pill-count">{{ cnt }}</span>
+    </a>
+  {% endfor %}
+  {% if current_location and current_location not in location_pills | map(attribute=0) %}
+    <span class="pill active">"{{ current_location }}"
+      <a href="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort=current_sort, q=current_q) }}"
+         style="margin-left:6px;color:white">×</a>
+    </span>
+  {% endif %}
+</div>
+{% endif %}
+
+{# ─────────── Search + sort + limit row ─────────── #}
+<div class="card" style="display: flex; gap: 10px; align-items: center; padding: 10px 14px; flex-wrap: wrap"
+     x-data="{ q: '{{ current_q | escape }}' }">
+  <input type="search"
+         x-model="q"
+         @input.debounce.250ms="document.dispatchEvent(new CustomEvent('jobs-search', { detail: { query: q } }))"
+         placeholder="{{ _('🔍 搜索 标题 / 公司 / 地点…（实时筛选当前结果）') }}"
+         style="flex: 1; min-width: 220px; padding: 7px 12px; border: 1px solid var(--line);
+                border-radius: 4px; font: inherit; font-size: 13.5px">
+  <span class="muted" style="font-size: 12px">{{ _('📡 全库搜：') }}</span>
+  <form method="get" action="{{ url_for('jobs.list_view') }}" style="display: inline">
+    <input type="hidden" name="tier" value="{{ current_tier or '' }}">
+    <input type="hidden" name="status" value="{{ current_status or '' }}">
+    <input type="hidden" name="limit" value="{{ current_limit }}">
+    <input type="hidden" name="sort" value="{{ current_sort }}">
+    <input type="text" name="q" value="{{ current_q }}" placeholder="{{ _('服务端过滤关键词') }}"
+           style="padding: 5px 8px; border: 1px solid var(--line); border-radius: 3px; font: inherit; font-size: 12.5px; width: 160px">
+    <button type="submit" class="subtle" style="font-size: 12px; padding: 4px 10px">⏎</button>
+  </form>
+  <div style="display: flex; gap: 8px; align-items: center; margin-left: auto">
+    <span class="muted" style="font-size: 12px">{{ _('排序：') }}</span>
+    <select onchange="location.href=this.value"
+            style="font: inherit; padding: 4px 8px; border-radius: 3px; border: 1px solid var(--line); font-size: 12.5px">
+      <option value="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort='tier', q=current_q) }}"
+              {% if current_sort == 'tier' %}selected{% endif %}>{{ _('按 Tier 分组') }}</option>
+      <option value="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort='scraped_desc', q=current_q) }}"
+              {% if current_sort == 'scraped_desc' %}selected{% endif %}>{{ _('抓取时间 ↓') }}</option>
+      <option value="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort='scraped_asc', q=current_q) }}"
+              {% if current_sort == 'scraped_asc' %}selected{% endif %}>{{ _('抓取时间 ↑') }}</option>
+      <option value="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=current_limit, sort='by_date', q=current_q) }}"
+              {% if current_sort == 'by_date' %}selected{% endif %}>{{ _('📅 按日期分组') }}</option>
+    </select>
+    <select onchange="location.href=this.value"
+            style="font: inherit; padding: 4px 8px; border-radius: 3px; border: 1px solid var(--line); font-size: 12.5px">
+      {% for n in [20, 40, 100, 200] %}
+        <option value="{{ url_for('jobs.list_view', tier=current_tier, status=current_status, limit=n, sort=current_sort, q=current_q) }}"
+                {% if current_limit == n %}selected{% endif %}>显示 {{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+{% include "jobs/_list_results.html" %}
+
+<script>
+  // Instant client-side filter on currently-displayed cards
+  document.addEventListener('jobs-search', function(e) {
+    var q = (e.detail.query || "").trim().toLowerCase();
+    var cards = document.querySelectorAll('.jobs-search-target');
+    var visible = 0;
+    cards.forEach(function(c) {
+      var blob = c.dataset.search || "";
+      var match = !q || blob.indexOf(q) >= 0;
+      c.style.display = match ? "" : "none";
+      if (match) visible += 1;
+    });
+    var empty = document.getElementById('jobs-search-empty');
+    if (empty) empty.style.display = (q && visible === 0) ? "" : "none";
+  });
+</script>
+
+{% endblock %}

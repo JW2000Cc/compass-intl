@@ -1,0 +1,164 @@
+{# Contact panel — rendered on jobs/detail. Shows warm + (lazy) cold + past outreach. #}
+<div id="contacts-panel-{{ job.id }}" x-data="{ draftFor: null }">
+
+  {# ─── Warm layer (people user already knows) ─── #}
+  <h3 style="margin: 18px 0 8px">🔗 你认识的人在 {{ job.company or "这家公司" }}（warm）</h3>
+  {% if warm %}
+    <p class="muted" style="font-size: 12px; margin: 0 0 8px">
+      共 {{ warm | length }} 个匹配。**warm 路径回应率 30-50%**——优先用这条。
+    </p>
+    {% for c in warm %}
+      <div class="card" style="border-left: 3px solid var(--ok); padding: 10px 14px">
+        <div style="display: flex; gap: 12px; align-items: start">
+          <div style="flex: 1">
+            <p style="margin: 0; font-weight: 500">
+              {% if c.linkedin_url %}
+                <a href="{{ c.linkedin_url }}" target="_blank" rel="noopener">{{ c.name }}</a>
+              {% else %}
+                {{ c.name }}
+              {% endif %}
+            </p>
+            <p class="muted" style="font-size: 12.5px; margin: 2px 0">
+              {{ c.title }}{% if c.title and c.company %} @ {% endif %}<strong>{{ c.company }}</strong>
+            </p>
+            <p class="muted" style="font-size: 11px; margin: 0">
+              {% if c.connected_at %}加为连接 {{ c.connected_at | local_dt("%Y-%m") }}{% endif %}
+              · source: {{ c.source }}
+            </p>
+          </div>
+          <button type="button" class="btn"
+                  @click='draftFor = {{ {"path":"warm","id":c.id,"name":c.name,"title":c.title,"url":c.linkedin_url,"snippet":""} | tojson }}'
+                  style="font-size: 12px; flex-shrink: 0">
+            📝 起草信
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card" style="background: #fafaf6">
+      <p class="muted" style="margin: 0; font-size: 13px">
+        没找到你认识的人在 {{ job.company or "这家公司" }}。
+        {% if not job.company %}
+          (这个 job 没有公司名信息，warm 查询无法运行。)
+        {% else %}
+          → 看下面 cold 层用搜索引擎找公开员工。
+        {% endif %}
+      </p>
+      <p class="muted" style="margin: 6px 0 0; font-size: 11.5px">
+        💡 想让 warm 命中率上去 → <a href="{{ url_for('connections.overview') }}">{{ _('导入更多 LinkedIn 连接') }}</a>
+      </p>
+    </div>
+  {% endif %}
+
+  {# ─── Cold layer — gated by workflow stage ─── #}
+  {% if cold_unlocked %}
+    <h3 style="margin: 22px 0 8px">🔍 公开搜得到的 {{ job.company or "公司" }} 员工（cold）</h3>
+    <p class="muted" style="font-size: 12px; margin: 0 0 8px">
+      {% if stage == "sent" %}
+        已投——用 cold 路径做 follow-up：「我刚提交了申请，能聊一下团队吗？」HR / 部门同事优先。
+      {% else %}
+        用搜索引擎查 LinkedIn 公开页（不爬 LinkedIn）。回应率 5-15%。
+      {% endif %}
+    </p>
+    <div id="cold-results-{{ job.id }}">
+      <div class="card" style="background: #fafaf6">
+        <button type="button" class="subtle"
+                hx-get="{{ url_for('contacts.cold_search', job_id=job.id) }}"
+                hx-target="#cold-results-{{ job.id }}" hx-swap="innerHTML"
+                hx-indicator="#cold-spinner-{{ job.id }}"
+                style="font-size: 13px">
+          🔍 开始搜索（约 10-30 秒）
+        </button>
+        <span id="cold-spinner-{{ job.id }}" class="htmx-indicator muted"
+              style="margin-left: 10px; font-size: 12px">
+          ⏳ 多引擎搜索中（DDG / Bing / Brave，三轮：HR → 部门同事 → 宽泛）…
+        </span>
+        <p class="muted" style="font-size: 11.5px; margin: 6px 0 0">
+          结果按公司缓存 30 天。同公司的不同 job 共享缓存。
+        </p>
+      </div>
+    </div>
+  {% else %}
+    <div class="card" style="margin-top: 18px; background: #fafaf6; opacity: 0.7">
+      <h3 class="muted">{{ _('🔍 cold 搜索 —') }} <span style="font-size: 11px">{{ _('阶段未启用') }}</span></h3>
+      <p class="muted" style="font-size: 12px; margin: 4px 0 0">
+        投递后（status: applied）开放——cold outreach 是 follow-up 用的，不是投前找路子。
+        投前应该先用 <strong>warm</strong> {{ _('路径——你认识的人。') }}
+        <br><br>
+        想现在就开放？把 status 切到 applied（详情页上方状态卡）。
+      </p>
+    </div>
+  {% endif %}
+
+  {# ─── Past outreach for this job ─── #}
+  {% if past %}
+    <h3 style="margin: 22px 0 8px">{{ _('📜 已发送给该 job 的 outreach') }}</h3>
+    {% for p in past %}
+      <div class="card" style="padding: 10px 14px; font-size: 13px">
+        <span style="display: inline-block; padding: 2px 8px; border-radius: 9px; font-size: 11px; background: {% if p.path == 'warm' %}#d8efd8; color: var(--ok){% else %}#eaf0f4; color: var(--accent){% endif %}">
+          {{ p.path }}
+        </span>
+        <strong>{{ p.contact_name }}</strong>
+        <span class="muted">· {{ p.purpose }} · {{ p.sent_at | local_dt("%m-%d") }}</span>
+
+        {% if p.response_received is none %}
+          <form method="post" action="{{ url_for('contacts.log_response', attempt_id=p.id) }}"
+                style="display: inline-flex; gap: 4px; margin-left: 10px">
+            <button type="submit" name="response_received" value="false" class="subtle" style="font-size: 11px">{{ _('无回应') }}</button>
+            <button type="submit" name="response_received" value="true" formaction="{{ url_for('contacts.log_response', attempt_id=p.id) }}" class="subtle" style="font-size: 11px">{{ _('有回应 → 详细') }}</button>
+          </form>
+        {% elif p.response_received %}
+          <span style="color: var(--ok); font-size: 11.5px; margin-left: 10px">✓ 回应了 ({{ p.response_kind or "—" }})</span>
+        {% else %}
+          <span class="muted" style="font-size: 11.5px; margin-left: 10px">{{ _('无回应') }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {# ─── Draft modal (Alpine x-show on draftFor) ─── #}
+  <div class="alias-modal" x-show="draftFor" x-cloak style="display:none" x-transition.opacity>
+    <div class="alias-modal-backdrop" @click="draftFor = null"></div>
+    <div class="alias-modal-content" style="max-width: 700px">
+      <h3>{{ _('起草 outreach') }} <span x-text="'给 ' + (draftFor && draftFor.name)"></span></h3>
+      <p class="muted" style="font-size: 12.5px; margin: 4px 0 14px">
+        LLM 用你的 facts + 这个 job + 联系人信息生成草稿。**你复制粘贴自己发**，系统不发。
+      </p>
+
+      <form hx-post="{{ url_for('contacts.draft', job_id=job.id) }}"
+            hx-target="#draft-output-{{ job.id }}" hx-swap="innerHTML">
+        <input type="hidden" name="path" :value="draftFor && draftFor.path">
+        <input type="hidden" name="connection_id" :value="draftFor && (draftFor.id || '')">
+        <input type="hidden" name="contact_name" :value="draftFor && draftFor.name">
+        <input type="hidden" name="contact_title" :value="draftFor && draftFor.title">
+        <input type="hidden" name="contact_url" :value="draftFor && draftFor.url">
+        <input type="hidden" name="contact_snippet" :value="draftFor && draftFor.snippet">
+
+        <div style="display: flex; gap: 8px; margin-bottom: 10px">
+          <div style="flex: 1">
+            <label class="muted" style="font-size: 12px; display: block">{{ _('目的') }}</label>
+            <select name="purpose" style="width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 3px; font: inherit">
+              <option value="referral_request">{{ _('referral_request — 直接请求内推') }}</option>
+              <option value="informational">{{ _('informational — 15 分钟交流，不直接要内推') }}</option>
+              <option value="direct_question">{{ _('direct_question — 一个具体问题') }}</option>
+            </select>
+          </div>
+          <div style="flex: 1">
+            <label class="muted" style="font-size: 12px; display: block">{{ _('载体') }}</label>
+            <select name="medium" style="width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 3px; font: inherit">
+              <option value="linkedin_dm">{{ _('LinkedIn DM (≤280 字符)') }}</option>
+              <option value="linkedin_request">{{ _('LinkedIn 连接请求 (≤300 字符)') }}</option>
+              <option value="email">{{ _('邮件 (≤150 字)') }}</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="add-selected">{{ _('→ 起草') }}</button>
+        <button type="button" class="cancel" @click="draftFor = null" style="margin-left: 8px">{{ _('取消') }}</button>
+        <span class="htmx-indicator muted" style="margin-left: 10px; font-size: 12px">{{ _('⏳ LLM 起草中…') }}</span>
+      </form>
+
+      <div id="draft-output-{{ job.id }}" style="margin-top: 14px"></div>
+    </div>
+  </div>
+</div>

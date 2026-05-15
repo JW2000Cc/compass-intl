@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% block title %}漂移仪表盘 · Compass{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <h1>{{ _('漂移仪表盘') }}</h1>
+    <p class="lede">{{ _('看见你的边界是怎么变的——反向调节飞轮失控的核心。') }}</p>
+  </div>
+  <div class="page-actions">
+    <form method="post" action="{{ url_for('reflection.snapshot_now') }}" style="display:inline">
+      <button class="primary" type="submit">{{ _('📌 现在抓快照') }}</button>
+    </form>
+  </div>
+</div>
+
+{# 5-07 Reflective Flywheel 完整闭环 — 4 信号 #}
+{% if flywheel %}
+  {% set hs = flywheel.health_score %}
+  {% set hs_color = '#2ea043' if hs >= 70 else ('#9a6700' if hs >= 40 else '#cf222e') %}
+  <div class="card" style="padding: 14px 18px; margin: 0 0 16px;
+                            border-left: 4px solid {{ hs_color }}">
+    <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px">
+      <h2 style="font-size: 16px; margin: 0">{{ _('🔄 反思飞轮闭环健康分') }}</h2>
+      <span style="font-size: 22px; font-weight: 700; color: {{ hs_color }}">{{ hs }}</span>
+      <span class="muted" style="font-size: 12px">/ 100 · 过去 {{ flywheel.days }} 天</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+                gap: 10px; font-size: 12px">
+      <div style="padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 4px">
+        <div class="muted" style="font-size: 11px; margin-bottom: 3px">{{ _('thumbs ↔ tier 闭环') }}</div>
+        <div style="font-weight: 600; font-size: 14px">{{ '%.0f' | format(flywheel.thumbs_closure.rate * 100) }}%</div>
+        <div class="muted" style="font-size: 10.5px; margin-top: 2px">
+          👎 {{ flywheel.thumbs_closure.thumbed_down }} / demote {{ flywheel.thumbs_closure.demoted }}
+        </div>
+      </div>
+      <div style="padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 4px">
+        <div class="muted" style="font-size: 11px; margin-bottom: 3px">{{ _('brief 渗透率') }}</div>
+        <div style="font-weight: 600; font-size: 14px">{{ '%.0f' | format(flywheel.brief_penetration.rate * 100) }}%</div>
+        <div class="muted" style="font-size: 10.5px; margin-top: 2px">
+          gate {{ flywheel.brief_penetration.gate_events }} / class {{ flywheel.brief_penetration.total_classify }}
+        </div>
+      </div>
+      <div style="padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 4px">
+        <div class="muted" style="font-size: 11px; margin-bottom: 3px">{{ _('undo 率') }}</div>
+        <div style="font-weight: 600; font-size: 14px">{{ '%.0f' | format(flywheel.undo_rate.rate * 100) }}%</div>
+        <div class="muted" style="font-size: 10.5px; margin-top: 2px">
+          {{ flywheel.undo_rate.undos }} / {{ flywheel.undo_rate.writes }} 写
+        </div>
+      </div>
+      <div style="padding: 8px 10px; background: white; border: 1px solid var(--line); border-radius: 4px">
+        <div class="muted" style="font-size: 11px; margin-bottom: 3px">rejection nudge</div>
+        <div style="font-weight: 600; font-size: 14px">{{ flywheel.rejection_nudges.count }}</div>
+        <div class="muted" style="font-size: 10.5px; margin-top: 2px">{{ _('条 nudge calibration') }}</div>
+      </div>
+    </div>
+    {% if flywheel.notes %}
+      <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line)">
+        {% for note in flywheel.notes %}
+          <div style="font-size: 12.5px; line-height: 1.5; margin-bottom: 4px">·  {{ note }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if rejection_agg and rejection_agg.total > 0 %}
+  <div class="card" style="padding: 12px 16px; margin: 0 0 16px">
+    <h3 style="font-size: 13.5px; margin: 0 0 8px">📉 被拒原因聚合（90 天 · {{ rejection_agg.total }} 封）</h3>
+    <div style="display: flex; gap: 4px; flex-wrap: wrap; font-size: 11.5px">
+      {% for cat, cnt in rejection_agg.by_category.items() %}
+        {% if cnt > 0 %}
+          <span style="padding: 3px 9px; border-radius: 10px; background: #f6f8fa;
+                       border: 1px solid var(--line)">{{ cat }} · {{ cnt }}</span>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="muted" style="font-size: 11px; margin-top: 8px">
+      <a href="{{ url_for('rejection.overview') }}">{{ _('→ 看完整 + 粘新拒信') }}</a>
+    </div>
+  </div>
+{% endif %}
+
+<details class="module-help">
+  <summary>{{ _('不熟？看这是什么 / 为什么用 / 什么时候来') }}</summary>
+  <div class="help-body">
+    <h4>{{ _('这是什么') }}</h4>
+    <p>{{ _('显示你的') }} <code>calibration</code>{{ _('（边界设定）随时间的变化轨迹 + Tier 分布健康度（') }}<code>ε-exploration</code>{{ _('）+ 你声称的偏好和实际行为的对照。') }}</p>
+    <h4>{{ _('为什么需要它') }}</h4>
+    <p>{{ _('Compass 学你的边界（学边界不学偏好）。但学习有失控风险——边界会') }}<strong>{{ _('单向漂移') }}</strong>{{ _('变成 sycophancy。这个仪表盘是反向调节四件套之一：') }}<strong>{{ _('让漂移可见') }}</strong>{{ _('。看见 = 阻止漂移最有效的方法。') }}</p>
+    <h4>{{ _('什么时候来这里') }}</h4>
+    <ul>
+      <li>{{ _('每 1–2 周来一次，看趋势') }}</li>
+      <li>{{ _('看到顶部 ⚠ 警报（漂移过快 / Tier 2 反茧房甜点 starvation）时立刻来') }}</li>
+      <li>{{ _('觉得简历改写"开始让我不舒服"时——可能边界悄悄漂了') }}</li>
+    </ul>
+  </div>
+</details>
+
+{# ─────────── KPI 行 ─────────── #}
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">📊</span>{{ _('当前漂移') }}</div>
+    <div class="kpi-value" style="font-size:18px; padding-top:4px">
+      {% if report.verdict == 'stable' %}
+        <span class="verdict stable">{{ _('稳定') }}</span>
+      {% elif report.verdict == 'drifting' %}
+        <span class="verdict drifting">{{ _('漂移中') }}</span>
+      {% else %}
+        <span class="verdict no_data">{{ _('尚无数据') }}</span>
+      {% endif %}
+    </div>
+    <div class="kpi-sub">{{ report.points | length }} 个快照</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">📈</span>{{ _('当前边界') }}</div>
+    <div class="kpi-value">
+      {% if report.current %}L{{ report.current.max_amplification_level }}{% else %}—{% endif %}
+    </div>
+    <div class="kpi-sub">max amplification level</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">🔒</span>{{ _('硬锁类目') }}</div>
+    <div class="kpi-value">
+      {% if report.current %}{{ report.current.sensitive_locked | length }}{% else %}—{% endif %}
+    </div>
+    <div class="kpi-sub">sensitive locked</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-label"><span class="kpi-icon">🪧</span>Style rules</div>
+    <div class="kpi-value">
+      {% if report.current %}{{ report.current.style_rules_count }}{% else %}—{% endif %}
+    </div>
+    <div class="kpi-sub">{{ _('累计风格规则') }}</div>
+  </div>
+
+  <div class="kpi" {% if epsilon.tier_2_starvation %}style="border-color: var(--warn)"{% endif %}>
+    <div class="kpi-label">
+      <span class="kpi-icon">🎯</span>反茧房健康
+      {% if epsilon.tier_2_starvation %}<span style="margin-left:auto;color:var(--warn)">⚠</span>{% endif %}
+    </div>
+    <div class="kpi-value" style="font-size:20px">
+      {% if epsilon.deviation is not none %}
+        {{ epsilon.deviation }}
+      {% else %}—{% endif %}
+    </div>
+    <div class="kpi-sub">{{ _('偏离指数（0=完美）') }}</div>
+  </div>
+</div>
+
+{# ─────────── 漂移轨迹 + ε-exploration ─────────── #}
+<div style="display: grid; gap: 14px; grid-template-columns: 2fr 1fr; align-items: start;">
+  <div class="card">
+    <h3>{{ _('漂移轨迹') }}</h3>
+    {% if report.points|length >= 2 %}
+      <svg id="drift-chart" width="100%" height="140" style="margin: 8px 0"></svg>
+      <ul style="margin:0; padding-left:18px; font-size: 13.5px">
+        {% for line in report.summary_lines %}
+          <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">{{ report.summary_lines[0] if report.summary_lines else "没有数据。" }}</p>
+      <p class="muted" style="font-size:12px">{{ _('点上方「现在抓快照」记一个起点；过一段时间再抓第二个，就能看到漂移线。') }}</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>{{ _('ε-exploration 配额') }}</h3>
+    {% if epsilon.tier_distribution %}
+      <table style="width: 100%; font-size: 13px; border-collapse: collapse">
+        <tr><th></th>
+            <th style="text-align:right;color:var(--muted);font-weight:500">{{ _('实际') }}</th>
+            <th style="text-align:right;color:var(--muted);font-weight:500">{{ _('目标') }}</th></tr>
+        {% for t in [1, 2, 3] %}
+          {% set actual = (epsilon.tier_distribution.get(t, 0) * 100) | round(0) %}
+          {% set target = (epsilon.target.get(t, 0) * 100) | round(0) %}
+          <tr>
+            <td style="padding: 4px 0">
+              <span class="badge badge-tier{{ t }}">Tier {{ t }}</span>
+            </td>
+            <td style="text-align:right">{{ actual }}%</td>
+            <td style="text-align:right; color: var(--muted)">{{ target }}%</td>
+          </tr>
+        {% endfor %}
+      </table>
+      <p style="margin-top: 10px; font-size: 12.5px; {% if epsilon.tier_2_starvation %}color: var(--warn);{% endif %}">
+        {{ epsilon.message }}
+      </p>
+    {% else %}
+      <p class="muted">{{ epsilon.message }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{# ─────────── 声称 vs 行为 ─────────── #}
+<div class="card">
+  <h3>{{ _('声称 vs 行为') }}</h3>
+  {% if divergence.notes %}
+    <ul style="margin:0; padding-left:18px; font-size: 13.5px">
+      {% for note in divergence.notes %}
+        <li>{{ note }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">{{ _('尚无足够行为数据做对照。') }}</p>
+  {% endif %}
+</div>
+
+{# ─────────── tier_quota 反身性距离 ─────────── #}
+{% set iva = intent_vs_action %}
+{% set verdict_color = {
+    'tier1_locked': 'var(--warn)',
+    'drifting': 'var(--warn)',
+    'explorer_revealed': 'var(--info, #3b82f6)',
+    'aligned': 'var(--ok, #10b981)',
+    'insufficient_data': 'var(--muted)'
+}[iva.verdict] %}
+<div class="card" style="margin-top: 14px; border-left: 3px solid {{ verdict_color }}">
+  <h3 style="margin:0 0 4px">{{ _('🪞 tier_quota: 你说想要的 vs 你实际点开的') }}
+    <span style="font-size: 11.5px; color: var(--muted); font-weight:400; margin-left: 6px">
+      过去 {{ iva.days }} 天 · 样本 {{ iva.sample_size }}
+      {% if iva.l1_distance is not none %}· L1 距离 {{ '%.2f'|format(iva.l1_distance) }}{% endif %}
+    </span>
+  </h3>
+  <p style="margin: 6px 0 10px; font-size: 13.5px; color: {{ verdict_color }}">
+    {{ iva.message }}
+  </p>
+  {% if iva.stated and iva.revealed %}
+    <table style="width: 100%; font-size: 13px; border-collapse: collapse">
+      <tr>
+        <th style="text-align:left; color:var(--muted); font-weight:500">Tier</th>
+        <th style="text-align:right; color:var(--muted); font-weight:500">{{ _('声称（quota 总和归一化）') }}</th>
+        <th style="text-align:right; color:var(--muted); font-weight:500">{{ _('实际（点开 / 改写 / 👍）') }}</th>
+        <th style="text-align:right; color:var(--muted); font-weight:500">{{ _('差') }}</th>
+      </tr>
+      {% for t in [1, 2, 3] %}
+        {% set s = (iva.stated.get(t, 0) * 100) | round(0) %}
+        {% set r = (iva.revealed.get(t, 0) * 100) | round(0) %}
+        {% set g = iva.gap.get(t, 0) %}
+        {% set gpct = (g * 100) | round(0) %}
+        <tr>
+          <td style="padding: 4px 0">
+            <span class="badge badge-tier{{ t }}">Tier {{ t }}</span>
+          </td>
+          <td style="text-align:right">{{ s }}%</td>
+          <td style="text-align:right; font-weight:600">{{ r }}%</td>
+          <td style="text-align:right; color: {% if g > 0.10 %}var(--info, #3b82f6){% elif g < -0.10 %}var(--warn){% else %}var(--muted){% endif %}">
+            {% if g > 0 %}+{% endif %}{{ gpct }}%
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted)">
+      "声称" = 各启用 profile 的 tier_quota 之和归一化。"实际" = 你这段时间点开 / 跑改写 / 👍 的岗位 tier 分布（每 job 只算一次）。
+      ε-exploration 卡片对的是<strong>{{ _('系统 push') }}</strong>{{ _('分布；这里对的是') }}<strong>{{ _('你的实际行为') }}</strong>。
+    </p>
+  {% endif %}
+</div>
+
+{# ─────────── 价值观 review 警报 ─────────── #}
+{% if report.review_due %}
+  <div class="card" style="border-color: var(--warn)">
+    <h3 style="color: var(--warn)">{{ _('⚠ 价值观回归 checkpoint 到期') }}</h3>
+    <p style="margin: 4px 0">{{ _('距离上次回归审视已超过 14 天。
+       建议跑一次') }} <a href="{{ url_for('reflection.assumptions') }}">{{ _('系统假设') }}</a> {{ _('重新审视。') }}</p>
+  </div>
+{% endif %}
+
+<script>
+  // Minimal SVG line chart for the drift series — no external deps.
+  (function(){
+    const series = {{ series | tojson }};
+    if (series.length < 2) return;
+    const svg = document.getElementById("drift-chart");
+    if (!svg) return;
+    const w = svg.clientWidth || 640;
+    const h = 140;
+    const pad = 26;
+    const minLevel = 0, maxLevel = 5;
+    const xs = i => pad + i * (w - 2*pad) / (series.length - 1);
+    const ys = v => h - pad - (v - minLevel) * (h - 2*pad) / (maxLevel - minLevel);
+
+    let path = "";
+    series.forEach((p, i) => {
+      const x = xs(i), y = ys(p.level);
+      path += (i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+    });
+
+    svg.innerHTML = `
+      <line x1="${pad}" y1="${ys(0)}" x2="${w-pad}" y2="${ys(0)}" stroke="#e2e2dd" />
+      <line x1="${pad}" y1="${ys(5)}" x2="${w-pad}" y2="${ys(5)}" stroke="#e2e2dd" />
+      <text x="${pad-4}" y="${ys(0)+4}" text-anchor="end" font-size="10" fill="#999">L0</text>
+      <text x="${pad-4}" y="${ys(5)+4}" text-anchor="end" font-size="10" fill="#999">L5</text>
+      <path d="${path}" stroke="#2b5876" stroke-width="2.5" fill="none" stroke-linejoin="round" />
+      ${series.map((p,i) => `<circle cx="${xs(i)}" cy="${ys(p.level)}" r="3.5" fill="#2b5876" />`).join("")}
+    `;
+  })();
+</script>
+
+{% endblock %}

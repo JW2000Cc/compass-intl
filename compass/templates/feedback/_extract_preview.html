@@ -1,0 +1,72 @@
+{# Extract preview — shown after LLM extraction. User can edit/uncheck before save. #}
+<div id="extract-preview" class="card" style="border-color: var(--accent)">
+  <h3>{{ _('提取预览') }}</h3>
+  <p class="muted" style="font-size: 12.5px; margin: 0 0 10px">
+    LLM 从你的反馈里提取了 {{ result.lines | length }} 条偏好。
+    勾选要保留的，可以编辑措辞或 scope，确认后写入 brief。
+  </p>
+
+  {% if result.ambiguity_note %}
+    <div class="alert-banner warn" style="margin-bottom: 10px">
+      <div class="alert-body-wrap">
+        <span class="alert-title">{{ _('⚠ 不够具体:') }}</span> {{ result.ambiguity_note }}
+        <br><span class="muted" style="font-size: 12px">{{ _('建议你重新写一条更明确的反馈。') }}</span>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if not result.lines %}
+    <p class="muted">{{ _('没有提取到有效偏好。换种说法再试。') }}</p>
+    <button type="button" class="subtle" @click="open = false">{{ _('关闭') }}</button>
+  {% else %}
+    <form hx-post="{{ url_for('feedback.save_lines') }}"
+          hx-target="#extract-preview" hx-swap="outerHTML">
+      <input type="hidden" name="context" value="{{ context }}">
+      <input type="hidden" name="item_id" value="{{ item_id }}">
+      <input type="hidden" name="item_label" value="{{ item_label }}">
+      <input type="hidden" name="user_text" value="{{ user_text }}">
+      {% if bullet_index is not none %}
+        <input type="hidden" name="bullet_index" value="{{ bullet_index }}">
+      {% endif %}
+      <input type="hidden" name="lines_count" value="{{ result.lines | length }}">
+
+      {% for ext in result.lines %}
+        {% set i = loop.index0 %}
+        <div style="margin: 10px 0; padding: 12px; background: #fafaf6; border-radius: 4px">
+          <label style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px">
+            <input type="checkbox" name="line_{{ i }}_keep" value="1" checked
+                   style="width: 18px; height: 18px">
+            <span style="font-weight: 600">{{ _('保留') }}</span>
+            {% if ext.merge_into and ext.merge_into in existing_lines %}
+              <span class="muted" style="font-size: 11px; padding: 2px 8px; background: var(--line); border-radius: 9px">
+                ↻ 合并到 "{{ existing_lines[ext.merge_into].text }}"（确认 +1）
+              </span>
+            {% else %}
+              <span class="muted" style="font-size: 11px; padding: 2px 8px; background: var(--accent); color: white; border-radius: 9px">{{ _('+ 新增') }}</span>
+            {% endif %}
+          </label>
+          <div style="display: flex; gap: 6px; align-items: end; flex-wrap: wrap">
+            <select name="line_{{ i }}_side" style="padding: 5px; font: inherit; border: 1px solid var(--line); border-radius: 3px">
+              <option value="+" {% if ext.side == "+" %}selected{% endif %}>{{ _('✓ 倾向') }}</option>
+              <option value="-" {% if ext.side == "-" %}selected{% endif %}>{{ _('✗ 避开') }}</option>
+            </select>
+            <input type="text" name="line_{{ i }}_text" value="{{ ext.text }}" maxlength="60"
+                   style="flex: 2; min-width: 200px; padding: 5px; font: inherit; border: 1px solid var(--line); border-radius: 3px">
+            <input type="text" name="line_{{ i }}_scope" value="{{ ext.scope or '' }}" maxlength="80"
+                   placeholder="{{ _('scope（可选）') }}"
+                   style="flex: 1; min-width: 140px; padding: 5px; font: inherit; border: 1px solid var(--line); border-radius: 3px">
+            <input type="hidden" name="line_{{ i }}_axis" value="{{ ext.axis }}">
+            <input type="hidden" name="line_{{ i }}_confidence" value="{{ ext.confidence }}">
+            <input type="hidden" name="line_{{ i }}_merge_into" value="{{ ext.merge_into or '' }}">
+            <span class="muted" style="font-size: 11px"><code>{{ ext.axis }}</code> · conf {{ "%.1f" | format(ext.confidence) }}</span>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div style="margin-top: 14px; display: flex; gap: 8px">
+        <button type="submit">{{ _('✓ 保存到 brief') }}</button>
+        <button type="button" class="subtle" @click="open = false">{{ _('取消') }}</button>
+      </div>
+    </form>
+  {% endif %}
+</div>

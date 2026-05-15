@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}薪资谈判模拟 · Compass{% endblock %}
+{% block content %}
+<div style="max-width: 720px; margin: 0 auto; padding: 12px 0">
+  <h1 style="font-size: 22px; margin: 0 0 4px">{{ _('💼 薪资谈判模拟') }}</h1>
+  <p class="muted" style="font-size: 13px; margin: 0 0 24px">
+    输入你的 offer + 角色 + 城市，LLM 给出市场范围 + 可争取范围 + 一段你能直接 paste 的话术。
+    一次性反思工具——不是聊天机器人，输出后退出。
+  </p>
+
+  {% if error %}
+    <div style="background: #fae5e5; border-left: 3px solid #cf222e; padding: 10px 14px;
+                border-radius: 4px; margin-bottom: 16px; font-size: 13px">
+      ⚠️ {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('negotiation.simulate') }}"
+        style="display: grid; gap: 12px; padding: 16px 18px; border: 1px solid var(--line);
+               border-radius: 6px; background: white">
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px">
+      <div class="field">
+        <label>{{ _('Offer 金额 *') }}</label>
+        <input type="number" step="0.01" name="offer_amount" required
+               value="{{ input.offer_amount if input else '' }}"
+               placeholder="3000">
+      </div>
+      <div class="field">
+        <label>{{ _('币种') }}</label>
+        <select name="currency">
+          <option value="EUR" {% if input and input.currency == 'EUR' %}selected{% endif %}>EUR</option>
+          <option value="USD" {% if input and input.currency == 'USD' %}selected{% endif %}>USD</option>
+          <option value="GBP" {% if input and input.currency == 'GBP' %}selected{% endif %}>GBP</option>
+          <option value="CNY" {% if input and input.currency == 'CNY' %}selected{% endif %}>CNY</option>
+          <option value="JPY" {% if input and input.currency == 'JPY' %}selected{% endif %}>JPY</option>
+          <option value="CHF" {% if input and input.currency == 'CHF' %}selected{% endif %}>CHF</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>{{ _('计薪') }}</label>
+        <select name="period">
+          <option value="monthly" {% if not input or input.period == 'monthly' %}selected{% endif %}>{{ _('每月') }}</option>
+          <option value="yearly" {% if input and input.period == 'yearly' %}selected{% endif %}>{{ _('每年') }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+      <div class="field">
+        <label>{{ _('城市') }}</label>
+        <input type="text" name="city" value="{{ input.city if input else '' }}" placeholder="Frankfurt">
+      </div>
+      <div class="field">
+        <label>{{ _('国家') }}</label>
+        <input type="text" name="country" value="{{ input.country if input else '' }}" placeholder="Germany">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px">
+      <div class="field">
+        <label>{{ _('角色 *') }}</label>
+        <input type="text" name="role" required
+               value="{{ input.role if input else '' }}"
+               placeholder="Power Engineer">
+      </div>
+      <div class="field">
+        <label>{{ _('资深级别') }}</label>
+        <select name="seniority">
+          <option value="junior" {% if input and input.seniority == 'junior' %}selected{% endif %}>Junior</option>
+          <option value="mid" {% if not input or input.seniority == 'mid' %}selected{% endif %}>Mid</option>
+          <option value="senior" {% if input and input.seniority == 'senior' %}selected{% endif %}>Senior</option>
+          <option value="staff" {% if input and input.seniority == 'staff' %}selected{% endif %}>Staff</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>{{ _('你的心理底线（可选）') }}</label>
+      <input type="number" step="0.01" name="your_minimum"
+             value="{{ input.your_minimum if input and input.your_minimum else '' }}"
+             placeholder="2800">
+    </div>
+
+    <div class="field">
+      <label>{{ _('补充信息（可选）') }}</label>
+      <textarea name="notes" rows="3"
+                placeholder="{{ _('例：我已 offer 另一份 3500；公司缺该岗位等了 6 个月；我有 ML 经验对这个角色加分...') }}"
+                style="width: 100%; padding: 6px 8px; font: inherit;
+                       border: 1px solid var(--line); border-radius: 3px">{{ input.notes if input else '' }}</textarea>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px">
+      <button type="submit" class="primary">{{ _('🎯 模拟谈判') }}</button>
+      <span class="muted" style="font-size: 11px">{{ _('用 LLM 估市场范围 + 给一段直接能用的话术') }}</span>
+    </div>
+  </form>
+
+  <details style="margin-top: 20px; font-size: 12px; color: var(--muted)">
+    <summary style="cursor: pointer">{{ _('为什么不是聊天机器人？') }}</summary>
+    <div style="margin-top: 8px; line-height: 1.6">
+      聊天机器人是 engagement loop——你陪它聊越久越觉得"我在做事"，但其实没有产出。
+      这里是 reflective tool：一次输入 → 一次输出 → 你看完决定 → 退出。
+      运行历史在 <a href="{{ url_for('reflection.dashboard') }}">/reflect/dashboard</a> {{ _('可见。') }}
+    </div>
+  </details>
+</div>
+{% endblock %}
